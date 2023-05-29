@@ -4,21 +4,22 @@ from car.serializers import CarSerializer
 from car.models import Car
 from owner.models import Owner
 from owner.serializers import OwnerSerializer
-from .serializers import InspectionSerializer
-from .models import Inspection
+from .serializers import FormSerializer
+from .models import Form
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.parsers import JSONParser 
 from django.forms.models import model_to_dict
+from datetime import datetime, timedelta
 
-class InspectionView(APIView):
-    serializer_class = InspectionSerializer
-    queryset = Inspection.objects.all()
+class FormView(APIView):
+    serializer_class = FormSerializer
+    queryset = Form.objects.all()
 
     def get(self, request, *args, **kwargs):
-        inspections = Inspection.objects.all()
-        serializer = InspectionSerializer(inspections, many=True)
+        registers = Form.objects.all()
+        serializer = FormSerializer(registers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def check_car(self, request):
@@ -55,7 +56,7 @@ class InspectionView(APIView):
         if not request.data:
             return Response('Empty Body', status=400)
         
-        if request.get("car") is None or request['car'] is None is None:
+        if request.data.get("car") is None or request.data['car'] is None:
             return Response('Car is None', status=400)
         
         try:
@@ -66,29 +67,29 @@ class InspectionView(APIView):
         if car is None:
             car = self.check_car(request)
             
-        inspection_data = request.data.copy()
-        inspection_data['car'] = None
+        register_data = request.data.copy()
+        register_data['car'] = None
         
-        inspection_serializer = InspectionSerializer(data=inspection_data)
+        register_serializer = FormSerializer(data=register_data)
         
-        if inspection_serializer.is_valid():
-            inspection_data['car'] = car
-            inspection = Inspection(**inspection_data)
-            inspection.save()
-            response = model_to_dict(inspection)
-            response['car'] = model_to_dict(inspection.car)
+        if register_serializer.is_valid():
+            register_data['car'] = car
+            register = Form(**register_data)
+            register.save()
+            response = model_to_dict(register)
+            response['car'] = model_to_dict(register.car)
             return Response(response, status=status.HTTP_200_OK)
         
-        return Response(inspection_serializer.errors, status=400)
+        return Response(register_serializer.errors, status=400)
     
-class InspectionDetailView(InspectionView):
-    serializer_class = InspectionSerializer
-    queryset = Inspection.objects.all()
+class FormDetailView(FormView):
+    serializer_class = FormSerializer
+    queryset = Form.objects.all()
 
     def get(self, request, id, *args, **kwargs):
         try:
-            inspection = Inspection.objects.get(inspection_number=id)
-            serializer = InspectionSerializer(inspection)
+            register = Form.objects.get(register_id=id)
+            serializer = FormSerializer(register)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except:
             return Response('Not Found', status=status.HTTP_400_BAD_REQUEST)
@@ -110,9 +111,9 @@ class InspectionDetailView(InspectionView):
         else:
             return Response(owner_serializer.errors, status=400)
     
-    def check_car(self, request, inspection):
+    def check_car(self, request, register):
         if request.data.get("car") is None or request.data['car'] is None:
-            return inspection.car
+            return register.car
         
         car_request = request.data['car']
         try:
@@ -120,7 +121,7 @@ class InspectionDetailView(InspectionView):
             owner = self.check_owner(car_request, car)
             
         except:
-            car = inspection.car
+            car = register.car
             owner = self.check_owner(car_request, car)
             
         car_data = car_request.copy()
@@ -141,25 +142,72 @@ class InspectionDetailView(InspectionView):
             return Response('Empty Body', status=400)
         
         try:
-            inspection = Inspection.objects.get(inspection_number=id)
+            register = Form.objects.get(register_id=id)
         except:
             return Response('Not Found', status=status.HTTP_400_BAD_REQUEST)
 
-        car = self.check_car(request, inspection)
+        car = self.check_car(request, register)
 
-        inspection_data = request.data.copy()
-        inspection_data['car'] = None
+        register_data = request.data.copy()
+        register_data['car'] = None
         
-        inspection_serializer = InspectionSerializer(inspection, data=inspection_data)
+        register_serializer = FormSerializer(register, data=register_data)
         
-        if inspection_serializer.is_valid():
-            inspection_data['car'] = car
+        if register_serializer.is_valid():
+            register_data['car'] = car
             
-            inspection = Inspection(**inspection_data)
-            inspection.save()
-            response = model_to_dict(inspection)
+            register = Form(**register_data)
+            register.save()
+            response = model_to_dict(register)
             response['car'] = model_to_dict(car)
             response['car']['owner'] = model_to_dict(car.owner)
             return Response(response, status=status.HTTP_200_OK)
         
-        return Response(inspection_serializer.errors, status=400)
+        return Response(register_serializer.errors, status=400)
+
+class FormExpiringView(APIView):
+    serializer_class = FormSerializer
+    queryset = Form.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        startdate = datetime.today()
+        enddate = startdate + timedelta(days=31)
+        registers = Form.objects.filter(expired_date__range=[startdate, enddate])
+        serializer = FormSerializer(registers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FormExpiringView(APIView):
+    serializer_class = FormSerializer
+    queryset = Form.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        startdate = datetime.today()
+        enddate = startdate + timedelta(days=31)
+        registers = Form.objects.filter(expired_date__range=[startdate, enddate])
+        serializer = FormSerializer(registers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FormExpiringPlaceView(APIView):
+    serializer_class = FormSerializer
+    queryset = Form.objects.all()
+
+    def get(self, request, place, *args, **kwargs):
+        registers = Form.objects.filter(register_place=place)
+        startdate = datetime.today()
+        enddate = startdate + timedelta(days=31)
+        registers = registers.filter(expired_date__range=[startdate, enddate])
+        serializer = FormSerializer(registers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FormExpiringCityView(APIView):
+    serializer_class = FormSerializer
+    queryset = Form.objects.all()
+
+    from django.forms.models import model_to_dict
+    def get(self, request, place, *args, **kwargs):
+        registers = Form.objects.filter(car__owner__city=place)
+        startdate = datetime.today()
+        enddate = startdate + timedelta(days=31)
+        registers = registers.filter(expired_date__range=[startdate, enddate])
+        serializer = FormSerializer(registers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

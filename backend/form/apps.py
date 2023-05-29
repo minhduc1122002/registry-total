@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class InspectionConfig(AppConfig):
+class FormConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'inspection'
+    name = 'form'

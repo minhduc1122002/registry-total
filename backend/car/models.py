@@ -1,4 +1,5 @@
 from django.db import models
+import json
 
 class Car(models.Model):
     # biển số đăng ký
@@ -12,7 +13,7 @@ class Car(models.Model):
         max_length=100,
         choices=[
             ('personal', 'Đi lại cá nhân'),
-            ('passenger_service', 'Dịch vụ trở khách'),
+            ('passenger_service', 'Dịch vụ chở khách'),
             ('transportation_service', 'Dịch vụ vận tải'),
         ],
         default='personal',

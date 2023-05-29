@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'car',
     'owner',
-    'inspection'
+    'form'
 ]
 
 MIDDLEWARE = [

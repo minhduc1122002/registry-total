@@ -19,11 +19,11 @@ from django.urls import path, include
 from rest_framework import routers
 from car import urls as car_urls
 from owner import urls as owner_urls
-from inspection import urls as inspection_urls
+from form import urls as form_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(car_urls)),
     path('api/', include(owner_urls)),
-    path('api/', include(inspection_urls)),
+    path('api/', include(form_urls)),
 ]
