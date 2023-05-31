@@ -37,5 +37,6 @@ class Owner(models.Model):
         choices=getChoice('backend/address/tinh_tp.json'),
         default='01',
     )
+    district = models.CharField(max_length=30, blank=True, null=True)
     # liên hệ
     contact = models.CharField(max_length=20, blank=True, null=True)

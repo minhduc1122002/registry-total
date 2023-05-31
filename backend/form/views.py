@@ -203,9 +203,20 @@ class FormExpiringCityView(APIView):
     serializer_class = FormSerializer
     queryset = Form.objects.all()
 
-    from django.forms.models import model_to_dict
-    def get(self, request, place, *args, **kwargs):
-        registers = Form.objects.filter(car__owner__city=place)
+    def get(self, request, city, *args, **kwargs):
+        registers = Form.objects.filter(car__owner__city=city)
+        startdate = datetime.today()
+        enddate = startdate + timedelta(days=31)
+        registers = registers.filter(expired_date__range=[startdate, enddate])
+        serializer = FormSerializer(registers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FormExpiringDistrictView(APIView):
+    serializer_class = FormSerializer
+    queryset = Form.objects.all()
+
+    def get(self, request, district, *args, **kwargs):
+        registers = Form.objects.filter(car__owner__district=district)
         startdate = datetime.today()
         enddate = startdate + timedelta(days=31)
         registers = registers.filter(expired_date__range=[startdate, enddate])

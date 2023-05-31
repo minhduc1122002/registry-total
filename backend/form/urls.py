@@ -5,6 +5,7 @@ from .views import (
     FormExpiringView,
     FormExpiringPlaceView,
     FormExpiringCityView,
+    FormExpiringDistrictView,
 )
 
 urlpatterns = [
@@ -12,5 +13,6 @@ urlpatterns = [
     path('form/<int:id>', FormDetailView.as_view()),
     path('form/expiring/all', FormExpiringView.as_view()),
     path('form/expiring/place/<str:place>', FormExpiringPlaceView.as_view()),
-    path('form/expiring/city/<str:place>', FormExpiringCityView.as_view()),
+    path('form/expiring/city/<str:city>', FormExpiringCityView.as_view()),
+    path('form/expiring/district/<str:district>', FormExpiringDistrictView.as_view()),
 ]
