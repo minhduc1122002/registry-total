@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from rest_framework.parsers import JSONParser 
 from django.forms.models import model_to_dict
 from datetime import datetime, timedelta
+from django.db.models import Q
 
 class FormView(APIView):
     serializer_class = FormSerializer
@@ -164,6 +165,48 @@ class FormDetailView(FormView):
             return Response(response, status=status.HTTP_200_OK)
         
         return Response(register_serializer.errors, status=400)
+
+class FormMonthViewAll(APIView):
+    def get(self, request, month, *args, **kwargs):
+        register = Form.objects.filter(register_date__month=month)
+        serializer = FormSerializer(register, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FormQuarterViewAll(APIView):
+    def get(self, request, quarter, *args, **kwargs):
+        start = (quarter - 1) * 2 + quarter
+        mid = start + 1
+        end = start + 2
+        register = Form.objects.filter(Q(register_date__month=start) | Q(register_date__month=mid) | Q(register_date__month=end))
+        serializer = FormSerializer(register, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FormYearViewAll(APIView):
+    def get(self, request, year, *args, **kwargs):
+        register = Form.objects.filter(register_date__year=year)
+        serializer = FormSerializer(register, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FormMonthViewDistrict(APIView):
+    def get(self, request, month, place, *args, **kwargs):
+        register = Form.objects.filter(register_date__month=month, register_place=place)
+        serializer = FormSerializer(register, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FormQuarterViewDistrict(APIView):
+    def get(self, request, quarter, place, *args, **kwargs):
+        start = (quarter - 1) * 2 + quarter
+        mid = start + 1
+        end = start + 2
+        register = Form.objects.filter(Q(register_date__month=start) | Q(register_date__month=mid) | Q(register_date__month=end), register_place=place)
+        serializer = FormSerializer(register, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FormYearViewDistrict(APIView):
+    def get(self, request, year, place, *args, **kwargs):
+        register = Form.objects.filter(register_date__year=year, register_place=place)
+        serializer = FormSerializer(register, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class FormExpiringView(APIView):
     serializer_class = FormSerializer
