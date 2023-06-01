@@ -1,0 +1,176 @@
+.login-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    z-index: 1;
+    background-color: rgb(63, 81, 181);
+}
+.login-container::before {
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    opacity: 0.1;
+    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0IiB2aWV3Qm94PSIwIDAgNjQwIDY0MCIgd2lkdGg9IjY0MCIgaGVpZ2h0PSI2NDAiPjxkZWZzPjxwYXRoIGQ9Ik0xMDMuMTQgMTE5LjMzQzY5Ljg5IDEzOS44NSA0OS42NSAxNzYuMTQgNDkuNjUgMjE1LjIyQzQ5LjY1IDI2OC43OSA0OS42NSAzNjYuNjMgNDkuNjUgNDIwLjJDNDkuNjUgNDU5LjI4IDY5Ljg5IDQ5NS41NyAxMDMuMTQgNTE2LjA5QzE0Ni4wMiA1NDIuNTYgMjIxLjE3IDU4OC45NCAyNjQuMDUgNjE1LjQxQzI5Ni44NSA2MzUuNjUgMzM4LjI1IDYzNS42NSAzNzEuMDUgNjE1LjQxQzQxMy45MyA1ODguOTQgNDg5LjA4IDU0Mi41NiA1MzEuOTYgNTE2LjA5QzU2NS4yMSA0OTUuNTcgNTg1LjQ1IDQ1OS4yOCA1ODUuNDUgNDIwLjJDNTg1LjQ1IDM2Ni42MyA1ODUuNDUgMjY4Ljc5IDU4NS40NSAyMTUuMjJDNTg1LjQ1IDE3Ni4xNCA1NjUuMjEgMTM5Ljg1IDUzMS45NiAxMTkuMzNDNDg5LjA4IDkyLjg2IDQxMy45MyA0Ni40OCAzNzEuMDUgMjAuMDFDMzM4LjI1IC0wLjIzIDI5Ni44NSAtMC4yMyAyNjQuMDUgMjAuMDFDMjIxLjE3IDQ2LjQ4IDE0Ni4wMiA5Mi44NiAxMDMuMTQgMTE5LjMzWiIgaWQ9ImdKcFF5R2RQOCI+PC9wYXRoPjwvZGVmcz48Zz48Zz48Zz48dXNlIHhsaW5rOmhyZWY9IiNnSnBReUdkUDgiIG9wYWNpdHk9IjEiIGZpbGw9IiM2MDk5NmMiIGZpbGwtb3BhY2l0eT0iMCI+PC91c2U+PGc+PHVzZSB4bGluazpocmVmPSIjZ0pwUXlHZFA4IiBvcGFjaXR5PSIxIiBmaWxsLW9wYWNpdHk9IjAiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2Utb3BhY2l0eT0iMSI+PC91c2U+PC9nPjwvZz48L2c+PC9nPjwvc3ZnPg==) -70px -370px no-repeat, url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0IiB2aWV3Qm94PSIwIDAgNjQwIDY0MCIgd2lkdGg9IjY0MCIgaGVpZ2h0PSI2NDAiPjxkZWZzPjxwYXRoIGQ9Ik0xMDMuMTQgMTE5LjMzQzY5Ljg5IDEzOS44NSA0OS42NSAxNzYuMTQgNDkuNjUgMjE1LjIyQzQ5LjY1IDI2OC43OSA0OS42NSAzNjYuNjMgNDkuNjUgNDIwLjJDNDkuNjUgNDU5LjI4IDY5Ljg5IDQ5NS41NyAxMDMuMTQgNTE2LjA5QzE0Ni4wMiA1NDIuNTYgMjIxLjE3IDU4OC45NCAyNjQuMDUgNjE1LjQxQzI5Ni44NSA2MzUuNjUgMzM4LjI1IDYzNS42NSAzNzEuMDUgNjE1LjQxQzQxMy45MyA1ODguOTQgNDg5LjA4IDU0Mi41NiA1MzEuOTYgNTE2LjA5QzU2NS4yMSA0OTUuNTcgNTg1LjQ1IDQ1OS4yOCA1ODUuNDUgNDIwLjJDNTg1LjQ1IDM2Ni42MyA1ODUuNDUgMjY4Ljc5IDU4NS40NSAyMTUuMjJDNTg1LjQ1IDE3Ni4xNCA1NjUuMjEgMTM5Ljg1IDUzMS45NiAxMTkuMzNDNDg5LjA4IDkyLjg2IDQxMy45MyA0Ni40OCAzNzEuMDUgMjAuMDFDMzM4LjI1IC0wLjIzIDI5Ni44NSAtMC4yMyAyNjQuMDUgMjAuMDFDMjIxLjE3IDQ2LjQ4IDE0Ni4wMiA5Mi44NiAxMDMuMTQgMTE5LjMzWiIgaWQ9ImdKcFF5R2RQOCI+PC9wYXRoPjwvZGVmcz48Zz48Zz48Zz48dXNlIHhsaW5rOmhyZWY9IiNnSnBReUdkUDgiIG9wYWNpdHk9IjEiIGZpbGw9IiM2MDk5NmMiIGZpbGwtb3BhY2l0eT0iMCI+PC91c2U+PGc+PHVzZSB4bGluazpocmVmPSIjZ0pwUXlHZFA4IiBvcGFjaXR5PSIxIiBmaWxsLW9wYWNpdHk9IjAiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2Utb3BhY2l0eT0iMSI+PC91c2U+PC9nPjwvZz48L2c+PC9nPjwvc3ZnPg==) 100% 480px no-repeat;
+}
+.login {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    background-size: cover;
+    flex-direction: row;
+    align-items: center;
+}
+.login-banner {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 48px;
+    height: 100%;
+}
+.login-banner::before {
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    opacity: 0.1;
+    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0IiB2aWV3Qm94PSIwIDAgNjQwIDY0MCIgd2lkdGg9IjY0MCIgaGVpZ2h0PSI2NDAiPjxkZWZzPjxwYXRoIGQ9Ik0xMDMuMTQgMTE5LjMzQzY5Ljg5IDEzOS44NSA0OS42NSAxNzYuMTQgNDkuNjUgMjE1LjIyQzQ5LjY1IDI2OC43OSA0OS42NSAzNjYuNjMgNDkuNjUgNDIwLjJDNDkuNjUgNDU5LjI4IDY5Ljg5IDQ5NS41NyAxMDMuMTQgNTE2LjA5QzE0Ni4wMiA1NDIuNTYgMjIxLjE3IDU4OC45NCAyNjQuMDUgNjE1LjQxQzI5Ni44NSA2MzUuNjUgMzM4LjI1IDYzNS42NSAzNzEuMDUgNjE1LjQxQzQxMy45MyA1ODguOTQgNDg5LjA4IDU0Mi41NiA1MzEuOTYgNTE2LjA5QzU2NS4yMSA0OTUuNTcgNTg1LjQ1IDQ1OS4yOCA1ODUuNDUgNDIwLjJDNTg1LjQ1IDM2Ni42MyA1ODUuNDUgMjY4Ljc5IDU4NS40NSAyMTUuMjJDNTg1LjQ1IDE3Ni4xNCA1NjUuMjEgMTM5Ljg1IDUzMS45NiAxMTkuMzNDNDg5LjA4IDkyLjg2IDQxMy45MyA0Ni40OCAzNzEuMDUgMjAuMDFDMzM4LjI1IC0wLjIzIDI5Ni44NSAtMC4yMyAyNjQuMDUgMjAuMDFDMjIxLjE3IDQ2LjQ4IDE0Ni4wMiA5Mi44NiAxMDMuMTQgMTE5LjMzWiIgaWQ9ImdKcFF5R2RQOCI+PC9wYXRoPjwvZGVmcz48Zz48Zz48Zz48dXNlIHhsaW5rOmhyZWY9IiNnSnBReUdkUDgiIG9wYWNpdHk9IjEiIGZpbGw9IiM2MDk5NmMiIGZpbGwtb3BhY2l0eT0iMCI+PC91c2U+PGc+PHVzZSB4bGluazpocmVmPSIjZ0pwUXlHZFA4IiBvcGFjaXR5PSIxIiBmaWxsLW9wYWNpdHk9IjAiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2Utb3BhY2l0eT0iMSI+PC91c2U+PC9nPjwvZz48L2c+PC9nPjwvc3ZnPg==) 230px 480px no-repeat;
+}
+.login-banner .logo {
+    margin-bottom: 50%;
+}
+.login-banner .logo .icon {
+    margin-right: 8px;
+}
+.login-banner .logo p {
+    display: flex;
+    align-items: center;
+    position: relative;
+    font-size: 22px;
+    margin-bottom: 16px;
+    color: rgb(255, 255, 255);
+}
+.login-banner .welcome h1 {
+    margin: 0px 0px 0.35em;
+    font-family: "Maven Pro", sans-serif;
+    font-weight: 400;
+    font-size: 3rem;
+    color: rgb(255, 255, 255);
+    line-height: 3.6rem;
+    display: block;
+}
+.login-banner .welcome p {
+    margin: 0px;
+    font-family: "Maven Pro", sans-serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: rgb(255, 255, 255);
+}
+.login-form {
+    display: flex;
+    flex: 2;
+    background-color: white;
+    height: 100%;
+}
+.form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    box-shadow: rgba(142, 142, 142, 0.2) 0px 1px 3px 0px, rgba(243, 243, 243, 0.14) 0px 1px 1px 0px, rgba(204, 204, 204, 0.12) 0px 2px 1px -1px;
+    padding: 48px;
+    background-color: rgb(255, 255, 255);
+    color: rgba(0, 0, 0, 0.87);
+    height: 100%;
+    border-radius: 0px;
+}
+.form .head {
+    display: flex;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+.form .head h1 {
+    margin: 0px;
+    font-family: Maven Pro, sans-serif;
+    line-height: 1.235;
+    color: rgb(63, 81, 181);
+    font-weight: 700;
+    font-size: 32px;
+}
+.form > div{
+    display: flex;
+    flex-direction: column;
+}
+.form label {
+    margin: 1rem 0;
+    display: block;
+    font-family: Maven Pro, sans-serif;
+    font-size: 14px;
+    font-weight: 650;
+    text-transform: uppercase;
+    line-height: 160%;
+}
+.infor {
+    --tw-ring-offset-shadow: 0 0 #0000;
+    --tw-ring-shadow: 0 0 #0000;
+    --tw-shadow: 0px 4px 16px 0px rgba(79,114,205,.1);
+    font-size: 16px;
+    width: 100%;
+    padding: 12px 20px;
+    display: inline-block;
+    border: 1px solid #a9a6bd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    box-shadow: var(--tw-ring-offset-shadow,0 0 #0000), var(--tw-ring-shadow,0 0 #0000), var(--tw-shadow);
+}
+.press {
+    width: 100%;
+    margin: 1.5rem auto;
+    display: block;
+    background-color: rgb(63, 81, 181);
+    color: rgb(255, 255, 250);
+    border-radius: 8px;
+    font-size: 18px;
+    padding: 12px 28px;
+    font-weight: 600;
+    height: 50px;
+    font-family: Maven Pro, sans-serif;
+    transition: background-color .1s ease-in;
+}
+.account {
+    display: block !important;
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 1rem;
+}
+.signup {
+    width: fit-content;
+    text-decoration: none;
+    color: rgb(63, 81, 181);
+    font-weight: 500;
+}
+.forgot-account {
+    margin-top: 1.5rem;
+}
+.forgot-account a {
+    color: rgb(63, 81, 181);
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: 600;
+}
+.press:hover {
+    background-color: rgb(63, 81, 181);
+    cursor: pointer;
+    box-shadow: 0 4px 7px rgb(79 114 205 / 60%);
+}
+input.infor:focus {
+    border: 1px solid rgb(63, 81, 181);
+    outline: none;
+}
+.input:focus-within label {
+    color: rgb(63, 81, 181);
+}
