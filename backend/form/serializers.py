@@ -7,4 +7,4 @@ class FormSerializer(serializers.ModelSerializer):
     car = CarSerializer(allow_null=True)
     class Meta:
         model = Form
-        fields = ('register_id', 'register_date', 'expired_date', 'register_place', 'car')
+        fields = ('register_id', 'register_date', 'expired_date', 'register_center', 'register_city', 'register_district', 'car')

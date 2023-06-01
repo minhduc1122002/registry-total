@@ -13,6 +13,7 @@ from rest_framework.parsers import JSONParser
 from django.forms.models import model_to_dict
 from datetime import datetime, timedelta
 from django.db.models import Q
+import calendar
 
 class FormView(APIView):
     serializer_class = FormSerializer
@@ -188,23 +189,23 @@ class FormYearViewAll(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class FormMonthViewDistrict(APIView):
-    def get(self, request, month, place, *args, **kwargs):
-        register = Form.objects.filter(register_date__month=month, register_place=place)
+    def get(self, request, month, district, *args, **kwargs):
+        register = Form.objects.filter(register_date__month=month, register_district=district)
         serializer = FormSerializer(register, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class FormQuarterViewDistrict(APIView):
-    def get(self, request, quarter, place, *args, **kwargs):
+    def get(self, request, quarter, district, *args, **kwargs):
         start = (quarter - 1) * 2 + quarter
         mid = start + 1
         end = start + 2
-        register = Form.objects.filter(Q(register_date__month=start) | Q(register_date__month=mid) | Q(register_date__month=end), register_place=place)
+        register = Form.objects.filter(Q(register_date__month=start) | Q(register_date__month=mid) | Q(register_date__month=end), register_district=district)
         serializer = FormSerializer(register, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class FormYearViewDistrict(APIView):
-    def get(self, request, year, place, *args, **kwargs):
-        register = Form.objects.filter(register_date__year=year, register_place=place)
+    def get(self, request, year, district, *args, **kwargs):
+        register = Form.objects.filter(register_date__year=year, register_district=district)
         serializer = FormSerializer(register, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -213,32 +214,9 @@ class FormExpiringView(APIView):
     queryset = Form.objects.all()
 
     def get(self, request, *args, **kwargs):
-        startdate = datetime.today()
-        enddate = startdate + timedelta(days=31)
-        registers = Form.objects.filter(expired_date__range=[startdate, enddate])
-        serializer = FormSerializer(registers, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-class FormExpiringView(APIView):
-    serializer_class = FormSerializer
-    queryset = Form.objects.all()
-
-    def get(self, request, *args, **kwargs):
-        startdate = datetime.today()
-        enddate = startdate + timedelta(days=31)
-        registers = Form.objects.filter(expired_date__range=[startdate, enddate])
-        serializer = FormSerializer(registers, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-class FormExpiringPlaceView(APIView):
-    serializer_class = FormSerializer
-    queryset = Form.objects.all()
-
-    def get(self, request, place, *args, **kwargs):
-        registers = Form.objects.filter(register_place=place)
-        startdate = datetime.today()
-        enddate = startdate + timedelta(days=31)
-        registers = registers.filter(expired_date__range=[startdate, enddate])
+        today = datetime.today()
+        enddate = datetime(today.year, today.month, calendar.monthrange(today.year, today.month)[1])
+        registers = Form.objects.filter(expired_date__lte=enddate)
         serializer = FormSerializer(registers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -247,10 +225,10 @@ class FormExpiringCityView(APIView):
     queryset = Form.objects.all()
 
     def get(self, request, city, *args, **kwargs):
-        registers = Form.objects.filter(car__owner__city=city)
-        startdate = datetime.today()
-        enddate = startdate + timedelta(days=31)
-        registers = registers.filter(expired_date__range=[startdate, enddate])
+        registers = Form.objects.filter(register_city=city)
+        today = datetime.today()
+        enddate = datetime(today.year, today.month, calendar.monthrange(today.year, today.month)[1])
+        registers = registers.filter(expired_date__lte=enddate)
         serializer = FormSerializer(registers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -259,9 +237,9 @@ class FormExpiringDistrictView(APIView):
     queryset = Form.objects.all()
 
     def get(self, request, district, *args, **kwargs):
-        registers = Form.objects.filter(car__owner__district=district)
-        startdate = datetime.today()
-        enddate = startdate + timedelta(days=31)
-        registers = registers.filter(expired_date__range=[startdate, enddate])
+        registers = Form.objects.filter(register_district=district)
+        today = datetime.today()
+        enddate = datetime(today.year, today.month, calendar.monthrange(today.year, today.month)[1])
+        registers = registers.filter(expired_date__lte=enddate)
         serializer = FormSerializer(registers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

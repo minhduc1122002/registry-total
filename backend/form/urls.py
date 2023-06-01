@@ -9,7 +9,6 @@ from .views import (
     FormQuarterViewDistrict,
     FormYearViewDistrict,
     FormExpiringView,
-    FormExpiringPlaceView,
     FormExpiringCityView,
     FormExpiringDistrictView,
 )
@@ -24,7 +23,6 @@ urlpatterns = [
     path('form/register/quarter/<int:quarter>/<str:place>', FormQuarterViewDistrict.as_view()),
     path('form/register/year/<int:year>/<str:place>', FormYearViewDistrict.as_view()),
     path('form/expiring/all', FormExpiringView.as_view()),
-    path('form/expiring/place/<str:place>', FormExpiringPlaceView.as_view()),
     path('form/expiring/city/<str:city>', FormExpiringCityView.as_view()),
     path('form/expiring/district/<str:district>', FormExpiringDistrictView.as_view()),
 ]
