@@ -33,7 +33,7 @@ class CarView(APIView):
                 owner = Owner(**request.data['owner'])
                 owner_serializer.save()
             else:
-                return Response(owner_serializer.errors, status=400)
+                return owner_serializer.errors
         return owner
 
     def post(self, request, format=None):
@@ -41,6 +41,8 @@ class CarView(APIView):
             return Response('Empty Body', status=400)
         
         owner = self.check_owner(request)
+        if not isinstance(owner, Owner):
+            return Response(owner, status=400)
         
         car_data = request.data.copy()
         car_data['owner'] = None

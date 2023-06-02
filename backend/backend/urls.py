@@ -20,10 +20,12 @@ from rest_framework import routers
 from car import urls as car_urls
 from owner import urls as owner_urls
 from form import urls as form_urls
+from user import urls as user_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(car_urls)),
     path('api/', include(owner_urls)),
     path('api/', include(form_urls)),
+    path('api/', include(user_urls)),
 ]

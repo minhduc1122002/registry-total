@@ -4,10 +4,50 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCar } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch, useSelector } from 'react-redux';
+import { login, reset } from '../../redux/auth'
 
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [isMissing, setIsMissing] = useState(false)
+
+    const isLoading = useSelector(
+        (state) => state.auth.isLoading[1]
+    )
+    const message = useSelector(
+        (state) => state.auth.message
+    )
+    const isError = useSelector(
+        (state) => state.auth.isError[1]
+    )
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (isError) {
+           dispatch(reset())
+        }
+    }, [isError, dispatch])
+
+    const handleLogin = (e) => {
+        e.preventDefault()
+        if (!username || !password) {
+            // setIsMissing(true)
+            // return toast.error("All field is required", {
+            //     position: "top-right",
+            //     autoClose: 2000,
+            //     hideProgressBar: false,
+            //     closeOnClick: true,
+            //     pauseOnHover: false,
+            //     draggable: false,
+            //     progress: undefined,
+            //     onClose: () => setIsMissing(false)
+            // })
+            console.log('Hi')
+        } else {
+            dispatch(login({username, password}));
+        }
+    }
     
     return (
         <div className="login-container">
@@ -51,7 +91,7 @@ export default function Login() {
                         <div className="forgot-account">
                             <a href ="/forgot">Forgot your password?</a>
                         </div>
-                        <button className="press" type="submit">Sign In</button>
+                        <button className="press" type="submit" onClick={handleLogin} disabled={isLoading || isError || isMissing}>Sign In</button>
                         {/* <div className="account">Don’t have an account yet? {' '} 
                             <Link to="/signup" className="signup">Sign Up</Link>
                         </div> */}

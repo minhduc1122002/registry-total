@@ -1,11 +1,10 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
-class User(models.Model):
-    # ID
-    id = models.AutoField(primary_key=True)
+class User(AbstractUser):
     # username
-    username = models.CharField(max_length=100, blank=False, null=False)
+    username = models.CharField(max_length=100, primary_key=True)
     # mật khẩu
     password = models.CharField(max_length=200, blank=False, null=False)
     # role
@@ -18,4 +17,7 @@ class User(models.Model):
         default='center',
     )
     # trung tâm
-    center = models.CharField(max_length=20, blank=True, null=True)
+    center = models.ForeignKey('form.Center', on_delete=models.CASCADE)
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = []

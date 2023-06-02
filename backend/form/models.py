@@ -16,17 +16,21 @@ def getChoice(link):
 
     return choices.items()
 
+class Center(models.Model):
+    id = models.AutoField(primary_key=True)
+    address = models.CharField(blank=True, null=True, max_length=100)
+    city = models.CharField(
+        max_length=20,
+        choices=getChoice('../backend/address/tinh_tp.json'),
+        default='01',
+    )
+    district = models.CharField(max_length=30, blank=True, null=True)
+
 class Form(models.Model):
     register_id = models.CharField(max_length=20, primary_key=True)
     register_date = models.DateField(blank=True, null=True)
     expired_date = models.DateField(blank=True, null=True)
-    register_center = models.CharField(blank=True, null=True, max_length=100)
-    register_city = models.CharField(
-        max_length=20,
-        choices=getChoice('backend/address/tinh_tp.json'),
-        default='01',
-    )
-    register_district = models.CharField(max_length=30, blank=True, null=True)
+    center = models.ForeignKey('form.Center', on_delete=models.CASCADE)
     car = models.ForeignKey('car.Car', on_delete=models.CASCADE)
 
     @staticmethod

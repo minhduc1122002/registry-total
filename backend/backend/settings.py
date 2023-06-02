@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'car',
     'owner',
-    'form'
+    'form',
+    'user'
 ]
 
 MIDDLEWARE = [
@@ -52,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -116,7 +118,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+AUTH_USER_MODEL = 'user.User'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -154,3 +156,6 @@ LOGGING = {
         }
     }
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True

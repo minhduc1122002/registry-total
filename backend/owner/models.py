@@ -34,7 +34,7 @@ class Owner(models.Model):
     address = models.CharField(max_length=200, blank=True, null=True)
     city = models.CharField(
         max_length=20,
-        choices=getChoice('backend/address/tinh_tp.json'),
+        choices=getChoice('../backend/address/tinh_tp.json'),
         default='01',
     )
     district = models.CharField(max_length=30, blank=True, null=True)
