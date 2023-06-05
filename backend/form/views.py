@@ -1,4 +1,6 @@
+from django.http import HttpResponse
 from django.shortcuts import render
+from django.db.models import Count
 from rest_framework import viewsets
 from car.serializers import CarSerializer
 from car.models import Car
@@ -291,6 +293,46 @@ class FormYearViewAll(APIView):
             serializer = FormSerializer(register, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         
+class FormMonthInYearViewAll(APIView):
+    def get(self, request, month, year, *args, **kwargs):
+        token = request.headers.get('Token')
+        if not token:
+            return Response('You are not authenticated', status=400)
+        try:
+            payload = jwt.decode(token, 'secret', algorithms='HS256')
+        except jwt.ExpiredSignatureError:
+            return Response('Token is not valid', status=400)
+        
+        # Trung tâm
+        if payload['role'] == 'center' and payload['center'] is not None:
+            register = Form.objects.filter(register_date__month=month, register_date__year=year, center__id=payload['center']['id'])
+            serializer = FormSerializer(register, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        # Cục
+        else:
+            register = Form.objects.filter(register_date__month=month, register_date__year=year)
+            serializer = FormSerializer(register, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+def CountInMonthByCenter(request, year):
+        token = request.headers.get('Token')
+        if not token:
+            return HttpResponse('You are not authenticated', status=400)
+        try:
+            payload = jwt.decode(token, 'secret', algorithms='HS256')
+        except jwt.ExpiredSignatureError:
+            return HttpResponse('Token is not valid', status=400)
+        
+        # Trung tâm
+        if payload['role'] == 'center' and payload['center'] is not None:
+            total = Form.objects.filter(register_date__year=year, center__id=payload['center']['id'])
+            month = total.values('register_date__month').annotate(count=Count('register_date__month'))
+            return HttpResponse(month)
+        # Cục
+        else:
+            total = Form.objects.filter(register_date__year=year)
+            month = total.values('register_date__month', 'center_id').annotate(count=Count('center_id'))
+            return HttpResponse(month)
 
 class FormMonthViewDistrict(APIView):
     def get(self, request, month, district, *args, **kwargs):
@@ -304,16 +346,15 @@ class FormMonthViewDistrict(APIView):
         
         # Trung tâm
         if payload['role'] == 'center' and payload['center'] is not None:
-            register = Form.objects.filter(register_date__month=month, register_district=district, center__id=payload['center']['id'])
+            register = Form.objects.filter(register_date__month=month, center__district=district, center__id=payload['center']['id'])
             serializer = FormSerializer(register, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         # Cục
         else:
-            register = Form.objects.filter(register_date__month=month, register_district=district)
+            register = Form.objects.filter(register_date__month=month, center__district=district)
             serializer = FormSerializer(register, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         
-
 class FormQuarterViewDistrict(APIView):
     def get(self, request, quarter, district, *args, **kwargs):
         start = (quarter - 1) * 2 + quarter
@@ -330,12 +371,12 @@ class FormQuarterViewDistrict(APIView):
         
         # Trung tâm
         if payload['role'] == 'center' and payload['center'] is not None:
-            register = Form.objects.filter(Q(register_date__month=start) | Q(register_date__month=mid) | Q(register_date__month=end), register_district=district, center__id=payload['center']['id'])
+            register = Form.objects.filter(Q(register_date__month=start) | Q(register_date__month=mid) | Q(register_date__month=end), center__district=district, center__id=payload['center']['id'])
             serializer = FormSerializer(register, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         # Cục
         else:
-            register = Form.objects.filter(Q(register_date__month=start) | Q(register_date__month=mid) | Q(register_date__month=end), register_district=district)
+            register = Form.objects.filter(Q(register_date__month=start) | Q(register_date__month=mid) | Q(register_date__month=end), center__district=district)
             serializer = FormSerializer(register, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -351,12 +392,33 @@ class FormYearViewDistrict(APIView):
         
         # Trung tâm
         if payload['role'] == 'center' and payload['center'] is not None:
-            register = Form.objects.filter(register_date__year=year, register_district=district, center__id=payload['center']['id'])
+            register = Form.objects.filter(register_date__year=year, center__district=district, center__id=payload['center']['id'])
             serializer = FormSerializer(register, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         # Cục
         else:
-            register = Form.objects.filter(register_date__year=year, register_district=district)
+            register = Form.objects.filter(register_date__year=year, center__district=district)
+            serializer = FormSerializer(register, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+class FormMonthInYearViewDistrict(APIView):
+    def get(self, request, month, year, district, *args, **kwargs):
+        token = request.headers.get('Token')
+        if not token:
+            return Response('You are not authenticated', status=400)
+        try:
+            payload = jwt.decode(token, 'secret', algorithms='HS256')
+        except jwt.ExpiredSignatureError:
+            return Response('Token is not valid', status=400)
+        
+        # Trung tâm
+        if payload['role'] == 'center' and payload['center'] is not None:
+            register = Form.objects.filter(register_date__month=month, register_date__year=year, center__district=district, center__id=payload['center']['id'])
+            serializer = FormSerializer(register, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        # Cục
+        else:
+            register = Form.objects.filter(register_date__month=month, register_date__year=year, center__district=district)
             serializer = FormSerializer(register, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 

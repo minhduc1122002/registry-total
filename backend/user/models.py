@@ -17,7 +17,7 @@ class User(AbstractUser):
         default='center',
     )
     # trung tâm
-    center = models.ForeignKey('form.Center', on_delete=models.CASCADE)
+    center = models.ForeignKey('form.Center', on_delete=models.CASCADE, blank=True, null=True)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []

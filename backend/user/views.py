@@ -16,35 +16,42 @@ class RegisterView(APIView):
     queryset = User.objects.all()
         
     def post(self, request, *args, **kwargs):
-        if request.data.get("center") is None or request.data['center'] is None:
-            return Response('Center is None', status=400)
-        
-        try:
-            center = Center.objects.get(id=request.data['center']['id'])
-        except:
-            center = None
+        if request.data['role'] != 'department':
+            if request.data.get("center") is None or request.data['center'] is None:
+                return Response('Center is None', status=400)
+            
+            try:
+                center = Center.objects.get(id=request.data['center']['id'])
+            except:
+                center = None
 
-        if center is None:
-            center_serializer = CenterSerializer(center, data=request.data['center'])
-            if center_serializer.is_valid():
-                center = Center(**request.data['center'])
-                center_serializer.save()
-            else:
-                return Response(center_serializer.errors, status=400)
-        
-        user_data = request.data.copy()
-        user_data['center'] = None
+            if center is None:
+                center_serializer = CenterSerializer(center, data=request.data['center'])
+                if center_serializer.is_valid():
+                    center = Center(**request.data['center'])
+                    center_serializer.save()
+                else:
+                    return Response(center_serializer.errors, status=400)
+            
+            user_data = request.data.copy()
+            user_data['center'] = None
 
-        serializer = UserSerializer(data=user_data)
-        
-        if serializer.is_valid():
-            user_data['center'] = center
-            user = User(**user_data)
-            user.set_password(user_data['password'])
-            user.save()
-            response = serializer.data
-            response['center'] = model_to_dict(user.center)
-            return Response(response, status=status.HTTP_201_CREATED)
+            serializer = UserSerializer(data=user_data)
+            
+            if serializer.is_valid():
+                user_data['center'] = center
+                user = User(**user_data)
+                user.set_password(user_data['password'])
+                user.save()
+                response = serializer.data
+                response['center'] = model_to_dict(user.center)
+                return Response(response, status=status.HTTP_201_CREATED)
+        else:
+            request.data['center'] = None
+            serializer = UserSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -61,13 +68,21 @@ class LoginView(APIView):
         if not user.check_password(password):
             return Response('Your password is incorrect', status=status.HTTP_400_BAD_REQUEST)
 
-        payload = {
-            'id': user.username,
-            'role': user.role,
-            'center': model_to_dict(user.center),
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
-            'iat': datetime.datetime.utcnow()
-        }
+        if user.role == 'department':
+            payload = {
+                'id': user.username,
+                'role': user.role,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+                'iat': datetime.datetime.utcnow()
+            }
+        else:
+            payload = {
+                'id': user.username,
+                'role': user.role,
+                'center': model_to_dict(user.center),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+                'iat': datetime.datetime.utcnow()
+            }
 
         token = jwt.encode(payload, 'secret', algorithm='HS256')
 
@@ -79,3 +94,4 @@ class LoginView(APIView):
             'jwt': token
         }
         return response
+
