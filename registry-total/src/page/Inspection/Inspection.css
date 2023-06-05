@@ -1,0 +1,11 @@
+.inspection {
+    flex: 8;
+}
+.container {
+    display: flex;
+    height: 100%;
+    flex-flow: row nowrap;
+    height: 100%;
+    margin: 0 auto;
+    flex-grow: 1;
+}

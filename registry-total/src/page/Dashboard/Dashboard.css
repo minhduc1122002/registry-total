@@ -1,0 +1,98 @@
+.dashboard {
+    flex: 8;
+}
+.dashboard-layout {
+    padding: 1.5rem;
+}
+.dashboard-title {
+    font-weight: 700;
+    font-size: 24px;
+    
+    padding-right: 8px;
+    text-transform: capitalize;
+    color: rgb(40, 53, 147);
+}
+.card-grid {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-left: -8px;
+    margin-right: -8px;
+}
+.statistics-card {
+    background-color: white;
+    padding: 16px;
+    margin: 8px;
+    color: rgba(0, 0, 0, 0.87);
+    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-width: 0px;
+    overflow-wrap: break-word;
+    background-color: rgb(255, 255, 255);
+    background-clip: border-box;
+    border: 0px solid rgba(0, 0, 0, 0.125);
+    border-radius: 1rem;
+    box-shadow: rgba(0, 0, 0, 0.05) 0rem 1.25rem 1.6875rem 0rem;
+}
+.statistics-card p {
+    margin: 0px;
+    font-family: "Maven Pro", sans-serif;
+    line-height: 1.5;
+    color: rgb(40, 53, 147);
+    font-size: 16px;
+    font-weight: 400;
+}
+.statistics-card h4 {
+    margin: 0px;
+    font-family: "Maven Pro", sans-serif;
+    line-height: 1.5;
+    color: rgb(40, 53, 147);
+    font-size: 28px;
+    font-weight: 500;
+}
+.statistics-line-chart {
+    background-color: white;
+    padding: 24px;
+    margin-top: 16px;
+    padding-top: 36px;
+    padding-bottom: 36px;
+    
+    color: rgba(0, 0, 0, 0.87);
+    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-width: 0px;
+    overflow-wrap: break-word;
+    background-color: rgb(255, 255, 255);
+    background-clip: border-box;
+    border: 0px solid rgba(0, 0, 0, 0.125);
+    border-radius: 1rem;
+    box-shadow: rgba(0, 0, 0, 0.05) 0rem 1.25rem 1.6875rem 0rem;
+}
+.chart {
+    flex: 4;
+    -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+    box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+    padding: 10px;
+    color: gray;
+  }
+
+.chartGrid {
+    stroke: rgb(228, 225, 225);
+}
+.chart-title {
+    margin-bottom: 20px;
+    font-family: "Maven Pro", sans-serif;
+    line-height: 1.6;
+    position: relative;
+    text-transform: capitalize;
+    font-size: 22px;
+    font-weight: 700;
+    color: rgb(40, 53, 147);
+    text-align: center;
+}

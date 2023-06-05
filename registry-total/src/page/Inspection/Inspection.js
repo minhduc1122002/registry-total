@@ -1,19 +1,17 @@
 import React from 'react'
 import Sidebar from '../../components/Menu/Menu'
 import Navigation from '../../components/Navigation/Navigation'
-import DashboardLayout from '../../layout/Dashboard/DashboardLayout'
-import './Dashboard.css'
+import InspectionLayout from '../../layout/Inspection/InspectionLayout'
+import './Inspection.css'
 
-export default function Dashboard() {
+export default function Inspection() {
   return (
-    <>
     <div className='container'>
       <Sidebar/>
-      <div className='dashboard'>
+      <div className='inspection'>
           <Navigation/>
-          <DashboardLayout/>
+          <InspectionLayout/>
       </div>
     </div>
-    </>
   )
 }
