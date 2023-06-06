@@ -8,6 +8,7 @@ import Login from "./page/Login/Login"
 import Dashboard from "./page/Dashboard/Dashboard"
 import Car from "./page/Car/Car"
 import Inspection from "./page/Inspection/Inspection"
+import Form from"./page/Form/Form"
 import { useSelector } from "react-redux";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="/inspection" element={!user ? <Navigate to="/login"/> : <Inspection/>} />
           <Route path="/inspection/:id" element={!user ? <Navigate to="/login"/> : <Inspection/>} />
           <Route path="/login" element={user ? <Navigate to="/"/> : <Login/>} />
+          <Route path="/form" element={<Form />} />
         </Routes>
       </Router>
     );
