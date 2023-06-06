@@ -6,7 +6,7 @@
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    flex: 2;
+    width: 20%;
     border: none;
     height: 100%;
 }

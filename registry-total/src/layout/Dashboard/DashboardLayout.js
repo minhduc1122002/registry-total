@@ -10,7 +10,6 @@ import {
 } from "recharts";
 import Table from '../../components/Table/Table'
 import { useState, useEffect } from "react";
-import { publicRequest, userRequest } from "../../request";
 
 const data = [
     { name: "January", Total: 12, Missing: 5 },
@@ -146,19 +145,37 @@ const userRows = [
 ];
 
 export default function DashboardLayout() {
-    const [registered_cars, setCars] = useState([]);
+    // const [registered_cars, setCars] = useState([]);
 
     useEffect(() => {
-        const getCars = async () => {
-        try {
-            const res = await userRequest.get("/form");
+          window.addEventListener('error', e => {
+            if (e.message === 'ResizeObserver loop limit exceeded') {
+                const resizeObserverErrDiv = document.getElementById(
+                    'webpack-dev-server-client-overlay-div'
+                );
+                const resizeObserverErr = document.getElementById(
+                    'webpack-dev-server-client-overlay'
+                );
+                if (resizeObserverErr) {
+                    resizeObserverErr.setAttribute('style', 'display: none');
+                }
+                if (resizeObserverErrDiv) {
+                    resizeObserverErrDiv.setAttribute('style', 'display: none');
+                }
+            }
+        });
+        // const getCars = async () => {
+        // try {
+        //     const res = await userRequest.get("/form");
             
-            setCars(res.data);
-        } catch {}
-        };
-        getCars();
+        //     setCars(res.data);
+        // } catch {}
+        // };
+        // getCars();
     }, []);
-    console.log(registered_cars)
+
+    
+    // console.log(registered_cars)
     return (
         <div className="dashboard-layout">
             <h4 className="dashboard-title">Dashboard</h4>

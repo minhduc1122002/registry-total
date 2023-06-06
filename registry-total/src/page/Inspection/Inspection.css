@@ -1,5 +1,5 @@
 .inspection {
-    flex: 8;
+    width: 80%;
 }
 .container {
     display: flex;

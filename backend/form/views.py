@@ -23,9 +23,24 @@ class FormView(APIView):
     queryset = Form.objects.all()
 
     def get(self, request, *args, **kwargs):
-        registers = Form.objects.all()
-        serializer = FormSerializer(registers, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        token = request.headers.get('Token')
+        if not token:
+            return Response('You are not authenticated', status=400)
+        try:
+            payload = jwt.decode(token, "secret", algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            return Response('Token is not valid', status=400)
+        
+        # Trung tâm
+        if payload['role'] == 'center' and payload['center'] is not None:
+            registers = Form.objects.filter(center__id=payload['center']['id'])
+            serializer = FormSerializer(registers, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        # Cục
+        else:
+            registers = Form.objects.all()
+            serializer = FormSerializer(registers, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
     
     def check_car(self, request):
         car_request = request.data['car']
@@ -226,6 +241,14 @@ class FormDetailView(FormView):
         
         return Response(register_serializer.errors, status=400)
     
+    def delete(self, request, id, *args, **kwargs):
+        try:
+            form = Form.objects.get(register_id=id)
+            form.delete()
+            return Response('Form Deleted', status=status.HTTP_200_OK)
+        except:
+            return Response('Not Found', status=status.HTTP_400_BAD_REQUEST)
+        
 class FormMonthViewAll(APIView):
     def get(self, request, month, *args, **kwargs):
         token = request.headers.get('Token')

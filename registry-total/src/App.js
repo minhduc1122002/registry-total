@@ -19,6 +19,7 @@ function App() {
           <Route path="/" element={!user ? <Navigate to="/login"/> : <Dashboard/>} />
           <Route path="/car" element={!user ? <Navigate to="/login"/> : <Car/>} />
           <Route path="/inspection" element={!user ? <Navigate to="/login"/> : <Inspection/>} />
+          <Route path="/inspection/:id" element={!user ? <Navigate to="/login"/> : <Inspection/>} />
           <Route path="/login" element={user ? <Navigate to="/"/> : <Login/>} />
         </Routes>
       </Router>

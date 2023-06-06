@@ -16,7 +16,7 @@ class RegisterView(APIView):
     queryset = User.objects.all()
         
     def post(self, request, *args, **kwargs):
-        if request.data['role'] != 'department':
+        if request.data.get('role') is not None and request.data['role'] != 'department':
             if request.data.get("center") is None or request.data['center'] is None:
                 return Response('Center is None', status=400)
             
@@ -84,7 +84,7 @@ class LoginView(APIView):
                 'iat': datetime.datetime.utcnow()
             }
 
-        token = jwt.encode(payload, 'secret', algorithm='HS256')
+        token = jwt.encode(payload, "secret", algorithm="HS256")
 
         response = Response()
 

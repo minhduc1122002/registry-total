@@ -8,6 +8,10 @@ import InputBase from '@mui/material/InputBase';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import Button from '@mui/material/Button';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../redux/auth';
+import { useEffect } from 'react'
+import decode from 'jwt-decode';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -55,34 +59,58 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const Navigation = () => {
 //   const { dispatch } = useContext(DarkModeContext);
+    const user = JSON.parse(localStorage.getItem('user'))
+    const dispatch = useDispatch()
 
-  return (
-    <div className="navbar">
-        <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-            style={{marginRight: 'auto', color: 'rgb(63, 81, 181)'}}
-          >
-            <MenuIcon />
-        </IconButton>
-        <div className="search-bar">
-            <Search>
-                <SearchIconWrapper>
-                <SearchIcon style={{fontSize: '16px'}}/>
-                </SearchIconWrapper>
-                <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ 'aria-label': 'search' }}
-                />
-            </Search>
-        </div>
-        <button className='sign-out' type="submit">Sign Out</button>
+    const checkExpired = () => {
+      const token = JSON.parse(localStorage.getItem('accessToken'))
+      if (token) {
+        const decodedToken = decode(token);
         
-    </div>
-  );
+        if (decodedToken.exp * 1000 < new Date().getTime()) {
+          dispatch(logout())
+          console.log("hi from expired")
+        }
+      }
+    }
+    useEffect(() => {
+      setInterval(() => {
+        checkExpired()
+      }, 5000)
+    }, []);
+
+    const handleLogout = (e) => {
+      e.preventDefault()
+      dispatch(logout())
+    }
+
+    return (
+      <div className="navbar">
+          <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              sx={{ mr: 2 }}
+              style={{marginRight: 'auto', color: 'rgb(63, 81, 181)'}}
+            >
+              <MenuIcon />
+          </IconButton>
+          <div className="search-bar">
+              <Search>
+                  <SearchIconWrapper>
+                  <SearchIcon style={{fontSize: '16px'}}/>
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                  placeholder="Search…"
+                  inputProps={{ 'aria-label': 'search' }}
+                  />
+              </Search>
+          </div>
+          <button className='primary-btn' type="submit" onClick={handleLogout}>Sign Out</button>
+          
+      </div>
+    );
 };
 
 export default Navigation;
