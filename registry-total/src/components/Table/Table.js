@@ -72,7 +72,7 @@ export default function Table( { cols, rows, title, row_id, actionColumn }) {
                             />
                         </Search>
                     </div>
-                    <Link to="/users/new" className="link primary-btn">
+                    <Link to="/inspection/form" className="link primary-btn">
                     Add New
                     </Link>
                 </div>

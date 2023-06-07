@@ -19,7 +19,7 @@ export default function InspectionLayout() {
       renderCell: (params) => {
           return (
           <div className="cellAction">
-              <Link to={`/inspection/${params.row.register_id}`} style={{ textDecoration: "none" }}>
+              <Link to={`/inspections/${params.row.register_id}`} style={{ textDecoration: "none" }}>
                   <div className="viewButton">View</div>
               </Link>
               <div
@@ -124,7 +124,7 @@ export default function InspectionLayout() {
             <h4 className="dashboard-title">Inspection</h4>
             {inspections &&
             
-            <div className="statistics-line-chart">
+            <div className="statistics-line-chart" style={{paddingBottom: '20px', paddingTop: '20px'}}>
                 <Table rows={inspections} cols={userColumns} row_id='register_id' actionColumn={actionColumn}/>
             </div>
             }

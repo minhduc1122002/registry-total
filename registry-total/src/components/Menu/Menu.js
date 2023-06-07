@@ -35,7 +35,7 @@ const Sidebar = () => {
                     )}
                 </NavLink>
                 <div className="menu-part"><h2>Table</h2></div>
-                <NavLink to="/inspection">
+                <NavLink to="/inspections">
                     {({ isActive, isPending }) => (
                         <li>
                             <div className={isActive ? "css-zsxelz" : "css-cxolhu"}>

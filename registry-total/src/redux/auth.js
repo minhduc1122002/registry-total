@@ -20,7 +20,7 @@ export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
     const { jwt } = response.data
     localStorage.setItem('user', JSON.stringify(jwt_decode(jwt)))
     localStorage.setItem('accessToken', JSON.stringify(jwt))
-    return response.data
+    return jwt_decode(jwt)
   } catch (error) {
     const message = (error.response &&
       (error.response.data ||

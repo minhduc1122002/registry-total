@@ -63,7 +63,6 @@ class FormView(APIView):
         car_data['owner'] = None
         
         car_serializer = CarSerializer(data=car_data)
-        
         if car_serializer.is_valid():
             car_data['owner'] = owner
             car = Car(**car_data)
@@ -101,10 +100,13 @@ class FormView(APIView):
             center_serializer = CenterSerializer(center, data=request.data['center'])
             if center_serializer.is_valid():
                 center = Center(**request.data['center'])
-                center_serializer.save()
+                center.save()
+                # center_serializer.save()
             else:
                 return Response(center_serializer.errors, status=400)
 
+        print(car)
+        print(center)
         register_data = request.data.copy()
         register_data['car'] = None
         register_data['center'] = None

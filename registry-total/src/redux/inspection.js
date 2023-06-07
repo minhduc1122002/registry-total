@@ -33,11 +33,12 @@ export const getInspectionList = createAsyncThunk('form/list', async (thunkAPI) 
 //add inspections
 export const addInspection = createAsyncThunk('form/add', async (inspection, thunkAPI) => {
   try {
+        console.log(inspection)
         const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
         const response = await axios.create({
             baseURL: BASE_URL,
             headers: { token: `${TOKEN}` },
-        }).post("/form/", inspection)
+        }).post("/form", inspection)
         return response.data
   } catch (error) {
         const message =  (error.response &&
@@ -153,9 +154,8 @@ export const InspectionSlice = createSlice({
         state.isLoading[2] = false
         state.isError[2] = false
         state.isSuccess[2] = true
-        state.inspections.splice(
-          state.inspections.findIndex(inspection => inspection.register_id === action.payload)
-        )
+        const index = state.inspections.findIndex(inspection => inspection.register_id === action.payload)
+        state.inspections.splice(index, 1)
       })
       .addCase(deleteInspection.rejected, (state, action) => {
         state.isLoading[2] = false
