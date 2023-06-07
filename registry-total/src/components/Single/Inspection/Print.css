@@ -1,0 +1,96 @@
+.size-a4 {
+    width: 6.2in;
+    height: 8.7in;
+  }
+  
+  .page-container {
+      font-family: "DejaVu Sans", "Arial", sans-serif;
+  }
+  
+  @font-face {
+      font-family: "DejaVu Sans";
+      src: url("https://kendo.cdn.telerik.com/2017.2.621/styles/fonts/DejaVu/DejaVuSans.ttf") format("truetype");
+  }
+  
+  @font-face {
+      font-family: "DejaVu Sans";
+      font-weight: bold;
+      src: url("https://kendo.cdn.telerik.com/2017.2.621/styles/fonts/DejaVu/DejaVuSans-Bold.ttf") format("truetype");
+  }
+  
+  @font-face {
+      font-family: "DejaVu Sans";
+      font-style: italic;
+      src: url("https://kendo.cdn.telerik.com/2017.2.621/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf") format("truetype");
+  }
+  
+  @font-face {
+      font-family: "DejaVu Sans";
+      font-weight: bold;
+      font-style: italic;
+      src: url("https://kendo.cdn.telerik.com/2017.2.621/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf") format("truetype");
+  }
+  
+  .pdf-page {
+    position: relative;
+    margin: 0 auto;
+    padding: 0.4in 0.3in;
+    color: #333;
+    background-color: #fff;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+  }
+    
+  .pdf-header {
+    padding-bottom: 0.1in;
+  }
+  
+  .company-logo {
+    font-size: 1.3em;
+    font-weight: bold;
+  }
+    
+  .english {
+    padding-top: 0.1in;
+    padding-left: 0.3in;
+    font-style: italic;
+  }
+    
+  .pdf-body {
+    font-size: 12px;
+  }
+    
+  .pdf-body:after {
+    display: block;
+    content: "";
+    clear: both;
+  }
+    
+  .regis-number {
+    float: left;
+  }
+  
+  .inspec-no {
+    float: right;
+    padding-right: 15px;
+  }
+  
+  .regis, .cluster {
+    font-size: 14px;
+  }
+    
+  .number {
+    margin-top: -5px;
+    margin-bottom: 5px;
+    font-style: italic;
+  }
+  
+  .type {
+    clear: both;
+  }
+  
+  .ita, .number {
+    font-style: italic;
+    font-size: 13px;
+    font-family: 'Times New Roman', Times, serif;
+  }
