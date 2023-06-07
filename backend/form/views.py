@@ -17,6 +17,7 @@ from datetime import datetime, timedelta
 from django.db.models import Q
 import calendar
 import jwt
+from django.http import JsonResponse
 
 class FormView(APIView):
     serializer_class = FormSerializer
@@ -351,13 +352,53 @@ def CountInMonthByCenter(request, year):
         # Trung tâm
         if payload['role'] == 'center' and payload['center'] is not None:
             total = Form.objects.filter(register_date__year=year, center__id=payload['center']['id'])
-            month = total.values('register_date__month').annotate(count=Count('register_date__month'))
-            return HttpResponse(month)
+            month = list(total.values('register_date__month').annotate(count=Count('register_date__month')))
+            return JsonResponse(month, safe=False)
         # Cục
         else:
             total = Form.objects.filter(register_date__year=year)
-            month = total.values('register_date__month', 'center_id').annotate(count=Count('center_id'))
-            return HttpResponse(month)
+            month = list(total.values('register_date__month', 'center_id').annotate(count=Count('center_id')))
+            return JsonResponse(month, safe=False)
+
+def CountAllByCenter(request):
+        token = request.headers.get('Token')
+        if not token:
+            return HttpResponse('You are not authenticated', status=400)
+        try:
+            payload = jwt.decode(token, 'secret', algorithms='HS256')
+        except jwt.ExpiredSignatureError:
+            return HttpResponse('Token is not valid', status=400)
+        
+        # Trung tâm
+        if payload['role'] == 'center' and payload['center'] is not None:
+            total = Form.objects.filter(center__id=payload['center']['id']).count()
+            return JsonResponse({'count': total})
+        # Cục
+        else:
+            total = Form.objects.all()
+            count = list(total.values('center_id').annotate(count=Count('center_id')))
+            return JsonResponse(count, safe=False)
+
+def ExpiredAllByCenter(request):
+        token = request.headers.get('Token')
+        if not token:
+            return HttpResponse('You are not authenticated', status=400)
+        try:
+            payload = jwt.decode(token, 'secret', algorithms='HS256')
+        except jwt.ExpiredSignatureError:
+            return HttpResponse('Token is not valid', status=400)
+        
+        today = datetime.today()
+        # Trung tâm
+        if payload['role'] == 'center' and payload['center'] is not None:
+            total = Form.objects.filter(center__id=payload['center']['id'])
+            expired_count = total.filter(expired_date__lt=today).count()
+            return JsonResponse({'count': expired_count})
+        # Cục
+        else:
+            total = Form.objects.filter(expired_date__lt=today)
+            count = list(total.values('center_id').annotate(count=Count('center_id')))
+            return JsonResponse(count, safe=False)
 
 class FormMonthViewDistrict(APIView):
     def get(self, request, month, district, *args, **kwargs):

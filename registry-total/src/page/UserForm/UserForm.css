@@ -1,0 +1,127 @@
+.form-container {
+    color: rgba(0, 0, 0, 0.87);
+    font-family: "Maven Pro", sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.5;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 24px;
+    margin-left: 280px;
+    max-width: 100%;
+}
+
+.content {
+    width: calc(100% + 24px);
+    margin: 0px 3em 0.35em;
+    line-height: 2;
+}
+
+.form-header {
+    margin: 0px 0px 0.35em;
+    line-height: 1.6;
+}
+
+.row-text, .row-select {
+    display: flex;
+    padding-top: 12px;
+}
+
+.label {
+    flex: 1;
+    font-weight: 450;
+}
+
+.label-group {
+    margin-top: 24px;
+    display: flex;
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.line_blue {
+    width: 36px;
+    border-bottom: 2px solid rgb(63, 81, 181);
+    margin-left: 5px;
+    margin-bottom: 8px;
+}
+
+.text-input, .select-container {
+    flex: 2;
+}
+
+.select-container {
+    align-items: center;
+    font-size: 1.2rem;
+}
+
+input[type=text] {
+    border: 1px solid rgba(0, 0, 0, 0.32);
+    border-radius: 8px;
+    align-items: center;
+    padding: 10px 10px 10px;
+    outline: none;
+    color: currentcolor;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 300;
+    width: 80%;
+}
+
+input[type=text]:hover {
+    border-color: gray;
+}
+
+input[type=text]:focus {
+    border-color: gray;
+}
+
+.select > div {
+    width: 300px;
+    cursor: text;
+}
+
+.button-container {
+    font-weight: 400;
+    line-height: 1.5;
+    justify-content: center;
+    display: flex;
+    padding-top: 1rem;
+}
+
+.button {
+    line-height: 2;
+    text-transform: uppercase;
+    padding: 8px 22px;
+    color: rgb(255, 255, 255);
+    background-color: rgb(63, 81, 181);
+    border-radius: 7px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    transition: 0.2s all;
+}
+
+.button:hover {
+    background-color: rgb(40, 53, 147);
+    box-shadow: rgba(142, 162, 142, 0.2) 0px 1px 3px 0px, 
+                rgba(243, 243, 243, 0.14) 0px 1px 1px 0px, 
+                rgba(204, 204, 204, 0.12) 0px 2px 1px -1px;
+}
+  
+.button:active {
+    transform: scale(0.93);
+}
+
+.button-quit {
+    background-color: transparent;
+    color: rgb(63, 81, 181);
+}
+
+.button-back:hover {
+    background-color: rgba(63, 81, 181, 0.05);
+}
