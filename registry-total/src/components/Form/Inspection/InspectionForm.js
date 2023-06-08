@@ -6,6 +6,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import {vi} from 'date-fns/locale';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function InspectionForm( {props} ) {
     const {index, setIndex, registerId, setRegisterId, registerDate, setRegisterDate, expiredDate, setExpiredDate, registerCity,
@@ -14,12 +15,22 @@ export default function InspectionForm( {props} ) {
     const cities = require('../../../address/tinh_tp.json');
     const tree = require('../../../address/tree.json');
 
+    const isSuccess = useSelector(
+        (state) => state.inspection.isSuccess[0]
+    )
+    const isError = useSelector(
+        (state) => state.inspection.isError[0]
+    )
+    const isLoading = useSelector(
+        (state) => state.inspection.isLoading[0]
+    )
     const selectStyle = {    
         control: (base, state) => ({
             ...base,
             '&:hover': { borderColor: 'gray' },
             border: '1px solid rgba(0, 0, 0, 0.32)',
             boxShadow: 'none',
+            width: '100%'
         }),
     };
 
@@ -30,10 +41,6 @@ export default function InspectionForm( {props} ) {
             return tree[city.code]['quan-huyen']
         }
         else return []
-    }
-
-    const getCityByCode = (code) => {
-        return tree[code]['name']
     }
 
     return (
@@ -103,6 +110,7 @@ export default function InspectionForm( {props} ) {
                                 onChange={setRegisterDate}
                                 disableFuture
                                 format="dd/MM/yyyy"
+                                className='date-picker-width'
                             />
                             </LocalizationProvider>
                         </div>
@@ -116,6 +124,7 @@ export default function InspectionForm( {props} ) {
                                 value={expiredDate}
                                 onChange={setExpiredDate}
                                 format="dd/MM/yyyy"
+                                className='date-picker-width'
                             />
                             </LocalizationProvider>
                         </div>
@@ -132,8 +141,8 @@ export default function InspectionForm( {props} ) {
                             <Select 
                                 id="city" name="City" options={cities}
                                 className="select"
-                                placeholder={getCityByCode(registerCity)}
-                                value={getCityByCode(registerCity)}
+                                placeholder={registerCity}
+                                value={registerCity}
                                 onChange={setRegisterCity}
                                 getOptionLabel={(city) => city.name_with_type}
                                 getOptionValue={(city) => city.code}
@@ -170,7 +179,7 @@ export default function InspectionForm( {props} ) {
 
                     <div className="button-container">
                         <button className="button button-back" type="button" onClick={() => setIndex("car")}>Quay lại</button>
-                        <button className="button" type="button" onClick={handleAdd}>Đăng ký</button>
+                        <button className="button" type="button" onClick={handleAdd} disabled={isLoading || isError}>Đăng ký</button>
                     </div>
                 </form>
             </div>

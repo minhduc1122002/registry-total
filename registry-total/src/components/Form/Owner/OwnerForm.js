@@ -5,28 +5,28 @@ import {
     FormControlLabel,
     Radio,
 } from "@material-ui/core";
-
-
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 export default function OwnerForm( {props} ) {
     const {index, setIndex, type, setType, name, setName, id, setId, contact, setContact, city, setCity,
         district, setDistrict, ward, setWard, address, setAddress} = props
-    
+    const navigate = useNavigate()
     const cities = require('../../../address/tinh_tp.json');
     const tree = require('../../../address/tree.json');
     const wards = require('../../../address/xa-phuong.json');
-
+    
     const selectStyle = {    
         control: (base, state) => ({
             ...base,
             '&:hover': { borderColor: 'gray' },
             border: '1px solid rgba(0, 0, 0, 0.32)',
             boxShadow: 'none',
+            width: '100%'
         }),
     };
     
     const getDist = (city) => {
-        console.log(city.code)
-        if (city.code !== undefined) {
+        if (city && city.code) {
             // console.log(tree[city.code]['quan-huyen'])
             return tree[city.code]['quan-huyen']
         }
@@ -34,13 +34,26 @@ export default function OwnerForm( {props} ) {
     }
 
     const getWard = (district) => {
-        // console.log(district.parent_code)
-        // console.log(district.code)
-        if (district.code !== undefined && wards[district.parent_code]['quan-huyen'][district.code]['xa-phuong'].length > 0) {
-            // console.log(wards[district.parent_code]['quan-huyen'][district.code]['xa-phuong'])
+        if (district && district.code && wards[district.parent_code]['quan-huyen'][district.code]['xa-phuong'].length > 0) {
             return wards[district.parent_code]['quan-huyen'][district.code]['xa-phuong']
         }
         else return []
+    }
+    const handleNext = (e) => {
+        e.preventDefault()
+        if (!type || !name || !id || !contact || !city || !district || !ward || !address) {
+            toast.error('Hãy nhập đầy đủ các trường', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+            })
+        } else {
+            setIndex("car")
+        }
     }
 
     return (
@@ -111,13 +124,13 @@ export default function OwnerForm( {props} ) {
                         </RadioGroup>
                     </div>
                     <div className="row-text">
-                        <div className="label">{type == "individual" ? "Họ và tên" : "Tên doanh nghiệp"}</div>
+                        <div className="label">{type === "individual" ? "Họ và tên" : "Tên doanh nghiệp"}</div>
                         <div className="text-input">
                             <input type="text" name="Name" value={name} onChange={(e) => setName(e.target.value)}></input>
                         </div>
                     </div>
                     <div className="row-text">
-                        <div className="label">{type == "individual" ? "Số CMT/CCCD hoặc hộ chiếu" : "Mã số doanh nghiệp"}</div>
+                        <div className="label">{type === "individual" ? "Số CMT/CCCD hoặc hộ chiếu" : "Mã số doanh nghiệp"}</div>
                         <div className="text-input">
                             <input type="text" name="Id" value={id} onChange={(e) => setId(e.target.value)}></input>
                         </div>
@@ -129,7 +142,7 @@ export default function OwnerForm( {props} ) {
                         </div>
                     </div>
                     <div className="label-group">
-                        {type == "individual" ? "Địa chỉ thường trú" : "Địa chỉ liên lạc"}
+                        {type === "individual" ? "Địa chỉ thường trú" : "Địa chỉ liên lạc"}
                         <p className="line_blue"></p>
                     </div>
                         
@@ -190,7 +203,8 @@ export default function OwnerForm( {props} ) {
                         </div>
                     </div>
                     <div className="button-container">
-                        <button className="button" type="button" onClick={() => setIndex("car")}>Tiếp</button>
+                        <button className="button button-back" type="button" onClick={() => navigate('/inspections')}>Quay lại</button>
+                        <button className="button" type="button" onClick={handleNext}>Tiếp</button>
                     </div>
                 </form>
             </div>

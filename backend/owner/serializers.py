@@ -4,4 +4,4 @@ from .models import Owner
 class OwnerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Owner
-        fields = ('id', 'type', 'name', 'address', 'city', 'district', 'contact')
+        fields = ('id', 'type', 'name', 'address', 'city', 'district', 'contact', 'ward')

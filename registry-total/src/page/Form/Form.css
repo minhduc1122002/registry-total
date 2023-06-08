@@ -95,11 +95,12 @@
 }
 
 .content {
-    /* box-sizing: border-box; */
-    /* display: flex; */
-    /* flex-flow: row wrap; */
-    width: calc(100% + 24px);
-    margin: 0px 3em 0.35em;
+    display: flex;
+    flex-direction: column;
+    margin-top: 28px;
+    width: 100%;
+    padding-left: 48px;
+    padding-right: 48px;
     line-height: 2;
 }
 
@@ -110,7 +111,7 @@
 
 .row-radio, .row-text, .row-select {
     display: flex;
-    padding-top: 12px;
+    margin-top: 16px;
 }
 
 .label {
@@ -144,7 +145,7 @@
     /* height: 35px; */
     /* line-height: 0.8; */
     /* vertical-align: middle; */
-    align-items: center;
+    width: 100%;
     font-size: 1rem;
 }
 
@@ -160,7 +161,7 @@
     font-size: inherit;
     font-weight: 300;
     /* height: 1.4375em; */
-    width: 80%;
+    width: 100%;
     /* animation-name: mui-auto-fill-cancel;
     animation-duration: 10ms; */
 }
@@ -174,7 +175,7 @@
 }
 
 .select > div {
-    width: 300px;
+    
     cursor: text;
 }
 
@@ -257,4 +258,7 @@
 
 .button-back:hover {
     background-color: rgba(63, 81, 181, 0.05);
+}
+.date-picker-width {
+    width: 100%
 }

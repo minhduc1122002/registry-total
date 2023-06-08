@@ -8,7 +8,7 @@ import Login from "./page/Login/Login"
 import Dashboard from "./page/Dashboard/Dashboard"
 import Car from "./page/Car/Car"
 import Inspection from "./page/Inspection/Inspection"
-import Export from "./components/Single/Inspection/Print"
+import Export from "./page/Print/Print"
 import Form from"./page/Form/Form"
 import { useSelector } from "react-redux";
 

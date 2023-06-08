@@ -69,7 +69,7 @@ class FormView(APIView):
             car.save()
             return car
         else:
-            return Response(car_serializer.errors, status=400)
+            return car_serializer.errors
     
     def post(self, request, format=None):
         if not request.data:
@@ -79,7 +79,7 @@ class FormView(APIView):
             return Response('Car is None', status=400)
         
         try:
-            car = Car.objects.get(registration_number=request.data['car']['registration_number'])
+            car = Car.objects.get(register_id=request.data['car']['register_id'])
         except:
             car = None
         
@@ -104,9 +104,7 @@ class FormView(APIView):
                 # center_serializer.save()
             else:
                 return Response(center_serializer.errors, status=400)
-
-        print(car)
-        print(center)
+            
         register_data = request.data.copy()
         register_data['car'] = None
         register_data['center'] = None
@@ -161,29 +159,29 @@ class FormDetailView(FormView):
         
         car_request = request.data['car']
         try:
-            car = Car.objects.get(registration_number=car_request['registration_number'])
+            car = Car.objects.get(register_id=car_request['register_id'])
             owner = self.check_owner(car_request, car)
             if not isinstance(owner, Owner):
-                return Response(owner, status=400)
+                return owner
             
         except:
             car = register.car
             owner = self.check_owner(car_request, car)
             if not isinstance(owner, Owner):
-                return Response(owner, status=400)
+                return owner
             
         car_data = car_request.copy()
         car_data['owner'] = None
             
         car_serializer = CarSerializer(car, data=car_data)
-            
+        
         if car_serializer.is_valid():
             car_data['owner'] = owner
             car = Car(**car_data)
             car.save()
             return car
         else:
-            return Response(car_serializer.errors, status=400)
+            return car_serializer.errors
     
     def check_center(self, request, register):
         if request.data.get("center") is None or request.data['center'] is None:

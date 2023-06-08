@@ -7,5 +7,5 @@ class CarSerializer(serializers.ModelSerializer):
     owner = OwnerSerializer(allow_null=True)
     class Meta:
         model = Car
-        fields = ('registration_place', 'registration_date', 'registration_number', 'purpose',
-                    'type', 'manufacturer', 'model', 'owner')
+        fields = ('register_id', 'registration_place', 'registration_date', 'plate_number', 'purpose',
+                    'type', 'manufacturer', 'model', 'engine_number', 'chassis_number', 'owner')

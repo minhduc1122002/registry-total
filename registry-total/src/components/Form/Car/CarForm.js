@@ -6,10 +6,11 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { vi } from 'date-fns/locale';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { toast } from 'react-toastify'
 
 export default function CarForm( {props} ) {
-    const {index, setIndex, carId, setCarId, carDate, setCarDate, numberPlate, setNumberPlate, carPlace, setCarPlace
-        , brand, setBrand, modelCode, setModelCode, carUse, setCarUse, carType, setCarType} = props
+    const {index, setIndex, carId, setCarId, carDate, setCarDate, numberPlate, setNumberPlate, carPlace, setCarPlace,
+        brand, setBrand, modelCode, setModelCode, carUse, setCarUse, carType, setCarType, engine_number, setEngineNumber, chassis_number, setChassisNumber} = props
 
     const cities = require('../../../address/tinh_tp.json');
 
@@ -19,6 +20,7 @@ export default function CarForm( {props} ) {
             '&:hover': { borderColor: 'gray' },
             border: '1px solid rgba(0, 0, 0, 0.32)',
             boxShadow: 'none',
+            width: '100%'
         }),
     };
     
@@ -27,6 +29,23 @@ export default function CarForm( {props} ) {
         { value: 'passenger_service', label: 'Dịch vụ chở khách' },
         { value: 'transportation_service', label: 'Dịch vụ vận tải' }
     ]
+
+    const handleNext = (e) => {
+        e.preventDefault()
+        if (!carId || !carDate || !numberPlate || !carPlace || !brand || !modelCode || !carUse || !carType || !engine_number || !chassis_number || !setChassisNumber) {
+            toast.error('Hãy nhập đầy đủ các trường', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+            })
+        } else {
+            setIndex("register")
+        }
+    }
 
     return (
         <>
@@ -101,6 +120,7 @@ export default function CarForm( {props} ) {
                                     onChange={setCarDate}
                                     disableFuture
                                     format="dd/MM/yyyy"
+                                    className='date-picker-width'
                                 />
                                 </LocalizationProvider>
                             </div>
@@ -109,17 +129,8 @@ export default function CarForm( {props} ) {
                     
                     <div className="row-select">
                         <div className="label">Nơi đăng ký</div>
-                        <div className="select-container">
-                            <Select 
-                                id="carPlace" name="carPlace" options={cities}
-                                className="select"
-                                placeholder="Chọn Tỉnh/Thành phố"
-                                value={carPlace}
-                                onChange={setCarPlace}
-                                getOptionLabel={(city) => city.name_with_type}
-                                getOptionValue={(city) => city.code}
-                                styles={selectStyle}
-                            />
+                        <div className="text-input">
+                            <input type="text" name="brand" value={carPlace} onChange={(e) => setCarPlace(e.target.value)}></input>
                         </div>
                     </div>
 
@@ -164,10 +175,24 @@ export default function CarForm( {props} ) {
                             />
                         </div>
                     </div>
+
+                    <div className="row-text">
+                        <div className="label">Số Máy</div>
+                        <div className="text-input">
+                            <input type="text" name="modelCode" value={engine_number} onChange={(e) => setEngineNumber(e.target.value)}></input>
+                        </div>
+                    </div>
+
+                    <div className="row-text">
+                        <div className="label">Số Khung</div>
+                        <div className="text-input">
+                            <input type="text" name="modelCode" value={chassis_number} onChange={(e) => setChassisNumber(e.target.value)}></input>
+                        </div>
+                    </div>
     
                     <div className="button-container">
                         <button className="button button-back" type="button" onClick={() => setIndex("owner")}>Quay lại</button>
-                        <button className="button" type="button" onClick={() => setIndex("register")}>Tiếp</button>
+                        <button className="button" type="button" onClick={handleNext}>Tiếp</button>
                     </div>
                 </form>
             </div>

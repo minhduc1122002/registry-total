@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { publicRequest, userRequest } from "../request";
+import { publicRequest } from "../request";
 import jwt_decode from "jwt-decode";
 
 // Get user from localStorage

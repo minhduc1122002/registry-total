@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link, NavLink } from "react-router-dom";
 import { faCar } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
+import BusinessIcon from '@mui/icons-material/Business';
+import TimelineIcon from '@mui/icons-material/Timeline';
 // import { DarkModeContext } from "../../context/darkModeContext";
 // import { useContext } from "react";
 
@@ -41,7 +43,7 @@ const Sidebar = () => {
                             <div className={isActive ? "css-zsxelz" : "css-cxolhu"}>
                                 <ListAltIcon className={isActive ? "css-pys03g" : "css-120kvgf"}/>
                                 <div className="css-oo3m22">
-                                    <span>Inspection</span>
+                                    <span>Giấy Đăng Kiểm</span>
                                 </div>
                             </div>
                         </li>
@@ -53,32 +55,32 @@ const Sidebar = () => {
                             <div className={isActive ? "css-zsxelz" : "css-cxolhu"}>
                                 <DirectionsCarIcon className={isActive ? "css-pys03g" : "css-120kvgf"}/>
                                 <div className="css-oo3m22">
-                                    <span>Car</span>
+                                    <span>Xe Ô Tô</span>
                                 </div>
                             </div>
                         </li>
                     )}
                 </NavLink>
-                <NavLink to="/owner">
+                <NavLink to="/analysis">
                     {({ isActive, isPending }) => (
                         <li>
                             <div className={isActive ? "css-zsxelz" : "css-cxolhu"}>
-                                <ListAltIcon className={isActive ? "css-pys03g" : "css-120kvgf"}/>
+                                <TimelineIcon className={isActive ? "css-pys03g" : "css-120kvgf"}/>
                                 <div className="css-oo3m22">
-                                    <span>Owner</span>
+                                    <span>Thống Kê</span>
                                 </div>
                             </div>
                         </li>
                     )}
                 </NavLink>
                 {user.role === 'department' && 
-                <NavLink to="/user">
+                <NavLink to="/center">
                     {({ isActive, isPending }) => (
                         <li>
                             <div className={isActive ? "css-zsxelz" : "css-cxolhu"}>
-                                <DirectionsCarIcon className={isActive ? "css-pys03g" : "css-120kvgf"}/>
+                                <BusinessIcon className={isActive ? "css-pys03g" : "css-120kvgf"}/>
                                 <div className="css-oo3m22">
-                                    <span>User</span>
+                                    <span>Trung Tâm</span>
                                 </div>
                             </div>
                         </li>

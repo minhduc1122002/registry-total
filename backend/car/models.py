@@ -2,8 +2,10 @@ from django.db import models
 import json
 
 class Car(models.Model):
+    # mã của giấy đăng ký
+    register_id = models.TextField(primary_key=True, null=False, max_length=20, unique=True)
     # biển số đăng ký
-    registration_number = models.TextField(primary_key=True, null=False, max_length=20, unique=True)
+    plate_number = models.TextField(null=False, max_length=20, unique=True)
     # nơi đăng ký
     registration_place = models.TextField(null=False)
     # ngày cấp
@@ -26,7 +28,8 @@ class Car(models.Model):
     model = models.TextField(null=False)
 
     # extra 
-    # engine_capacity = models.FloatField(blank=True, null=True)
+    engine_number = models.TextField(null=False)
+    chassis_number = models.TextField(null=False)
     # power = models.FloatField(blank=True, null=True)
     # torque = models.FloatField(blank=True, null=True)
     # transmission = models.CharField(max_length=50, blank=True, null=True)

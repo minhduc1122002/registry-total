@@ -38,5 +38,6 @@ class Owner(models.Model):
         default='01',
     )
     district = models.CharField(max_length=30, blank=True, null=True)
+    ward = models.CharField(max_length=30, blank=True, null=True)
     # liên hệ
     contact = models.CharField(max_length=20, blank=True, null=True)
