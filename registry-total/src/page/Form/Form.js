@@ -55,25 +55,6 @@ export default function Form() {
     const [registerCity, setRegisterCity] = useState(user.center.city);
     const [registerDistrict, setRegisterDistrict] = useState(user.center.district);
     const [registerAddress, setRegisterAddress] = useState(user.center.address);
-    
-    // useEffect(() => {
-    //     setDistrict("")
-    //     setWard("")
-    // }, [city])
-
-    // useEffect(() => {
-    //     setWard("")
-    // }, [district])
-
-    // useEffect(() => {
-    //     setName("")
-    //     setId("")
-    //     setContact("")
-    //     setCity("")
-    //     setDistrict("")
-    //     setWard("")
-    //     setAddress("")
-    // }, [type])
 
     useEffect(() => {
         if (isError) {
@@ -161,35 +142,6 @@ export default function Form() {
             "center": center
         }))
     }
-    console.log(district)
-    console.log({
-        "car": {
-            "register_id": carId,
-            "registration_place": carPlace,
-            "registration_date": formatDate(carDate),
-            "plate_number": numberPlate,
-            "purpose": carUse?.value,
-            "type": carType,
-            "manufacturer": brand,
-            "model": modelCode,
-            "engine_number": engine_number,
-            "chassis_number": chassis_number,
-            "owner": {
-                "id": id,
-                "type": type,
-                "name": name,
-                "address": address,
-                "contact": contact,
-                "ward": ward?.name_with_type,
-                "district": district?.name_with_type,
-                "city": city?.code
-            }
-        },
-        "register_id": registerId,
-        "register_date": formatDate(registerDate),
-        "expired_date": formatDate(expiredDate),
-        
-    })
     const renderSwitch = (index) => {
         switch(index) {
             case "owner":

@@ -32,7 +32,6 @@ export const getInspectionList = createAsyncThunk('form/list', async (thunkAPI) 
 //add inspections
 export const addInspection = createAsyncThunk('form/add', async (inspection, thunkAPI) => {
   try {
-        console.log(inspection)
         const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
         const response = await axios.create({
             baseURL: BASE_URL,

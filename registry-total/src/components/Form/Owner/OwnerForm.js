@@ -7,6 +7,8 @@ import {
 } from "@material-ui/core";
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react';
+
 export default function OwnerForm( {props} ) {
     const {index, setIndex, type, setType, name, setName, id, setId, contact, setContact, city, setCity,
         district, setDistrict, ward, setWard, address, setAddress} = props
@@ -14,7 +16,26 @@ export default function OwnerForm( {props} ) {
     const cities = require('../../../address/tinh_tp.json');
     const tree = require('../../../address/tree.json');
     const wards = require('../../../address/xa-phuong.json');
-    
+
+    useEffect(() => {
+        setName()
+        setId()
+        setContact()
+        setCity()
+        setDistrict()
+        setWard()
+        setAddress()
+    }, [type])
+
+    useEffect(() => {
+        setDistrict()
+        setWard()
+    }, [city])
+
+    useEffect(() => {
+        setWard()
+    }, [district])
+
     const selectStyle = {    
         control: (base, state) => ({
             ...base,

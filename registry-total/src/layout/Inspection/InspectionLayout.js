@@ -1,5 +1,5 @@
 import React from 'react'
-import Table from '../../components/Table/Table'
+import Table from '../../components/Table/InspectionTable'
 import { Link } from "react-router-dom";
 import { deleteInspection } from '../../redux/inspection'
 import { useDispatch } from 'react-redux'
@@ -45,14 +45,6 @@ export default function InspectionLayout( {inspections} ) {
             },
        },
         {
-          field: "register_id",
-          headerName: "Số Đăng Ký",
-          width: 150,
-          renderCell: (params) => {
-            return <div className="rowitem">{params.row.car.register_id}</div>;
-          },
-        },
-        {
           field: "inspection_date",
           headerName: "Ngày Đăng Kiểm",
           width: 150,
@@ -69,7 +61,21 @@ export default function InspectionLayout( {inspections} ) {
             return <div className="rowitem">{params.row.expired_date}</div>;
           }
         },
-      
+        {
+          field: "status",
+          headerName: "Tình Trạng",
+          width: 150,
+          renderCell: (params) => {
+            const register_date = new Date(params.row.register_date)
+            
+            const status = register_date.getTime() * 1000 < new Date().getTime() ? 'expired' : 'active'
+            return (
+              <div className={`cellWithStatus ${status}`}>
+                {status === 'expired' ? 'Đã hết hạn' : 'Còn hiệu lực'}
+              </div>
+            );
+          },
+        },
         {
           field: "center_id",
           headerName: "Trung Tâm",
@@ -77,6 +83,14 @@ export default function InspectionLayout( {inspections} ) {
           renderCell: (params) => {
             return <div className="rowitem">{params.row.center.id}</div>;
           }
+        },
+        {
+          field: "register_id",
+          headerName: "Số Đăng Ký",
+          width: 150,
+          renderCell: (params) => {
+            return <div className="rowitem">{params.row.car.register_id}</div>;
+          },
         },
     
         {
@@ -87,22 +101,23 @@ export default function InspectionLayout( {inspections} ) {
               return <div className="rowitem">{params.row.car.plate_number}</div>;
             }
           },
-
           {
-            field: "status",
-            headerName: "Tình Trạng",
+            field: "owner_name",
+            headerName: "Chủ sở hữu",
             width: 150,
             renderCell: (params) => {
-              const register_date = new Date(params.row.register_date)
-              
-              const status = register_date.getTime() * 1000 < new Date().getTime() ? 'expired' : 'active'
-              return (
-                <div className={`cellWithStatus ${status}`}>
-                  {status === 'expired' ? 'Đã hết hạn' : 'Còn hiệu lực'}
-                </div>
-              );
-            },
+              return <div className="rowitem">{params.row.car.owner.name}</div>;
+            }
           },
+  
+          {
+            field: "owner_id",
+            headerName: "CCCD",
+            width: 150,
+            renderCell: (params) => {
+              return <div className="rowitem">{params.row.car.owner.id}</div>;
+            }
+          }
         
     ];
     return (

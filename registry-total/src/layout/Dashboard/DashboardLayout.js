@@ -8,7 +8,7 @@ import {
     ResponsiveContainer,
     YAxis,
 } from "recharts";
-import Table from '../../components/Table/Table'
+import Table from '../../components/Table/InspectionTable'
 import { useState, useEffect } from "react";
 
 const data = [
