@@ -1,5 +1,6 @@
 import React from 'react'
 import './Table.scss'
+import * as XLSX from 'xlsx/xlsx.mjs'
 import { DataGrid } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -54,6 +55,57 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function CarTable( { cols, rows, title, row_id, actionColumn }) {
     const [id, setID] = useState('')
+
+    function upload() {
+      var files = document.getElementById('file_upload').files;
+      if(files.length === 0){
+        alert("Please choose any file...");
+        return;
+      }
+      var filename = files[0].name;
+      var extension = filename.substring(filename.lastIndexOf(".")).toUpperCase();
+      if (extension === '.XLS' || extension === '.XLSX') {
+          excelFileToJSON(files[0]);
+      } else {
+          alert("Please select a valid excel file.");
+      }
+    }
+
+
+    function excelFileToJSON(file){
+      try {
+          var reader = new FileReader();
+          reader.readAsBinaryString(file);
+          reader.onload = function(e) {
+            var data = e.target.result;
+            var workbook = XLSX.read(data, {
+                type : 'binary'
+            });
+            var result = {};
+            workbook.SheetNames.forEach(function(sheetName) {
+              var roa = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+              if (roa.length > 0) {
+                result[sheetName] = roa;
+              }
+            });
+
+            var final = [];
+            for (var i = 0; i < result['Car'].length; i++) {
+              for (var j = 0; j < result['Owner'].length; j++) {
+                var car = result['Car'][i];
+                var owner = result['Owner'][j];
+                if (car['Chủ sở hữu'] == owner['Chủ sở hữu']) {
+                  car['Chủ sở hữu'] = owner;
+                  final.push(car);
+                }
+              }
+            }
+            console.log(JSON.stringify(final, null, 4));
+          }
+      }catch(e){
+        console.error(e);
+      }
+  }
     
     return (
         <div className="datatable">
@@ -72,9 +124,17 @@ export default function CarTable( { cols, rows, title, row_id, actionColumn }) {
                             />
                         </Search>
                     </div>
-                    <Link to="/inspection/form" className="link primary-btn">
-                    Thêm (Upload File)
-                    </Link>
+                    <div className="upload">
+                      <input type="file" className="file-input" id="file_upload" />
+                      <button 
+                          id="upBtn" 
+                          className="link primary-btn" 
+                          type="button"
+                          onClick={e => upload()}
+                      >
+                          Thêm (Upload File)
+                      </button>
+                  </div>
                 </div>
             </div>
             <DataGrid
