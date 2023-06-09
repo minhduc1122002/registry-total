@@ -52,7 +52,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
       fontSize: '13px'
 }));
 
-export default function Table( { cols, rows, title, row_id, actionColumn }) {
+export default function InspectionTable( { cols, rows, title, row_id, actionColumn }) {
     const [id, setID] = useState('')
     
     return (
@@ -73,7 +73,7 @@ export default function Table( { cols, rows, title, row_id, actionColumn }) {
                         </Search>
                     </div>
                     <Link to="/inspection/form" className="link primary-btn">
-                    Add New
+                    Thêm
                     </Link>
                 </div>
             </div>

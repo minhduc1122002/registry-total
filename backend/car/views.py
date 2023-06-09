@@ -65,7 +65,7 @@ class CarDetailView(CarView):
 
     def get(self, request, id, *args, **kwargs):
         try:
-            car = Car.objects.get(registration_number=str(id))
+            car = Car.objects.get(registration_id=str(id))
             serializer = CarSerializer(car)
 
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -93,7 +93,7 @@ class CarDetailView(CarView):
             return Response('Empty Body', status=400)
         
         try:
-            car = Car.objects.get(registration_number=id)
+            car = Car.objects.get(registration_id=id)
         except:
             return Response('Not Found', status=status.HTTP_400_BAD_REQUEST)
 

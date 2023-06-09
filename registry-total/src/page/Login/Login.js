@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCar } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux';
 import { login, reset } from '../../redux/auth'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Login() {
     const [username, setUsername] = useState("");
@@ -25,31 +27,44 @@ export default function Login() {
 
     useEffect(() => {
         if (isError) {
-           dispatch(reset())
+            toast.error(message, {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                onClose: () => dispatch(reset())
+            })
+           
         }
-    }, [isError, dispatch])
+        toast.clearWaitingQueue();
+    }, [isError, message, dispatch])
 
     const handleLogin = (e) => {
         e.preventDefault()
         if (!username || !password) {
-            // setIsMissing(true)
-            // return toast.error("All field is required", {
-            //     position: "top-right",
-            //     autoClose: 2000,
-            //     hideProgressBar: false,
-            //     closeOnClick: true,
-            //     pauseOnHover: false,
-            //     draggable: false,
-            //     progress: undefined,
-            //     onClose: () => setIsMissing(false)
-            // })
-            console.log('Hi')
+            console.log('hi')
+            setIsMissing(true)
+            return toast.error("All field is required", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                onClose: () => setIsMissing(false)
+            })
         } else {
             dispatch(login({username, password}));
         }
     }
     
     return (
+        <>
+        <ToastContainer limit={1}/>
         <div className="login-container">
             <div className="login">
                 <div className="login-banner">
@@ -99,5 +114,6 @@ export default function Login() {
                 </div>
             </div>
         </div>
+        </>
     );
 }

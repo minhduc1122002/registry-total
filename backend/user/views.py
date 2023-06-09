@@ -16,10 +16,15 @@ class RegisterView(APIView):
     queryset = User.objects.all()
         
     def post(self, request, *args, **kwargs):
-        if request.data.get('role') is not None and request.data['role'] != 'department':
+        if request.data.get('role') is not None and request.data['role'] == 'department':
+            request.data['center'] = None
+            serializer = UserSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
             if request.data.get("center") is None or request.data['center'] is None:
                 return Response('Center is None', status=400)
-            
+        else:
             try:
                 center = Center.objects.get(id=request.data['center']['id'])
             except:
@@ -29,7 +34,7 @@ class RegisterView(APIView):
                 center_serializer = CenterSerializer(center, data=request.data['center'])
                 if center_serializer.is_valid():
                     center = Center(**request.data['center'])
-                    center_serializer.save()
+                    center.save()
                 else:
                     return Response(center_serializer.errors, status=400)
             
@@ -46,12 +51,6 @@ class RegisterView(APIView):
                 response = serializer.data
                 response['center'] = model_to_dict(user.center)
                 return Response(response, status=status.HTTP_201_CREATED)
-        else:
-            request.data['center'] = None
-            serializer = UserSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
