@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import Table from '../../components/Table/InspectionTable'
 import { useState, useEffect } from "react";
+import axios from 'axios';
 
 const data = [
     { name: "January", Total: 12, Missing: 5 },
@@ -21,7 +22,9 @@ const data = [
 ];
 
 export default function DashboardLayout() {
-    // const [registered_cars, setCars] = useState([]);
+    const [registered_cars, setRegisteredCars] = useState([]);
+    const [expiring_cars, setExpiringCars] = useState([]);
+    const [expired_cars, setExpiredCars] = useState([]);
 
     useEffect(() => {
           window.addEventListener('error', e => {
@@ -40,36 +43,65 @@ export default function DashboardLayout() {
                 }
             }
         });
-        // const getCars = async () => {
-        // try {
-        //   const res = const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
-        //   const response = await axios.create({
-        //     baseURL: BASE_URL,
-        //     headers: { token: `${TOKEN}` },
-        // }).get("/form");
+        
+        const BASE_URL = "http://localhost:8000/api/"
+        const getRegisteredCars = async () => {
+        try {
+            const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+            const response = await axios.create({
+            baseURL: BASE_URL,
+            headers: { token: `${TOKEN}` },
+        }).get("/form/register/all");
+        
+            setRegisteredCars(response.data);
+        } catch(e) {
+            console.log(e)
+        }};
+        getRegisteredCars();
+
+        const getExpiringCars = async () => {
+            try {
+                const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+                const response = await axios.create({
+                baseURL: BASE_URL,
+                headers: { token: `${TOKEN}` },
+            }).get("/form/expiring/all");
             
-        //    setCars(res.data);
-        // } catch {}
-        // };
-        // getCars();
+                setExpiringCars(response.data);
+            } catch(e) {
+                console.log(e)
+            }};
+            getExpiringCars();
+
+        const getExpiredCars = async () => {
+        try {
+            const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+            const response = await axios.create({
+            baseURL: BASE_URL,
+            headers: { token: `${TOKEN}` },
+        }).get("/form/expired/all");
+        
+            setExpiredCars(response.data);
+        } catch(e) {
+            console.log(e)
+        }};
+        getExpiredCars();
     }, []);
 
-    
-    // console.log(registered_cars)
     return (
         <div className="dashboard-layout">
             <h4 className="dashboard-title">Dashboard</h4>
             <div className="card-grid">
                 <div className="statistics-card">
-                    <h4>60</h4>
+                    <h4>{registered_cars.count}</h4>
                     <p>Ô Tô Đã Đăng Kiểm</p>
                 </div>
                 <div className="statistics-card">
-                    <h4>60</h4>
+                    <h4>{expiring_cars.length}</h4>
                     <p>Ô Tô Sắp Hết Hạn Đăng Kiểm</p>
                 </div>
                 <div className="statistics-card">
-                    <h4>60</h4>
+                    <h4>{expired_cars.count}</h4>
                     <p>Ô Tô Đã Hết Hạn Đăng Kiểm</p>
                 </div>
             </div>
