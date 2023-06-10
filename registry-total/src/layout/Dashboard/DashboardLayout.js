@@ -41,6 +41,25 @@ export default function DashboardLayout() {
     const [expired_cars, setExpiredCars] = useState([]);
 
     const BASE_URL = "http://localhost:8000/api/"
+    
+    useEffect(() => {
+        window.addEventListener('error', e => {
+          if (e.message === 'ResizeObserver loop limit exceeded') {
+              const resizeObserverErrDiv = document.getElementById(
+                  'webpack-dev-server-client-overlay-div'
+              );
+              const resizeObserverErr = document.getElementById(
+                  'webpack-dev-server-client-overlay'
+              );
+              if (resizeObserverErr) {
+                  resizeObserverErr.setAttribute('style', 'display: none');
+              }
+              if (resizeObserverErrDiv) {
+                  resizeObserverErrDiv.setAttribute('style', 'display: none');
+              }
+          }
+      });
+    
         const getRegisteredCars = async () => {
         try {
             const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
@@ -54,6 +73,36 @@ export default function DashboardLayout() {
             console.log(e)
         }};
         getRegisteredCars();
+
+        const getExpiringCars = async () => {
+            try {
+                const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+                const response = await axios.create({
+                    baseURL: BASE_URL,
+                    headers: { token: `${TOKEN}` },
+                }).get("/form/expiring/all");
+                
+                setExpiringCars(response.data);
+            } catch(e) {
+                console.log(e)
+            }};
+            getExpiringCars();
+
+        const getExpiredCars = async () => {
+        try {
+            const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+            const response = await axios.create({
+                baseURL: BASE_URL,
+                headers: { token: `${TOKEN}` },
+            }).get("/form/expired/all");
+            console.log(response.data)
+            setExpiredCars(response.data);
+        } catch(e) {
+            console.log(e)
+        }};
+        getExpiredCars();
+
+    }, []);
     
     async function getYearRegisteredCars(url) {
         try {
@@ -147,53 +196,6 @@ export default function DashboardLayout() {
             }
         return month;
     }
-
-    useEffect(() => {
-            window.addEventListener('error', e => {
-            if (e.message === 'ResizeObserver loop limit exceeded') {
-                const resizeObserverErrDiv = document.getElementById(
-                    'webpack-dev-server-client-overlay-div'
-                );
-                const resizeObserverErr = document.getElementById(
-                    'webpack-dev-server-client-overlay'
-                );
-                if (resizeObserverErr) {
-                    resizeObserverErr.setAttribute('style', 'display: none');
-                }
-                if (resizeObserverErrDiv) {
-                    resizeObserverErrDiv.setAttribute('style', 'display: none');
-                }
-            }
-        });
-
-        const getExpiringCars = async () => {
-            try {
-                const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
-                const response = await axios.create({
-                    baseURL: BASE_URL,
-                    headers: { token: `${TOKEN}` },
-                }).get("/form/expiring/all");
-                
-                setExpiringCars(response.data);
-            } catch(e) {
-                console.log(e)
-            }};
-            getExpiringCars();
-
-        const getExpiredCars = async () => {
-        try {
-            const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
-            const response = await axios.create({
-                baseURL: BASE_URL,
-                headers: { token: `${TOKEN}` },
-            }).get("/form/expired/all");
-            console.log(response.data)
-            setExpiredCars(response.data);
-        } catch(e) {
-            console.log(e)
-        }};
-        getExpiredCars();
-    }, []);
     
     const getTotalCount = (list) => {
         if (list.length === 0) {
@@ -214,7 +216,7 @@ export default function DashboardLayout() {
               { user.role === 'center' ? (
                   <>
                     <div className="statistics-card">
-                        <h4>{registered_cars.count}</h4>
+                        <h4>{year_registered_cars.length}</h4>
                         <p>Ô Tô Đã Đăng Kiểm</p>
                     </div>
                     <div className="statistics-card">
@@ -352,54 +354,6 @@ export default function DashboardLayout() {
                                 </div>
                             </li>
                         </ul>
-                    </div>
-                </div>
-            </div>
-            <div className="block-content-container">
-                <h4 className="chart-title">Số lượng xe ô tô sắp hết hạn đăng kiểm trong năm</h4>
-                <div style={{display: 'flex'}}>
-                  <div className="statistics-line-chart">
-                    <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                        <Select options={years} onChange={handleChange} styles={customStyles}/>
-                        <br></br>
-                        <ResponsiveContainer width='100%' height={400}>
-                          <AreaChart
-                            data={selectdata()}
-                            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                          >
-                          <defs>
-                              <linearGradient id="total" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="rgb(23, 193, 232)" stopOpacity={0.2} />
-                              <stop offset="70%" stopColor="rgb(23, 193, 232)" stopOpacity={0.1} />
-                              </linearGradient>
-                              <linearGradient id="missing" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#8884d8" stopOpacity={0.4} />
-                              <stop offset="70%" stopColor="#8884d8" stopOpacity={0.2} />
-                              </linearGradient>
-                          </defs>
-                          <XAxis dataKey="name" stroke="gray" />
-                          <YAxis/>
-                          <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
-                          <Tooltip />
-                          <Area
-                              type="monotone"
-                              dataKey="Total"
-                              stroke="rgb(23, 193, 232)"
-                              fillOpacity={1}
-                              strokeWidth={4}
-                              fill="url(#total)"
-                          />
-                          <Area
-                              type="monotone"
-                              dataKey="Missing"
-                              stroke="#8884d8"
-                              fillOpacity={1}
-                              strokeWidth={4}
-                              fill="url(#missing)"
-                          />
-                          </AreaChart>
-                      </ResponsiveContainer>
-                      </div>
                     </div>
                 </div>
             </div>
