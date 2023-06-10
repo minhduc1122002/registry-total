@@ -7,25 +7,133 @@ import {
     Tooltip,
     ResponsiveContainer,
     YAxis,
+    Bar,
+    BarChart,
+    Legend,
+    RadialBar,
+    RadialBarChart
 } from "recharts";
+import Table from '../../components/Table/InspectionTable'
 import { useState, useEffect } from "react";
 import axios from 'axios';
-import { useSelector } from "react-redux";
-
-const data = [
-  { name: "January", Total: 12, Missing: 5 },
-  { name: "February", Total: 21, Missing: 19 },
-  { name: "March", Total: 8, Missing: 4 },
-  { name: "April", Total: 16, Missing: 10 },
-  { name: "May", Total: 9, Missing: 1 },
-  { name: "June", Total: 17, Missing: 5 },
-];
+import "./DashboardLayout.css";
+import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
+import Select from "react-select";
 
 export default function DashboardLayout() {
-    const user = useSelector((state) => state.auth.user);
-    const [registered_cars, setRegisteredCars] = useState();
-    const [expiring_cars, setExpiringCars] = useState();
-    const [expired_cars, setExpiredCars] = useState();
+    const [registered_cars, setRegisteredCars] = useState([]);
+    const [year_registered_cars, setYearRegisteredCars] = useState([]);
+    const [expiring_cars, setExpiringCars] = useState([]);
+    const [expired_cars, setExpiredCars] = useState([]);
+
+    const BASE_URL = "http://localhost:8000/api/"
+        const getRegisteredCars = async () => {
+        try {
+            const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+            const response = await axios.create({
+            baseURL: BASE_URL,
+            headers: { token: `${TOKEN}` },
+        }).get("/form");
+        
+            setRegisteredCars(response.data);
+        } catch(e) {
+            console.log(e)
+        }};
+        getRegisteredCars();
+    
+    async function getYearRegisteredCars(url) {
+        try {
+            const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+            const response = await axios.create({
+            baseURL: BASE_URL,
+            headers: { token: `${TOKEN}` },
+        }).get(url);
+            
+            setYearRegisteredCars(response.data);
+        } catch(e) {
+            console.log(e)
+        }
+    };
+
+    const years = [
+        { value: '/form/register/bymonth/2022', label: '2022' },
+        { value: '/form/register/bymonth/2023', label: '2023' }
+    ]
+
+    const [selected, setSelected] = useState(null);
+
+    const handleChange = (selectedOption) => {
+        setSelected(selectedOption);
+        getYearRegisteredCars(selectedOption.value);
+    };
+
+    var month = [
+        { name: "Jan", Total: 0 },
+        { name: "Feb", Total: 0 },
+        { name: "Mar", Total: 0 },
+        { name: "Apr", Total: 0 },
+        { name: "May", Total: 0 },
+        { name: "June", Total: 0 },
+        { name: "July", Total: 0 },
+        { name: "Aug", Total: 0 },
+        { name: "Sep", Total: 0 },
+        { name: "Oct", Total: 0 },
+        { name: "Nov", Total: 0 },
+        { name: "Dec", Total: 0 },
+    ];
+
+    var quarter = [
+        { name: "1", Total: 0 },
+        { name: "2", Total: 0 },
+        { name: "3", Total: 0 },
+        { name: "4", Total: 0 }
+    ];
+
+    
+    function selectdata() {
+        var months = year_registered_cars;
+            for (var i=0;i<months.length;i++) {
+                if (months[i].register_date__month===1) {
+                    month[0].Total = months[i].count;
+                    quarter[0].Total += months[i].count;
+                } else if (months[i].register_date__month===2) {
+                    month[1].Total = months[i].count;
+                    quarter[0].Total += months[i].count;
+                } else if (months[i].register_date__month===3) {
+                    month[2].Total = months[i].count;
+                    quarter[0].Total += months[i].count;
+                } else if (months[i].register_date__month===4) {
+                    month[3].Total = months[i].count;
+                    quarter[1].Total += months[i].count;
+                } else if (months[i].register_date__month===5) {
+                    month[4].Total = months[i].count;
+                    quarter[1].Total += months[i].count;
+                } else if (months[i].register_date__month===6) {
+                    month[5].Total = months[i].count;
+                    quarter[1].Total += months[i].count;
+                } else if (months[i].register_date__month===7) {
+                    month[6].Total = months[i].count;
+                    quarter[2].Total += months[i].count;
+                } else if (months[i].register_date__month===8) {
+                    month[7].Total = months[i].count;
+                    quarter[2].Total += months[i].count;
+                } else if (months[i].register_date__month===9) {
+                    month[8].Total = months[i].count;
+                    quarter[2].Total += months[i].count;
+                } else if (months[i].register_date__month===10) {
+                    month[9].Total = months[i].count;
+                    quarter[3].Total += months[i].count;
+                } else if (months[i].register_date__month===11) {
+                    month[10].Total = months[i].count;
+                    quarter[3].Total += months[i].count;
+                } else if (months[i].register_date__month===12) {
+                    month[11].Total = months[i].count;
+                    quarter[3].Total += months[i].count;
+                }
+            }
+        return month;
+    }
 
     useEffect(() => {
           window.addEventListener('error', e => {
@@ -44,21 +152,6 @@ export default function DashboardLayout() {
                 }
             }
         });
-        
-        const BASE_URL = "http://localhost:8000/api/"
-        const getRegisteredCars = async () => {
-        try {
-            const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
-            const response = await axios.create({
-                baseURL: BASE_URL,
-                headers: { token: `${TOKEN}` },
-            }).get("/form/register/all");
-            
-            setRegisteredCars(response.data);
-        } catch(e) {
-            console.log(e)
-        }};
-        getRegisteredCars();
 
         const getExpiringCars = async () => {
             try {
@@ -144,10 +237,11 @@ export default function DashboardLayout() {
                 <div style={{display: 'flex'}}>
                   <div className="statistics-line-chart">
                     <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                      <ResponsiveContainer width={1200} height={400}>
+                        <Select options={years} onChange={handleChange} />
+                        <ResponsiveContainer width={1200} height={400}>
                           <AreaChart
-                          data={data}
-                          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                            data={selectdata()}
+                            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                           >
                           <defs>
                               <linearGradient id="total" x1="0" y1="0" x2="0" y2="1">
@@ -181,6 +275,60 @@ export default function DashboardLayout() {
                           />
                           </AreaChart>
                       </ResponsiveContainer>
+                      <div className="statistics-bar">
+                            <span className="statis"> Thống kê </span>
+                            <hr className="space"></hr>
+                            <ul className="progress-bar">
+                                <li>
+                                    <p className="quarter">
+                                        Quý 1
+                                    </p>
+                                    <Box sx={{ width: '20%' }}>
+                                        <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
+                                                            '& .MuiLinearProgress-bar': {
+                                                                backgroundColor: 'rgb(236, 64, 122)'
+                                                            }}} 
+                                                        variant="determinate" value={quarter[0].Total} />
+                                    </Box>
+                                </li>
+                                <li>
+                                    <p className="quarter">
+                                        Quý 2
+                                    </p>
+                                    <Box sx={{ width: '20%' }}>
+                                        <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
+                                                            '& .MuiLinearProgress-bar': {
+                                                                backgroundColor: 'rgb(251, 140, 0)'
+                                                            }}} 
+                                                        variant="determinate" value={quarter[1].Total} />
+                                    </Box>
+                                </li>
+                                <li>
+                                    <p className="quarter">
+                                        Quý 3
+                                    </p>
+                                    <Box sx={{ width: '20%' }}>
+                                        <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
+                                                            '& .MuiLinearProgress-bar': {
+                                                                backgroundColor: 'rgb(124, 179, 66)'
+                                                            }}} 
+                                                        variant="determinate" value={quarter[2].Total} />
+                                    </Box>
+                                </li>
+                                <li>
+                                    <p className="quarter">
+                                        Quý 4
+                                    </p>
+                                    <Box sx={{ width: '20%' }}>
+                                        <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
+                                                            '& .MuiLinearProgress-bar': {
+                                                                backgroundColor: 'rgb(3, 169, 244)'
+                                                            }}} 
+                                                        variant="determinate" value={quarter[3].Total} />
+                                    </Box>
+                                </li>
+                            </ul>
+                    </div>
                       </div>
                     </div>
                     <div className="quater-container">
