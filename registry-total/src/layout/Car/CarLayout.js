@@ -1,21 +1,14 @@
 import React from 'react'
 import CarTable from '../../components/Table/CarTable'
 import { Link } from "react-router-dom";
-import { deleteInspection } from '../../redux/inspection'
-import { useDispatch } from 'react-redux'
 
 export default function CarLayout( {cars} ) {
-    const dispatch = useDispatch()
-
-    const handleDelete = (e, id) => {
-        e.preventDefault()
-        // dispatch(deleteInspection(id))
-    }
     const carUses = [
         { value: 'personal', label: 'Đi lại cá nhân' },
         { value: 'passenger_service', label: 'Dịch vụ chở khách' },
         { value: 'transportation_service', label: 'Dịch vụ vận tải' }
     ]
+
     const actionColumn = [
       {
       field: "action",
@@ -141,10 +134,9 @@ export default function CarLayout( {cars} ) {
         <div className="dashboard-layout">
             <h4 className="dashboard-title">Xe Ô Tô Đã Đăng Ký</h4>
             {cars &&
-            
-            <div className="statistics-line-chart" style={{paddingBottom: '20px', paddingTop: '20px'}}>
-                <CarTable rows={cars} cols={userColumns} row_id='register_id' actionColumn={actionColumn}/>
-            </div>
+                <div className="statistics-line-chart" style={{paddingBottom: '20px', paddingTop: '20px'}}>
+                    <CarTable rows={cars} cols={userColumns} row_id='register_id' actionColumn={actionColumn}/>
+                </div>
             }
         </div>
   )

@@ -1,11 +1,11 @@
 .navbar {
-    height: 50px;
     display: flex;
     align-items: center;
     font-size: 14px;
     color: #555;
     padding: 1rem;
-  }
+    justify-content: flex-end;
+}
 .search-bar {
     font-family: "Maven Pro", sans-serif;
     position: relative;
@@ -33,4 +33,12 @@
     font-weight: 600;
     box-shadow: none;
     margin: 0px 16px;
+}
+.navbar button:first-child {
+    display: none;
+}
+@media screen and (min-width: 600px) {
+    .css-1orzy9s {
+        margin-left: 0px !important;
+    }
 }

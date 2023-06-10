@@ -44,7 +44,7 @@ export default function Print() {
     const handleExportWithComponent = event => {
         pdfExportComponent.current.save();
     };
-    console.log(inspection)
+    
     return (
     <>
         <div className="container">
@@ -52,7 +52,7 @@ export default function Print() {
             <div className='inspection'>
                 <Navigation/>
                 <div className="dashboard-layout">
-                    <h4 className="dashboard-title">Inspection</h4>
+                    <h4 className="dashboard-title">Giấy Đăng Kiểm</h4>
                     {inspection &&
                     <div className="statistics-line-chart">
                         <div className="export-content">

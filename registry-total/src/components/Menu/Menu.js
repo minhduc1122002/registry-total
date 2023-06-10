@@ -8,11 +8,8 @@ import { faCar } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import BusinessIcon from '@mui/icons-material/Business';
 import TimelineIcon from '@mui/icons-material/Timeline';
-// import { DarkModeContext } from "../../context/darkModeContext";
-// import { useContext } from "react";
 
 const Sidebar = () => {
-//   const { dispatch } = useContext(DarkModeContext);
     const user = useSelector((state) => state.auth.user);
     const role = user.role
     return (

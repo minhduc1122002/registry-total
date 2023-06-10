@@ -10,8 +10,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addInspection, reset } from '../../redux/inspection';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify'
+import Modal from '@mui/material/Modal';
 
 export default function Form() {
+    const [sideBar, setSideBar] = useState(false)
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const { message } = useSelector(
@@ -166,14 +168,23 @@ export default function Form() {
     
     return (
         <>
-        <ToastContainer limit={1} />
-        <div className='container'>
-            <Sidebar/>
-            <div className="form-container">
-                <Navigation/>
-                {renderSwitch(index)}
+            <ToastContainer limit={1} />
+            <div className='container'>
+                {sideBar &&
+                <Modal open={sideBar} onClose={() => setSideBar(false)}>
+                    <Sidebar/>
+                </Modal>
+                
+                }
+                <div className="sidebar-container">
+                    <Sidebar/>
+                </div>
+                <div className='main-content'>
+
+                    <Navigation sideBar={sideBar} setSideBar={setSideBar}/>
+                    {renderSwitch(index)}
+                </div>
             </div>
-        </div>
         </>
     );
 }

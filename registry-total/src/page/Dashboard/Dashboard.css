@@ -1,4 +1,4 @@
-.dashboard {
+.main-content {
     width: 80%;
 }
 .dashboard-layout {
@@ -53,18 +53,15 @@
     font-size: 28px;
     font-weight: 500;
 }
-.statistics-line-chart {
+.block-content-container {
     background-color: white;
-    padding: 24px;
     margin-top: 16px;
     padding-top: 36px;
     padding-bottom: 36px;
-    
+    flex-direction: column;
     color: rgba(0, 0, 0, 0.87);
     transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    overflow: hidden;
     display: flex;
-    flex-direction: column;
     position: relative;
     min-width: 0px;
     overflow-wrap: break-word;
@@ -73,6 +70,14 @@
     border: 0px solid rgba(0, 0, 0, 0.125);
     border-radius: 1rem;
     box-shadow: rgba(0, 0, 0, 0.05) 0rem 1.25rem 1.6875rem 0rem;
+}
+.statistics-line-chart {
+    flex: 2;
+    overflow: hidden;
+}
+.quater-container {
+    padding: 16px;
+    flex: 1;
 }
 .chart {
     flex: 4;
@@ -86,13 +91,46 @@
     stroke: rgb(228, 225, 225);
 }
 .chart-title {
-    margin-bottom: 20px;
+    margin-bottom: 36px;
     font-family: "Maven Pro", sans-serif;
     line-height: 1.6;
     position: relative;
     text-transform: capitalize;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 700;
     color: rgb(40, 53, 147);
     text-align: center;
+}
+.chart {
+    width: 100%;
+}
+@media screen and (max-width: 1200px) {
+    .navbar button:first-child {
+        display: block;
+    }
+    .main-content {
+        width: 100%;
+    }
+    .sidebar-container {
+        display: none;
+    }
+    .sidebar {
+        width: 30%;
+    }
+}
+@media screen and (max-width: 596px) {
+    .statistics-card h4 {
+        font-size: 22px;
+    }
+    .statistics-card p {
+        font-size: 12px;
+    }
+    .primary-btn {
+        font-size: 0.5rem;
+        margin-right: 0px;
+        height: 36px;
+    }
+    .chart-title {
+        font-size: 18px;
+    }
 }

@@ -4,20 +4,21 @@ import Navigation from '../../components/Navigation/Navigation'
 import { useEffect, useState } from "react";
 import { getCarList } from '../../redux/car'
 import { useDispatch, useSelector } from 'react-redux'
-import CarLayout from '../../layout/Car/CarLayout'
+import CenterLayout from '../../layout/Center/CenterLayout'
 import Modal from '@mui/material/Modal';
 
 export default function Car() {
-    const dispatch = useDispatch()
-    const cars = useSelector(state => state.car.cars)
+    // const dispatch = useDispatch()
+    // const cars = useSelector(state => state.car.cars)
+    // const [sideBar, setSideBar] = useState(false)
+    // useEffect(() => {
+    //     dispatch(getCarList())
+    // }, [dispatch]);
     const [sideBar, setSideBar] = useState(false)
-    useEffect(() => {
-        dispatch(getCarList())
-    }, [dispatch]);
+    const centers = []
     
     return (
       <>
-      
         <div className='container'>
             {sideBar &&
             <Modal open={sideBar} onClose={() => setSideBar(false)}>
@@ -29,9 +30,8 @@ export default function Car() {
                 <Sidebar/>
             </div>
             <div className='main-content'>
-
                 <Navigation sideBar={sideBar} setSideBar={setSideBar}/>
-                <CarLayout cars={cars}/>
+                <CenterLayout centers={centers}/>
             </div>
         </div>
       </>

@@ -4,15 +4,15 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-export default function InspectionTable( { cols, rows, title, row_id, actionColumn }) {
+export default function CenterTable( { cols, rows, title, row_id, actionColumn }) {
     const user = useSelector((state) => state.auth.user);
     return (
         <div className="datatable">
             <div className="datatableTitle">
                 Table
-                {user.role === 'center' &&
+                {user.role === 'department' &&
                 <div style={{display: 'flex'}}>
-                    <Link to="/inspection/form" className="link primary-btn">
+                    <Link to="/center/form" className="link primary-btn">
                     Thêm
                     </Link>
                 </div>

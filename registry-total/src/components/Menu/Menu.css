@@ -1,14 +1,14 @@
 .sidebar {
-    background-color: transparent;
-    box-shadow: none;
-    margin-bottom: 0px;
-    color: rgba(0, 0, 0, 0.87);
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    width: 20%;
-    border: none;
+    color: rgba(0, 0, 0, 0.87);
     height: 100%;
+    padding: 1rem 1rem;
+    z-index: 2;
+    position: sticky;
+    background-color: #fff;
+    overflow-y: scroll;
+    top: 123px;
 }
 .line {
     flex-shrink: 0;
@@ -144,4 +144,15 @@ li {
     font-size: 0.7rem;;
     text-transform: capitalize;
 }
-
+.sidebar-container {
+    width: 20%;
+}
+@media screen and (max-width: 1200px) {
+    
+}
+@media screen and (max-width: 900px) {
+    
+}
+@media screen and (max-width: 596px) {
+    
+}

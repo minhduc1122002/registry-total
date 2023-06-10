@@ -1,3 +1,6 @@
-.car {
-    flex: 8;
+.upload input {
+    height: 48px;
+    margin-bottom: 16px;
+    position: relative;
+    width: 230px;
 }

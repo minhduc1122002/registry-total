@@ -72,12 +72,15 @@ export default function Login() {
                         <p><FontAwesomeIcon icon={faCar} className="icon"/> Registry Total</p>
                     </div>
                     <div className="welcome">
-                        <h1>Welcome to Registry Total</h1>
+                        <h1>Welcome to{'\u00A0'}Registry Total</h1>
                         <p>Please sign in to continune</p>
                     </div>
                 </div>
                 <div className="login-form">
-                    <form className="form">   
+                    <form className="form">
+                        <div className="logo">
+                            <p><FontAwesomeIcon icon={faCar} className="icon"/> Registry Total</p>
+                        </div>   
                         <div className="head">
                             <h1>Sign In</h1>
                         </div>

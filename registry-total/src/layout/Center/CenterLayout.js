@@ -1,10 +1,10 @@
 import React from 'react'
-import InspectionTable from '../../components/Table/InspectionTable'
+import CenterTable from '../../components/Table/CenterTable'
 import { Link } from "react-router-dom";
 import { deleteInspection } from '../../redux/inspection'
 import { useDispatch } from 'react-redux'
 
-export default function InspectionLayout( {inspections} ) {
+export default function CenterLayout( {centers} ) {
     const dispatch = useDispatch()
 
     const handleDelete = (e, id) => {
@@ -132,10 +132,10 @@ export default function InspectionLayout( {inspections} ) {
     ];
     return (
         <div className="dashboard-layout">
-            <h4 className="dashboard-title">Giấy Đăng Kiểm</h4>
-            {inspections &&
+            <h4 className="dashboard-title">Trung Tâm</h4>
+            {centers &&
               <div className="statistics-line-chart" style={{paddingBottom: '20px', paddingTop: '20px'}}>
-                  <InspectionTable rows={inspections} cols={userColumns} row_id='register_id' actionColumn={actionColumn}/>
+                  <CenterTable rows={centers} cols={userColumns} row_id='register_id' actionColumn={actionColumn}/>
               </div>
             }
         </div>

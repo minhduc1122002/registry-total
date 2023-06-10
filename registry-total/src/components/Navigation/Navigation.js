@@ -57,7 +57,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     fontSize: '13px'
 }));
 
-const Navigation = () => {
+const Navigation = ( { sideBar, setSideBar }) => {
 //   const { dispatch } = useContext(DarkModeContext);
     const user = JSON.parse(localStorage.getItem('user'))
     const dispatch = useDispatch()
@@ -93,6 +93,7 @@ const Navigation = () => {
               aria-label="open drawer"
               sx={{ mr: 2 }}
               style={{marginRight: 'auto', color: 'rgb(63, 81, 181)'}}
+              onClick={() => setSideBar(true)}
             >
               <MenuIcon />
           </IconButton>

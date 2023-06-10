@@ -7,6 +7,7 @@ import {
 import Login from "./page/Login/Login"
 import Dashboard from "./page/Dashboard/Dashboard"
 import Car from "./page/Car/Car"
+import Center from "./page/Center/Center"
 import Inspection from "./page/Inspection/Inspection"
 import Export from "./page/Print/Print"
 import Form from"./page/Form/Form"
@@ -26,7 +27,8 @@ function App() {
           <Route path="/inspections/:id" element={!user ? <Navigate to="/login"/> : <Inspection/>} />
           <Route path="/inspection/print/:id" element={!user ? <Navigate to="/login"/> : <Export/>} />
           <Route path="/login" element={user ? <Navigate to="/"/> : <Login/>} />
-          <Route path="/userform" element={<UserForm />} />
+          <Route path="/center" element={!user ? <Navigate to="/login"/> : <Center />} />
+          <Route path="/center/form" element={!user ? <Navigate to="/login"/> : <UserForm />} />
         </Routes>
       </Router>
     );
