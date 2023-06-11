@@ -20,8 +20,9 @@ import "./DashboardLayout.css";
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import Select from "react-select";
-import { useSelector } from "react-redux";
-import Stack from "@mui/material/Stack";
+import { useDispatch, useSelector } from "react-redux";
+import { getCarList } from '../../redux/car'
+import { getInspectionList } from '../../redux/inspection'
 
 const customStyles = {
 
@@ -40,9 +41,22 @@ export default function DashboardLayout() {
     const [yearly_registered_cars, setYearlyRegisteredCars] = useState([]);
     const [expiring_cars, setExpiringCars] = useState([]);
     const [expired_cars, setExpiredCars] = useState([]);
+    const [re_regis_cars, setReRegisCars] = useState([]);
+    const [selected, setSelected] = useState(null);
+
+    const dispatch = useDispatch()
+    const cars = useSelector(state => state.car.cars)
+    useEffect(() => {
+        dispatch(getCarList())
+    }, [dispatch]);
+
+    const inspections = useSelector(state => state.inspection.inspections)
+    useEffect(() => {
+        dispatch(getInspectionList())
+    }, [dispatch]);
 
     const BASE_URL = "http://localhost:8000/api/"
-    
+
     useEffect(() => {
         window.addEventListener('error', e => {
           if (e.message === 'ResizeObserver loop limit exceeded') {
@@ -148,8 +162,6 @@ export default function DashboardLayout() {
         { value: '/form/register/bymonth/all/2023', label: '2023' }
     ])
 
-    const [selected, setSelected] = useState(null);
-
     const handleChange = (selectedOption) => {
         setSelected(selectedOption);
         getYearRegisteredCars(selectedOption.value);
@@ -233,6 +245,23 @@ export default function DashboardLayout() {
             return sum
         }
     }
+
+    const new_regis_cars = cars.length - inspections.length;
+
+    const getReRegisCars = () => {
+        let total = 0;
+        const year = new Date().getFullYear();
+        const month = new Date().getMonth();
+        for(let i = 0; i < inspections.length; i++) {
+            const expired_date = new Date(inspections[i].expired_date);
+            if (expired_date.getFullYear() === year) {
+                if (expired_date.getMonth() - month <= 2) {
+                    total += 1;
+                }
+            } 
+        }
+        return total;
+    };
     
     return (
         <div className="dashboard-layout">
@@ -253,21 +282,36 @@ export default function DashboardLayout() {
                         <h4>{expired_cars.count}</h4>
                         <p>Ô Tô Đã Hết Hạn Đăng Kiểm</p>
                     </div>
+                    <div className="statistics-card">
+                        <p>Dự báo</p>
+                        <h4>{new_regis_cars}</h4>
+                        <p>Ô Tô Đăng Kiểm Mới</p>
+                    </div>
+                    <div className="statistics-card">
+                        <p>Dự báo</p>
+                        <h4>{getReRegisCars()}</h4>
+                        <p>Ô Tô Đăng Kiểm Lại</p>
+                    </div>
                   </>
                 ) : (
                   <>
-                  <div className="statistics-card">
+                    <div className="statistics-card">
                       <h4>{getTotalCount(registered_cars)}</h4>
                       <p>Ô Tô Đã Đăng Kiểm</p>
-                  </div>
-                  <div className="statistics-card">
+                    </div>
+                    <div className="statistics-card">
                       <h4>{expiring_cars.length}</h4>
                       <p>Ô Tô Sắp Hết Hạn Đăng Kiểm</p>
-                  </div>
-                  <div className="statistics-card">
+                    </div>
+                    <div className="statistics-card">
                       <h4>{getTotalCount(expired_cars)}</h4>
                       <p>Ô Tô Đã Hết Hạn Đăng Kiểm</p>
-                  </div>
+                    </div>
+                    <div className="statistics-card">
+                        <p>Dự báo</p>
+                        <h4>{new_regis_cars}</h4>
+                        <p>Ô Tô Đăng Kiểm Mới</p>
+                    </div>
                 </>
                 )
               }
