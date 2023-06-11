@@ -119,7 +119,7 @@ export default function SingleInspection( { inspection }) {
     const [ward, setWard] = useState(findWard(district, owner.ward));
     const [address, setAddress] = useState(owner.address);
 
-    const [carId, setCarId] = useState(car.register_id);
+    const [carId, setCarId] = useState(car.registration_id);
     const [carDate, setCarDate] = useState(new Date(car.registration_date));
     const [numberPlate, setNumberPlate] = useState(car.plate_number);
     const [carPlace, setCarPlace] = useState(car.registration_place);
@@ -136,13 +136,13 @@ export default function SingleInspection( { inspection }) {
     const [registerCity, setRegisterCity] = useState(findCity(center.city));
     const [registerDistrict, setRegisterDistrict] = useState(findDist(center.district, registerCity));
     const [registerAddress, setRegisterAddress] = useState(center.address);
-    
+    console.log(registerDistrict)
 
     const handleEdit = (e) => {
         e.preventDefault()
         dispatch(updateInspectionbyId({
           "car": {
-              "register_id": carId,
+              "registration_id": carId,
               "registration_place": carPlace,
               "registration_date": formatDate(carDate),
               "plate_number": numberPlate,

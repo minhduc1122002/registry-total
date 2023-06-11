@@ -117,7 +117,7 @@ export default function Form() {
         
         dispatch(addInspection({
             "car": {
-                "register_id": carId,
+                "registration_id": carId,
                 "registration_place": carPlace,
                 "registration_date": formatDate(carDate),
                 "plate_number": numberPlate,

@@ -3,9 +3,9 @@ import axios from "axios";
 
 const initialState = {
   cars: [],
-  isError: [false, false, false, false],
-  isSuccess: [false, false, false, false],
-  isLoading: [false, false, false, false],
+  isError: [false, false, false, false, false],
+  isSuccess: [false, false, false, false, false],
+  isLoading: [false, false, false, false, false],
   message: '',
 }
 
@@ -29,7 +29,7 @@ export const getCarList = createAsyncThunk('car/list', async (thunkAPI) => {
   }
 })
 
-//add inspections
+//add car
 export const addCar = createAsyncThunk('form/add', async (car, thunkAPI) => {
   try {
         const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
@@ -37,6 +37,25 @@ export const addCar = createAsyncThunk('form/add', async (car, thunkAPI) => {
             baseURL: BASE_URL,
             headers: { token: `${TOKEN}` },
         }).post("/car", car)
+        return response.data
+  } catch (error) {
+        const message =  (error.response &&
+        (error.response.data ||
+            error.response.data.message)) || error.message ||
+        error.toString()
+        console.log(message)
+        return thunkAPI.rejectWithValue(message)
+  }
+})
+
+//add list of car
+export const addCarList = createAsyncThunk('form/add/list', async (cars, thunkAPI) => {
+  try {
+        const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+        const response = await axios.create({
+            baseURL: BASE_URL,
+            headers: { token: `${TOKEN}` },
+        }).post("/car/list", cars)
         return response.data
   } catch (error) {
         const message =  (error.response &&
@@ -68,32 +87,32 @@ export const addCar = createAsyncThunk('form/add', async (car, thunkAPI) => {
 //   }
 // })
 
-// //delete inspection
-// export const deleteInspection = createAsyncThunk('form/delete', async (id, thunkAPI) => {
-//   try {
-//         const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
-//         const response = await axios.create({
-//             baseURL: BASE_URL,
-//             headers: { token: `${TOKEN}` },
-//         }).delete("/form/" + id)
-//         return id
-//   }catch (error) {
-//     const message = (error.response &&
-//       (error.response.data ||
-//         error.response.data.message)) || error.message ||
-//       error.toString()
-//     return thunkAPI.rejectWithValue(message)
-//   }
-// })
+//delete car
+export const deleteCar = createAsyncThunk('car/delete', async (id, thunkAPI) => {
+  try {
+        const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+        const response = await axios.create({
+            baseURL: BASE_URL,
+            headers: { token: `${TOKEN}` },
+        }).delete("/car/" + id)
+        return id
+  }catch (error) {
+    const message = (error.response &&
+      (error.response.data ||
+        error.response.data.message)) || error.message ||
+      error.toString()
+    return thunkAPI.rejectWithValue(message)
+  }
+})
 
 export const CarSlice = createSlice({
   name: 'car',
   initialState,
   reducers: {
     reset: (state) => {
-      state.isLoading = [false, false, false, false]
-      state.isSuccess = [false, false, false, false]
-      state.isError = [false, false, false, false]
+      state.isLoading = [false, false, false, false, false]
+      state.isSuccess = [false, false, false, false, false]
+      state.isError = [false, false, false, false, false]
       state.message = ''
     },
   },
@@ -129,6 +148,21 @@ export const CarSlice = createSlice({
         state.isSuccess[0] = false
         state.message = action.payload
       })
+      .addCase(addCarList.pending, (state) => {
+        state.isLoading[4] = true
+      })
+      .addCase(addCarList.fulfilled, (state, action) => {
+        state.isLoading[4] = false
+        state.isError[4] = false
+        state.isSuccess[4] = true
+        state.cars = state.cars.concat(action.payload)
+      })
+      .addCase(addCarList.rejected, (state, action) => {
+        state.isLoading[4] = false
+        state.isError[4] = true
+        state.isSuccess[4] = false
+        state.message = action.payload
+      })
     //   .addCase(updateInspectionbyId.pending, (state) => {
     //     state.isLoading[1] = true
     //   })
@@ -146,22 +180,22 @@ export const CarSlice = createSlice({
     //     state.isSuccess[1] = false
     //     state.message = action.payload
     //   })
-    //   .addCase(deleteInspection.pending, (state) => {
-    //     state.isLoading[2] = true
-    //   })
-    //   .addCase(deleteInspection.fulfilled, (state, action) => {
-    //     state.isLoading[2] = false
-    //     state.isError[2] = false
-    //     state.isSuccess[2] = true
-    //     const index = state.inspections.findIndex(inspection => inspection.register_id === action.payload)
-    //     state.inspections.splice(index, 1)
-    //   })
-    //   .addCase(deleteInspection.rejected, (state, action) => {
-    //     state.isLoading[2] = false
-    //     state.isError[2] = true
-    //     state.isSuccess[2] = false
-    //     state.message = action.payload
-    //   })
+      .addCase(deleteCar.pending, (state) => {
+        state.isLoading[2] = true
+      })
+      .addCase(deleteCar.fulfilled, (state, action) => {
+        state.isLoading[2] = false
+        state.isError[2] = false
+        state.isSuccess[2] = true
+        const index = state.cars.findIndex(car => car.registration_id === action.payload)
+        state.cars.splice(index, 1)
+      })
+      .addCase(deleteCar.rejected, (state, action) => {
+        state.isLoading[2] = false
+        state.isError[2] = true
+        state.isSuccess[2] = false
+        state.message = action.payload
+      })
       
   },
 })

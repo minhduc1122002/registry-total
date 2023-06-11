@@ -65,6 +65,7 @@ class FormView(APIView):
         car_serializer = CarSerializer(data=car_data)
         if car_serializer.is_valid():
             car_data['owner'] = owner
+            print(owner)
             car = Car(**car_data)
             return car
         else:
@@ -78,7 +79,7 @@ class FormView(APIView):
             return Response('Car is None', status=400)
         
         try:
-            car = Car.objects.get(register_id=request.data['car']['register_id'])
+            car = Car.objects.get(registration_id=request.data['car']['registration_id'])
         except:
             car = None
         
@@ -88,7 +89,7 @@ class FormView(APIView):
                 return Response(car, status=400)
         else:
             try:
-                exsited_form = Form.objects.get(car__register_id=car.register_id)
+                exsited_form = Form.objects.get(car__registration_id=car.registration_id)
             except:
                 exsited_form = None
 
@@ -117,6 +118,7 @@ class FormView(APIView):
         register_serializer = FormSerializer(data=register_data)
         
         if register_serializer.is_valid():
+            car.inspection_status = "Đã Đăng Kiểm"
             register_data['car'] = car
             register_data['center'] = center
             register = Form(**register_data)
@@ -126,6 +128,7 @@ class FormView(APIView):
             register.save()
             response = model_to_dict(register)
             response['car'] = model_to_dict(register.car)
+            response['car']['owner'] = model_to_dict(car.owner)
             response['center'] = model_to_dict(register.center)
             return Response(response, status=status.HTTP_200_OK)
         
@@ -165,7 +168,7 @@ class FormDetailView(FormView):
         
         car_request = request.data['car']
         try:
-            car = Car.objects.get(register_id=car_request['register_id'])
+            car = Car.objects.get(registration_id=car_request['registration_id'])
             owner = self.get_owner(car_request, car)
             if not isinstance(owner, Owner):
                 return owner

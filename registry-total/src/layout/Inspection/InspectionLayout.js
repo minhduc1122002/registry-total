@@ -94,11 +94,11 @@ export default function InspectionLayout( {inspections} ) {
           }
         },
         {
-          field: "register_id",
+          field: "registration_id",
           headerName: "Số Đăng Ký",
           width: 150,
           renderCell: (params) => {
-            return <div className="rowitem">{params.row.car.register_id}</div>;
+            return <div className="rowitem">{params.row.car.registration_id}</div>;
           },
         },
     

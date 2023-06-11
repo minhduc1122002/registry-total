@@ -65,7 +65,7 @@ class CarDetailView(CarView):
 
     def get(self, request, id, *args, **kwargs):
         try:
-            car = Car.objects.get(registration_id=str(id))
+            car = Car.objects.get(registration_id=id)
             serializer = CarSerializer(car)
 
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -84,9 +84,9 @@ class CarDetailView(CarView):
 
         if owner_serializer.is_valid():
             owner = Owner(**request.data['owner'])
-            owner_serializer.save()
-
-        return owner
+            return owner
+        else:
+            return owner_serializer.errors
     
     def put(self, request, id, *args, **kwargs):
         if not request.data:
@@ -98,7 +98,10 @@ class CarDetailView(CarView):
             return Response('Not Found', status=status.HTTP_400_BAD_REQUEST)
 
         owner = self.check_owner(request, car)
-
+        
+        if not isinstance(owner, Owner):
+            return Response(owner, status=400)
+        
         car_data = request.data.copy()
         car_data['owner'] = None
         
@@ -113,3 +116,58 @@ class CarDetailView(CarView):
             return Response(response, status=status.HTTP_200_OK)
         
         return Response(car_serializer.errors, status=400)
+    
+    def delete(self, request, id, *args, **kwargs):
+        try:
+            car = Car.objects.get(registration_id=id)
+            car.delete()
+            return Response('Car Deleted', status=status.HTTP_200_OK)
+        except:
+            return Response('Not Found', status=status.HTTP_400_BAD_REQUEST)
+
+class CarListView(APIView):
+    serializer_class = CarSerializer
+    queryset = Car.objects.all()
+    
+    def check_owner(self, data):
+        if data.get('owner') is None or data['owner'] is None:
+            return Response('Owner is None', status=400)
+        try:
+            owner = Owner.objects.get(id=data['owner']['id'])
+        except:
+            owner = None
+        
+        if owner is None:
+            owner_serializer = OwnerSerializer(owner, data=data['owner'])
+            if owner_serializer.is_valid():
+                owner = Owner(**data['owner'])
+            else:
+                return owner_serializer.errors
+        return owner
+
+    def post(self, request, format=None):
+        if not request.data:
+            return Response('Empty Body', status=400)
+        
+        responses = []
+        for item in request.data:
+            owner = self.check_owner(item)
+            if not isinstance(owner, Owner):
+                return Response(owner, status=400)
+            
+            car_data = item.copy()
+            car_data['owner'] = None
+            
+            car_serializer = CarSerializer(data=car_data)
+            
+            if car_serializer.is_valid():
+                car_data['owner'] = owner
+                car = Car(**car_data)
+                owner.save()
+                car.save()
+                response = model_to_dict(car)
+                response['owner'] = model_to_dict(owner)
+                responses.append(response)
+            else:
+                return Response(car_serializer.errors, status=400)
+        return Response(responses, status=status.HTTP_200_OK)

@@ -1,17 +1,15 @@
 import React from 'react'
 import './Table.scss'
-import { useState } from "react";
-import InputBase from '@mui/material/InputBase';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import { styled, alpha } from '@mui/material/styles';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import * as XLSX from 'xlsx/xlsx.mjs'
 import { useSelector } from "react-redux";
+import { addCarList } from '../../redux/car'
+import { useDispatch } from 'react-redux'
 
 export default function CarTable( { cols, rows, title, row_id, actionColumn }) {
     const user = useSelector((state) => state.auth.user);
-    
+    const dispatch = useDispatch()
+
     function upload() {
       var files = document.getElementById('file_upload').files;
       if(files.length === 0){
@@ -49,19 +47,19 @@ export default function CarTable( { cols, rows, title, row_id, actionColumn }) {
               for (var j = 0; j < result['Owner'].length; j++) {
                 var car = result['Car'][i];
                 var owner = result['Owner'][j];
-                if (car['Chủ sở hữu'] == owner['Chủ sở hữu']) {
-                  car['Chủ sở hữu'] = owner;
+                if (car['owner'] == owner['id']) {
+                  car['owner'] = owner;
                   final.push(car);
                 }
               }
             }
-            console.log(JSON.stringify(final, null, 4));
+            dispatch(addCarList(JSON.parse(JSON.stringify(final, null, 4))))
           }
-      } catch(e){
+      } catch(e) {
         console.error(e);
       }
     }
-    
+    console.log(rows)
     return (
         <div className="datatable">
             <div className="datatableTitle">
@@ -70,7 +68,7 @@ export default function CarTable( { cols, rows, title, row_id, actionColumn }) {
                     <div className="upload">
                         <div className="faux-button">
                             <div className="btn-enhanced btn-s">Upload File</div>
-                            <input type="file" id="avatar" />
+                            <input type="file" id="file_upload" />
                             <div className="hover-bg"></div>
                         </div>
                         <button 
@@ -92,7 +90,7 @@ export default function CarTable( { cols, rows, title, row_id, actionColumn }) {
                 pageSize={9}
                 rowsPerPageOptions={[9]}
                 checkboxSelection
-                getRowId={(row) => row[row_id]}
+                getRowId={(row) => row['registration_id']}
                 slots={{toolbar: GridToolbar}}
             />
         </div>

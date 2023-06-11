@@ -3,7 +3,7 @@ import json
 
 class Car(models.Model):
     # mã của giấy đăng ký
-    register_id = models.TextField(primary_key=True, null=False, max_length=20, unique=True)
+    registration_id = models.TextField(primary_key=True, null=False, max_length=20, unique=True)
     # biển số đăng ký
     plate_number = models.TextField(null=False, max_length=20, unique=True)
     # nơi đăng ký
@@ -44,3 +44,5 @@ class Car(models.Model):
 
     # chủ sở hữu
     owner = models.ForeignKey('owner.Owner', on_delete=models.CASCADE, null=True, blank=True)
+    # đã đăng kiểm
+    inspection_status = models.CharField(max_length=100, default='Chưa đăng kiểm')

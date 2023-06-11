@@ -12,8 +12,8 @@ class OwnerView(APIView):
     queryset = Owner.objects.all()
 
     def get(self, request, *args, **kwargs):
-        cars = Owner.objects.all()
-        serializer = OwnerSerializer(cars, many=True)
+        owners = Owner.objects.all()
+        serializer = OwnerSerializer(owners, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
         
     def post(self, request, *args, **kwargs):
@@ -23,6 +23,11 @@ class OwnerView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, *args, **kwargs):
+        owners = Owner.objects.all()
+        owners.delete()
+        return Response('All Owner Deleted', status=status.HTTP_200_OK)
 
 class OwnerDetailView(OwnerView):
     serializer_class = OwnerSerializer

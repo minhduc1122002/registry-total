@@ -317,6 +317,7 @@ export default function DashboardLayout() {
               }
             </div>
             }
+            {yearly_registered_cars.length !== 0 &&
             <div className="block-content-container">
                 <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm qua các năm</h4>
                 <div style={{display: 'flex'}}>
@@ -338,7 +339,7 @@ export default function DashboardLayout() {
                       </div>
                     </div>
                 </div>
-            </div>
+            </div>}
             <div className="block-content-container">
                 <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
                     <h4 className="chart-title" style={{marginBottom: '0px'}}>Số lượng xe ô tô đã đăng kiểm trong năm</h4>
