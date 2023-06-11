@@ -24,6 +24,8 @@ urlpatterns = [
     path('form/register/year/<int:year>', FormYearViewAll.as_view()),
     path('form/register/month-year/<int:month>/<int:year>', FormMonthInYearViewAll.as_view()),
     path('form/register/bymonth/<int:year>', views.CountInMonthByCenter, name="center"),
+    path('form/register/bymonth/all/<int:year>', views.CountInMonthAll),
+    path('form/register/byyear/all', views.CountInYearAll),
     path('form/register/all', views.CountAllByCenter, name="center"),
     path('form/expired/all', views.ExpiredAllByCenter, name="center"),
     path('form/register/month/<int:month>/<str:district>', FormMonthViewDistrict.as_view()),

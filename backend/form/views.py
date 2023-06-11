@@ -358,6 +358,46 @@ def CountInMonthByCenter(request, year):
             month = list(total.values('register_date__month', 'center_id').annotate(count=Count('center_id')))
             return JsonResponse(month, safe=False)
 
+def CountInMonthAll(request, year):
+        token = request.headers.get('Token')
+        if not token:
+            return HttpResponse('You are not authenticated', status=400)
+        try:
+            payload = jwt.decode(token, 'secret', algorithms='HS256')
+        except jwt.ExpiredSignatureError:
+            return HttpResponse('Token is not valid', status=400)
+        
+        # Trung tâm
+        if payload['role'] == 'center' and payload['center'] is not None:
+            total = Form.objects.filter(register_date__year=year, center__id=payload['center']['id'])
+            month = list(total.values('register_date__month').annotate(count=Count('register_date__month')))
+            return JsonResponse(month, safe=False)
+        # Cục
+        else:
+            total = Form.objects.filter(register_date__year=year)
+            month = list(total.values('register_date__month').annotate(count=Count('register_date__month')))
+            return JsonResponse(month, safe=False)
+
+def CountInYearAll(request):
+        token = request.headers.get('Token')
+        if not token:
+            return HttpResponse('You are not authenticated', status=400)
+        try:
+            payload = jwt.decode(token, 'secret', algorithms='HS256')
+        except jwt.ExpiredSignatureError:
+            return HttpResponse('Token is not valid', status=400)
+        
+        # Trung tâm
+        if payload['role'] == 'center' and payload['center'] is not None:
+            total = Form.objects.filter(center__id=payload['center']['id'])
+            year = list(total.values('register_date__year').annotate(count=Count('register_date__year')))
+            return JsonResponse(year, safe=False)
+        # Cục
+        else:
+            total = Form.objects.all()
+            year = list(total.values('register_date__year').annotate(count=Count('register_date__year')))
+            return JsonResponse(year, safe=False)
+
 def CountAllByCenter(request):
         token = request.headers.get('Token')
         if not token:

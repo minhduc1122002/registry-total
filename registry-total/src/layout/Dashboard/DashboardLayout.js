@@ -37,6 +37,7 @@ export default function DashboardLayout() {
     const user = useSelector((state) => state.auth.user);
     const [registered_cars, setRegisteredCars] = useState([]);
     const [year_registered_cars, setYearRegisteredCars] = useState([]);
+    const [yearly_registered_cars, setYearlyRegisteredCars] = useState([]);
     const [expiring_cars, setExpiringCars] = useState([]);
     const [expired_cars, setExpiredCars] = useState([]);
 
@@ -66,7 +67,7 @@ export default function DashboardLayout() {
             const response = await axios.create({
             baseURL: BASE_URL,
             headers: { token: `${TOKEN}` },
-        }).get("/form");
+        }).get("/form/register/all");
         
             setRegisteredCars(response.data);
         } catch(e) {
@@ -95,14 +96,35 @@ export default function DashboardLayout() {
                 baseURL: BASE_URL,
                 headers: { token: `${TOKEN}` },
             }).get("/form/expired/all");
-            console.log(response.data)
             setExpiredCars(response.data);
         } catch(e) {
             console.log(e)
         }};
         getExpiredCars();
 
+        const getYearlyRegisteredCars = async () => {
+            try {
+                const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+                const response = await axios.create({
+                    baseURL: BASE_URL,
+                    headers: { token: `${TOKEN}` },
+                }).get("/form/register/byyear/all");
+                const data = response.data;
+                data.forEach( obj => renameKey( obj, 'register_date__year', 'name' ) );
+                data.forEach( obj => renameKey( obj, 'count', 'Total' ) );
+                setYearlyRegisteredCars(data);
+            } catch(e) {
+                console.log(e)
+            }};
+            getYearlyRegisteredCars();
+            
+
     }, []);
+
+    function renameKey(obj, oldKey, newKey) {
+        obj[newKey] = obj[oldKey];
+        delete obj[oldKey];
+    }
     
     async function getYearRegisteredCars(url) {
         try {
@@ -118,10 +140,13 @@ export default function DashboardLayout() {
         }
     };
 
-    const years = [
+    const years = (user.role === 'center') ? ([
         { value: '/form/register/bymonth/2022', label: '2022' },
         { value: '/form/register/bymonth/2023', label: '2023' }
-    ]
+    ]) : ([
+        { value: '/form/register/bymonth/all/2022', label: '2022' },
+        { value: '/form/register/bymonth/all/2023', label: '2023' }
+    ])
 
     const [selected, setSelected] = useState(null);
 
@@ -247,6 +272,53 @@ export default function DashboardLayout() {
               }
             </div>
             }
+            <div className="block-content-container">
+                <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm qua các năm</h4>
+                <div style={{display: 'flex'}}>
+                  <div className="statistics-line-chart">
+                    <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
+                        <ResponsiveContainer width={800} height={400}>
+                          <AreaChart
+                            data={yearly_registered_cars}
+                            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                            name
+                          >
+                          <defs>
+                              <linearGradient id="total" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="rgb(23, 193, 232)" stopOpacity={0.2} />
+                              <stop offset="70%" stopColor="rgb(23, 193, 232)" stopOpacity={0.1} />
+                              </linearGradient>
+                              <linearGradient id="missing" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#8884d8" stopOpacity={0.4} />
+                              <stop offset="70%" stopColor="#8884d8" stopOpacity={0.2} />
+                              </linearGradient>
+                          </defs>
+                          <XAxis dataKey="name" stroke="gray" />
+                          <YAxis/>
+                          <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
+                          <Tooltip />
+                          <Area
+                              type="monotone"
+                              dataKey="Total"
+                              stroke="rgb(23, 193, 232)"
+                              fillOpacity={1}
+                              strokeWidth={4}
+                              fill="url(#total)"
+                          />
+                          <Area
+                              type="monotone"
+                              dataKey="Missing"
+                              stroke="#8884d8"
+                              fillOpacity={1}
+                              strokeWidth={4}
+                              fill="url(#missing)"
+                          />
+                          </AreaChart>
+                      </ResponsiveContainer>
+                      </div>
+                    </div>
+                </div>
+            </div>
             <div className="block-content-container">
                 <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm trong năm</h4>
                 <div style={{display: 'flex'}}>
