@@ -1,11 +1,71 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import InspectionTable from '../../components/Table/InspectionTable'
 import { Link } from "react-router-dom";
 import { deleteInspection } from '../../redux/inspection'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import Select from "react-select"
 
 export default function InspectionLayout( {inspections} ) {
     const dispatch = useDispatch()
+    const user = useSelector((state) => state.auth.user);
+    const cities = require('../../address/tinh_tp.json');
+    const tree = require('../../address/tree.json');
+    const filters = [
+      { value: 'city', label: 'Theo Tỉnh/Thành phố' },
+      { value: 'district', label: 'Theo Quận/Huyện' },
+      { value: 'center', label: 'Theo Trung tâm' }
+    ]
+    const centers = [
+      { value: '1', label: '1' },
+      { value: '2', label: '2' },
+      { value: '3', label: '3' }
+    ]
+    const [inspection, setInspection] = useState(inspections)
+
+    const [filter, setFilter] = useState()
+    const [city, setCity] = useState()
+    const [district, setDistrict] = useState()
+    const [center, setCenter] = useState()
+
+    useEffect(() => {
+      setCity("")
+      setDistrict("")
+      setCenter("")
+  }, [filter])
+
+  useEffect(() => {
+      setDistrict("")
+  }, [city])
+
+    const selectStyle = {    
+      control: (base, state) => ({
+          ...base,
+          '&:hover': { borderColor: 'gray' },
+          border: '1px solid rgba(0, 0, 0, 0.32)',
+          boxShadow: 'none',
+          width: '100%'
+      }),
+    };
+
+    const getDist = (city) => {
+      if (city && city.code) {
+          return tree[city.code]['quan-huyen']
+      }
+      else return []
+    }
+
+    const handleClick = () => {
+      if (filter) {
+        switch(filter.value) {
+          case 'city':
+            setInspection(inspections.filter(inspection => inspection.center.city == city.code))
+          case 'district':
+            setInspection(inspections.filter(inspection => inspection.center.district == district.code))
+          case 'center':
+            setInspection(inspections.filter(inspection => inspection.center.id == center.value))
+        }
+      }
+    }
 
     const handleDelete = (e, id) => {
         e.preventDefault()
@@ -132,9 +192,77 @@ export default function InspectionLayout( {inspections} ) {
     return (
         <div className="dashboard-layout">
             <h4 className="dashboard-title">Giấy Đăng Kiểm</h4>
-            {inspections &&
+            {user.role === 'department' && 
+            (
+            <>
+            <div className="row-select">
+              <div className="label">Bộ lọc</div>
+              <div className="select-container" style={{width:'70%'}}>
+                <Select
+                  id="filter" name="filter" options={filters}
+                  className="select"
+                  placeholder="Chọn Bộ lọc"
+                  value={filter}
+                  onChange={setFilter}
+                  noOptionsMessage={() => "Không có lựa chọn nào"}
+                  styles={selectStyle}
+                />
+              </div>
+            </div>
+            <div className="row-select">
+              <div className="label">Tỉnh/Thành phố</div>
+              <div className="select-container">
+                <Select 
+                    id="city" name="City" options={(filter && filter.value=='center') ? [] : cities}
+                    className="select"
+                    placeholder="Chọn Tỉnh/Thành phố"
+                    value={city}
+                    onChange={setCity}
+                    getOptionLabel={(city) => city.name_with_type}
+                    getOptionValue={(city) => city.code}
+                    noOptionsMessage={() => "Không có lựa chọn nào"}
+                    styles={selectStyle}
+                />
+              </div>
+            </div>
+            <div className="row-select">
+              <div className="label">Quận/Huyện</div>
+              <div className="select-container">
+                <Select
+                    id="district" name="District" options={(filter && filter.value=='district') ? getDist(city) : []}
+                    className="select"
+                    placeholder="Chọn Quận/Huyện"
+                    value={district}
+                    onChange={setDistrict}
+                    getOptionLabel={(district) => district.name_with_type}
+                    getOptionValue={(district) => district.code}
+                    noOptionsMessage={() => "Không có lựa chọn nào"}
+                    styles={selectStyle}
+                />
+              </div>
+            </div>
+            <div className="row-select">
+              <div className="label">Trung tâm</div>
+              <div className="select-container">
+                <Select
+                    id="center" name="Center" options={(filter && filter.value=='center') ? centers : []}
+                    className="select"
+                    placeholder="Chọn Trung tâm"
+                    value={center}
+                    onChange={setCenter}
+                    noOptionsMessage={() => "Không có lựa chọn nào"}
+                    styles={selectStyle}
+                />
+              </div>
+            </div>
+            <div className="button-container">
+              <button type='button' className='link primary-btn' onClick={handleClick}>Lọc</button>
+            </div>
+            </>)}
+
+            {inspection &&
               <div className="statistics-line-chart" style={{paddingBottom: '20px', paddingTop: '20px'}}>
-                  <InspectionTable rows={inspections} cols={userColumns} row_id='register_id' actionColumn={actionColumn}/>
+                  <InspectionTable rows={inspection} cols={userColumns} row_id='register_id' actionColumn={actionColumn}/>
               </div>
             }
         </div>

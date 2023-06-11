@@ -13,16 +13,16 @@ import {
     RadialBar,
     RadialBarChart
 } from "recharts";
-import Table from '../../components/Table/InspectionTable'
+import Table from '../../../components/Table/InspectionTable'
 import { useState, useEffect } from "react";
 import axios from 'axios';
-import "./DashboardLayout.css";
+import "../../../layout/Dashboard/DashboardLayout.css";
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
-import { getCarList } from '../../redux/car'
-import { getInspectionList } from '../../redux/inspection'
+import { getCarList } from '../../../redux/car'
+import { getInspectionList } from '../../../redux/inspection'
 
 const customStyles = {
 
@@ -39,7 +39,7 @@ const customStyles = {
     singleValue: (defaultStyles) => ({ ...defaultStyles, color: "rgb(40, 53, 147)" }),
   };
 
-export default function DashboardLayout() {
+export default function DashboardLayout({center_id}) {
     const user = useSelector((state) => state.auth.user);
     const [registered_cars, setRegisteredCars] = useState([]);
     const [year_registered_cars, setYearRegisteredCars] = useState([]);
@@ -55,10 +55,13 @@ export default function DashboardLayout() {
         dispatch(getCarList())
     }, [dispatch]);
 
-    const inspections = useSelector(state => state.inspection.inspections)
+    const inspections = useSelector(state => state.inspection.inspections).filter(inspection => inspection.center.id == center_id)
     useEffect(() => {
         dispatch(getInspectionList())
     }, [dispatch]);
+
+    // console.log(inspections.filter(inspection => inspection.center.id == center_id))
+    console.log(cars)
 
     const BASE_URL = "http://localhost:8000/api/"
 
@@ -86,7 +89,7 @@ export default function DashboardLayout() {
                 const response = await axios.create({
                 baseURL: BASE_URL,
                 headers: { token: `${TOKEN}` },
-            }).get("/form/register/all");
+            }).get(`/form/register/all/${center_id}`);
             
                 setRegisteredCars(response.data);
             } catch(e) {
@@ -100,7 +103,7 @@ export default function DashboardLayout() {
                 const response = await axios.create({
                     baseURL: BASE_URL,
                     headers: { token: `${TOKEN}` },
-                }).get("/form/expiring/all");
+                }).get(`/form/expiring/all/${center_id}`);
                 
                 setExpiringCars(response.data);
             } catch(e) {
@@ -114,7 +117,7 @@ export default function DashboardLayout() {
             const response = await axios.create({
                 baseURL: BASE_URL,
                 headers: { token: `${TOKEN}` },
-            }).get("/form/expired/all");
+            }).get(`/form/expired/all/${center_id}`);
             setExpiredCars(response.data);
         } catch(e) {
             console.log(e)
@@ -127,7 +130,7 @@ export default function DashboardLayout() {
                 const response = await axios.create({
                     baseURL: BASE_URL,
                     headers: { token: `${TOKEN}` },
-                }).get("/form/register/byyear/all");
+                }).get(`/form/register/byyear/all/${center_id}`);
                 const data = response.data;
                 data.forEach( obj => renameKey( obj, 'register_date__year', 'name' ) );
                 data.forEach( obj => renameKey( obj, 'count', 'Total' ) );
@@ -159,13 +162,10 @@ export default function DashboardLayout() {
         }
     };
 
-    const years = (user.role === 'center') ? ([
-        { value: '/form/register/bymonth/2022', label: '2022' },
-        { value: '/form/register/bymonth/2023', label: '2023' }
-    ]) : ([
-        { value: '/form/register/bymonth/all/2022', label: '2022' },
-        { value: '/form/register/bymonth/all/2023', label: '2023' }
-    ])
+    const years = [
+        { value: `/form/register/bymonth/2022/${center_id}`, label: '2022' },
+        { value: `/form/register/bymonth/2023/${center_id}`, label: '2023' }
+    ]
 
     const handleChange = (selectedOption) => {
         setSelected(selectedOption);
@@ -238,18 +238,6 @@ export default function DashboardLayout() {
             }
         return month;
     }
-    
-    const getTotalCount = (list) => {
-        if (list.length === 0) {
-            return 0
-        } else {
-            let sum = 0
-            for(let i = 0; i < list.length; i++) {
-                sum += list[i].count
-            }
-            return sum
-        }
-    }
 
     const new_regis_cars = cars.length - inspections.length;
 
@@ -270,10 +258,10 @@ export default function DashboardLayout() {
     
     return (
         <div className="dashboard-layout">
-            <h4 className="dashboard-title">Dashboard</h4>
+            <h5 className="dashboard-title">Thống kê</h5>
             {registered_cars && expiring_cars && expired_cars && 
             <div className="card-grid">
-              { user.role === 'center' ? (
+               
                   <>
                     <div className="statistics-card">
                         <h4>{registered_cars.count}</h4>
@@ -298,31 +286,8 @@ export default function DashboardLayout() {
                         <p>Ô Tô Đăng Kiểm Lại</p>
                     </div>
                   </>
-                ) : (
-                  <>
-                    <div className="statistics-card">
-                      <h4>{getTotalCount(registered_cars)}</h4>
-                      <p>Ô Tô Đã Đăng Kiểm</p>
-                    </div>
-                    <div className="statistics-card">
-                      <h4>{expiring_cars.length}</h4>
-                      <p>Ô Tô Sắp Hết Hạn Đăng Kiểm</p>
-                    </div>
-                    <div className="statistics-card">
-                      <h4>{getTotalCount(expired_cars)}</h4>
-                      <p>Ô Tô Đã Hết Hạn Đăng Kiểm</p>
-                    </div>
-                    <div className="statistics-card">
-                        <p>Dự báo</p>
-                        <h4>{new_regis_cars}</h4>
-                        <p>Ô Tô Đăng Kiểm Mới</p>
-                    </div>
-                </>
-                )
-              }
             </div>
             }
-            {yearly_registered_cars.length !== 0 &&
             <div className="block-content-container">
                 <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm qua các năm</h4>
                 <div style={{display: 'flex'}}>
@@ -344,7 +309,7 @@ export default function DashboardLayout() {
                       </div>
                     </div>
                 </div>
-            </div>}
+            </div>
             <div className="block-content-container">
                 <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
                     <h4 className="chart-title" style={{marginBottom: '0px'}}>Số lượng xe ô tô đã đăng kiểm trong năm</h4>
