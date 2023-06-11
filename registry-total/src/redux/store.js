@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import authReducer from "./auth"
 import inspectionReducer from "./inspection"
 import carReducer from "./car"
+import userReducer from "./user"
 import {
   createStateSyncMiddleware,
   initMessageListener,
@@ -16,7 +17,8 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     inspection: inspectionReducer,
-    car: carReducer
+    car: carReducer,
+    user: userReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(syncMiddleware),
 })

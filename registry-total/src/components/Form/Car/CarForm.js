@@ -12,8 +12,6 @@ export default function CarForm( {props} ) {
     const {index, setIndex, carId, setCarId, carDate, setCarDate, numberPlate, setNumberPlate, carPlace, setCarPlace,
         brand, setBrand, modelCode, setModelCode, carUse, setCarUse, carType, setCarType, engine_number, setEngineNumber, chassis_number, setChassisNumber} = props
 
-    const cities = require('../../../address/tinh_tp.json');
-
     const selectStyle = {    
         control: (base, state) => ({
             ...base,

@@ -43,7 +43,7 @@ class FormView(APIView):
             serializer = FormSerializer(registers, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
     
-    def check_car(self, request):
+    def get_car(self, request):
         car_request = request.data['car']
         if car_request['owner'] is None:
             return Response('Owner is None', status=400)
@@ -56,7 +56,6 @@ class FormView(APIView):
             owner_serializer = OwnerSerializer(data=car_request['owner'])
             if owner_serializer.is_valid():
                 owner = Owner(**car_request['owner'])
-                owner_serializer.save()
             else:
                 return owner_serializer.errors
 
@@ -67,7 +66,6 @@ class FormView(APIView):
         if car_serializer.is_valid():
             car_data['owner'] = owner
             car = Car(**car_data)
-            car.save()
             return car
         else:
             return car_serializer.errors
@@ -85,10 +83,18 @@ class FormView(APIView):
             car = None
         
         if car is None:
-            car = self.check_car(request)
+            car = self.get_car(request)
             if not isinstance(car, Car):
                 return Response(car, status=400)
-            
+        else:
+            try:
+                exsited_form = Form.objects.get(car__register_id=car.register_id)
+            except:
+                exsited_form = None
+
+            if exsited_form is not None:
+                return Response('Form with this car already exsited', status=400)
+                
         if request.data.get("center") is None or request.data['center'] is None:
             return Response('Center is None', status=400)
         
@@ -101,8 +107,6 @@ class FormView(APIView):
             center_serializer = CenterSerializer(center, data=request.data['center'])
             if center_serializer.is_valid():
                 center = Center(**request.data['center'])
-                center.save()
-                # center_serializer.save()
             else:
                 return Response(center_serializer.errors, status=400)
             
@@ -114,9 +118,11 @@ class FormView(APIView):
         
         if register_serializer.is_valid():
             register_data['car'] = car
-            
             register_data['center'] = center
             register = Form(**register_data)
+            car.owner.save()
+            car.save()
+            center.save()
             register.save()
             response = model_to_dict(register)
             response['car'] = model_to_dict(register.car)
@@ -137,7 +143,7 @@ class FormDetailView(FormView):
         except:
             return Response('Not Found', status=status.HTTP_400_BAD_REQUEST)
     
-    def check_owner(self, request, car):
+    def get_owner(self, request, car):
         if request.get("owner") is None or request['owner'] is None:
             return car.owner
         try:
@@ -149,25 +155,24 @@ class FormDetailView(FormView):
 
         if owner_serializer.is_valid():
             owner = Owner(**request['owner'])
-            owner_serializer.save()
             return owner
         else:
             return owner_serializer.errors
     
-    def check_car(self, request, register):
+    def get_car(self, request, register):
         if request.data.get("car") is None or request.data['car'] is None:
             return register.car
         
         car_request = request.data['car']
         try:
             car = Car.objects.get(register_id=car_request['register_id'])
-            owner = self.check_owner(car_request, car)
+            owner = self.get_owner(car_request, car)
             if not isinstance(owner, Owner):
                 return owner
             
         except:
             car = register.car
-            owner = self.check_owner(car_request, car)
+            owner = self.get_owner(car_request, car)
             if not isinstance(owner, Owner):
                 return owner
             
@@ -179,12 +184,11 @@ class FormDetailView(FormView):
         if car_serializer.is_valid():
             car_data['owner'] = owner
             car = Car(**car_data)
-            car.save()
             return car
         else:
             return car_serializer.errors
     
-    def check_center(self, request, register):
+    def get_center(self, request, register):
         if request.data.get("center") is None or request.data['center'] is None:
             return register.center
         
@@ -198,7 +202,6 @@ class FormDetailView(FormView):
             
         if center_serializer.is_valid():
             center = Center(**request.data['center'])
-            center_serializer.save()
             return center
         else:
             return center_serializer.errors
@@ -212,12 +215,12 @@ class FormDetailView(FormView):
         except:
             return Response('Not Found', status=status.HTTP_400_BAD_REQUEST)
 
-        car = self.check_car(request, register)
+        car = self.get_car(request, register)
 
         if not isinstance(car, Car):
             return Response(car, status=400)
         
-        center = self.check_center(request, register)
+        center = self.get_center(request, register)
         
         if not isinstance(center, Center):
             return Response(center, status=400)
@@ -231,8 +234,10 @@ class FormDetailView(FormView):
         if register_serializer.is_valid():
             register_data['car'] = car
             register_data['center'] = center
-
             register = Form(**register_data)
+            car.owner.save()
+            car.save()
+            center.save()
             register.save()
             response = model_to_dict(register)
             response['car'] = model_to_dict(car)
@@ -249,52 +254,6 @@ class FormDetailView(FormView):
             return Response('Form Deleted', status=status.HTTP_200_OK)
         except:
             return Response('Not Found', status=status.HTTP_400_BAD_REQUEST)
-        
-class FormMonthViewAll(APIView):
-    def get(self, request, month, *args, **kwargs):
-        token = request.headers.get('Token')
-        if not token:
-            return Response('You are not authenticated', status=400)
-        try:
-            payload = jwt.decode(token, 'secret', algorithms='HS256')
-        except jwt.ExpiredSignatureError:
-            return Response('Token is not valid', status=400)
-        
-        # Trung tâm
-        if payload['role'] == 'center' and payload['center'] is not None:
-            register = Form.objects.filter(register_date__month=month, center__id=payload['center']['id'])
-            serializer = FormSerializer(register, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        # Cục
-        else:
-            register = Form.objects.filter(register_date__month=month)
-            serializer = FormSerializer(register, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-class FormQuarterViewAll(APIView):
-    def get(self, request, quarter, *args, **kwargs):
-        token = request.headers.get('Token')
-        if not token:
-            return Response('You are not authenticated', status=400)
-        try:
-            payload = jwt.decode(token, 'secret', algorithms='HS256')
-        except jwt.ExpiredSignatureError:
-            return Response('Token is not valid', status=400)
-        
-        start = (quarter - 1) * 2 + quarter
-        mid = start + 1
-        end = start + 2
-
-        # Trung tâm
-        if payload['role'] == 'center' and payload['center'] is not None:
-            register = Form.objects.filter(Q(register_date__month=start) | Q(register_date__month=mid) | Q(register_date__month=end), center__id=payload['center']['id'])
-            serializer = FormSerializer(register, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        # Cục
-        else:
-            register = Form.objects.filter(Q(register_date__month=start) | Q(register_date__month=mid) | Q(register_date__month=end))
-            serializer = FormSerializer(register, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
 
 class FormYearViewAll(APIView):
     def get(self, request, year, *args, **kwargs):
@@ -314,27 +273,6 @@ class FormYearViewAll(APIView):
         # Cục
         else:
             register = Form.objects.filter(register_date__year=year)
-            serializer = FormSerializer(register, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        
-class FormMonthInYearViewAll(APIView):
-    def get(self, request, month, year, *args, **kwargs):
-        token = request.headers.get('Token')
-        if not token:
-            return Response('You are not authenticated', status=400)
-        try:
-            payload = jwt.decode(token, 'secret', algorithms='HS256')
-        except jwt.ExpiredSignatureError:
-            return Response('Token is not valid', status=400)
-        
-        # Trung tâm
-        if payload['role'] == 'center' and payload['center'] is not None:
-            register = Form.objects.filter(register_date__month=month, register_date__year=year, center__id=payload['center']['id'])
-            serializer = FormSerializer(register, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        # Cục
-        else:
-            register = Form.objects.filter(register_date__month=month, register_date__year=year)
             serializer = FormSerializer(register, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 

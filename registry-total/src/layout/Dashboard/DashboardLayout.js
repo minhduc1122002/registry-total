@@ -62,18 +62,18 @@ export default function DashboardLayout() {
       });
     
         const getRegisteredCars = async () => {
-        try {
-            const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
-            const response = await axios.create({
-            baseURL: BASE_URL,
-            headers: { token: `${TOKEN}` },
-        }).get("/form/register/all");
-        
-            setRegisteredCars(response.data);
-        } catch(e) {
-            console.log(e)
-        }};
-        getRegisteredCars();
+            try {
+                const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+                const response = await axios.create({
+                baseURL: BASE_URL,
+                headers: { token: `${TOKEN}` },
+            }).get("/form/register/all");
+            
+                setRegisteredCars(response.data);
+            } catch(e) {
+                console.log(e)
+            }};
+            getRegisteredCars();
 
         const getExpiringCars = async () => {
             try {
@@ -233,15 +233,16 @@ export default function DashboardLayout() {
             return sum
         }
     }
+    
     return (
         <div className="dashboard-layout">
             <h4 className="dashboard-title">Dashboard</h4>
-            {expiring_cars && expiring_cars && expired_cars && 
+            {registered_cars && expiring_cars && expired_cars && 
             <div className="card-grid">
               { user.role === 'center' ? (
                   <>
                     <div className="statistics-card">
-                        <h4>{year_registered_cars.length}</h4>
+                        <h4>{registered_cars.count}</h4>
                         <p>Ô Tô Đã Đăng Kiểm</p>
                     </div>
                     <div className="statistics-card">
@@ -277,59 +278,34 @@ export default function DashboardLayout() {
                 <div style={{display: 'flex'}}>
                   <div className="statistics-line-chart">
                     <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                        <ResponsiveContainer width={800} height={400}>
-                          <AreaChart
+                        <ResponsiveContainer width={'100%'} height={400}>
+                          <BarChart
                             data={yearly_registered_cars}
-                            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                             name
                           >
-                          <defs>
-                              <linearGradient id="total" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="rgb(23, 193, 232)" stopOpacity={0.2} />
-                              <stop offset="70%" stopColor="rgb(23, 193, 232)" stopOpacity={0.1} />
-                              </linearGradient>
-                              <linearGradient id="missing" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor="#8884d8" stopOpacity={0.4} />
-                              <stop offset="70%" stopColor="#8884d8" stopOpacity={0.2} />
-                              </linearGradient>
-                          </defs>
-                          <XAxis dataKey="name" stroke="gray" />
-                          <YAxis/>
-                          <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
-                          <Tooltip />
-                          <Area
-                              type="monotone"
-                              dataKey="Total"
-                              stroke="rgb(23, 193, 232)"
-                              fillOpacity={1}
-                              strokeWidth={4}
-                              fill="url(#total)"
-                          />
-                          <Area
-                              type="monotone"
-                              dataKey="Missing"
-                              stroke="#8884d8"
-                              fillOpacity={1}
-                              strokeWidth={4}
-                              fill="url(#missing)"
-                          />
-                          </AreaChart>
+                            <Bar dataKey="Total" fill="rgb(63, 81, 181)" />
+                            <XAxis dataKey="name" stroke="gray" />
+                            <YAxis/>
+                            <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
+                          
+                          
+                          </BarChart>
                       </ResponsiveContainer>
                       </div>
                     </div>
                 </div>
             </div>
             <div className="block-content-container">
-                <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm trong năm</h4>
+                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
+                    <h4 className="chart-title" style={{marginBottom: '0px'}}>Số lượng xe ô tô đã đăng kiểm trong năm</h4>
+                    <Select options={years} onChange={handleChange} styles={customStyles}/>
+                </div>
                 <div style={{display: 'flex'}}>
-                  <div className="statistics-line-chart">
-                    <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                        <Select options={years} onChange={handleChange} styles={customStyles}/>
-                        <br></br>
-                        <ResponsiveContainer width={600} height={400}>
+                  <div className="statistics-line-chart" style={{padding: '16px'}}>
+                    <div style={{overflowX: 'scroll', paddingBottom: '8px'}}>
+                        <ResponsiveContainer width={800} height={400}>
                           <AreaChart
                             data={selectdata()}
-                            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                           >
                           <defs>
                               <linearGradient id="total" x1="0" y1="0" x2="0" y2="1">
@@ -366,7 +342,7 @@ export default function DashboardLayout() {
                       </div>
                     </div>
                     <div className="quater-container">
-                        <span className="statis"> Thống kê </span>
+                        <span className="statis">Thống kê theo từng quý</span>
                         <hr className="space"></hr>
                         <ul className="progress-bar">
                             <li>
@@ -376,10 +352,10 @@ export default function DashboardLayout() {
                                     </p>
                                     <Box sx={{ width: '100%' }}>
                                         <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
-                                                        '& .MuiLinearProgress-bar': {
-                                                            backgroundColor: 'rgb(236, 64, 122)'
-                                                        }}} 
-                                                        variant="determinate" value={quarter[0].Total} />
+                                            '& .MuiLinearProgress-bar': {
+                                                backgroundColor: 'rgb(236, 64, 122)'
+                                            }}} 
+                                        variant="determinate" value={quarter[0].Total * 100 / (quarter[0].Total + quarter[1].Total + quarter[2].Total + quarter[3].Total)} />
                                     </Box>
                                 </div>
                             </li>
@@ -390,10 +366,10 @@ export default function DashboardLayout() {
                                     </p>
                                     <Box sx={{ width: '100%' }}>
                                         <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
-                                                        '& .MuiLinearProgress-bar': {
-                                                            backgroundColor: 'rgb(251, 140, 0)'
-                                                        }}} 
-                                                        variant="determinate" value={quarter[1].Total} />
+                                            '& .MuiLinearProgress-bar': {
+                                                backgroundColor: 'rgb(251, 140, 0)'
+                                            }}} 
+                                        variant="determinate" value={quarter[1].Total * 100 / (quarter[0].Total + quarter[1].Total + quarter[2].Total + quarter[3].Total)} />
                                     </Box>
                                 </div>
                             </li>
@@ -404,10 +380,10 @@ export default function DashboardLayout() {
                                     </p>
                                     <Box sx={{ width: '100%' }}>
                                         <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
-                                                        '& .MuiLinearProgress-bar': {
-                                                            backgroundColor: 'rgb(124, 179, 66)'
-                                                        }}} 
-                                                        variant="determinate" value={quarter[2].Total} />
+                                            '& .MuiLinearProgress-bar': {
+                                                backgroundColor: 'rgb(124, 179, 66)'
+                                            }}} 
+                                            variant="determinate" value={quarter[2].Total * 100 / (quarter[0].Total + quarter[1].Total + quarter[2].Total + quarter[3].Total)} />
                                     </Box>
                                 </div>
                             </li>
@@ -418,10 +394,10 @@ export default function DashboardLayout() {
                                     </p>
                                     <Box sx={{ width: '100%' }}>
                                         <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
-                                                        '& .MuiLinearProgress-bar': {
-                                                            backgroundColor: 'rgb(3, 169, 244)'
-                                                        }}} 
-                                                        variant="determinate" value={quarter[3].Total*100} />
+                                            '& .MuiLinearProgress-bar': {
+                                                backgroundColor: 'rgb(3, 169, 244)'
+                                            }}} 
+                                            variant="determinate" value={quarter[3].Total * 100 / (quarter[0].Total + quarter[1].Total + quarter[2].Total + quarter[3].Total)} />
                                     </Box>
                                 </div>
                             </li>

@@ -2,23 +2,24 @@ import React from 'react'
 import Sidebar from '../../components/Menu/Menu'
 import Navigation from '../../components/Navigation/Navigation'
 import { useEffect, useState } from "react";
-import { getCarList } from '../../redux/car'
+import { getUserList } from '../../redux/user'
 import { useDispatch, useSelector } from 'react-redux'
 import CenterLayout from '../../layout/Center/CenterLayout'
 import Modal from '@mui/material/Modal';
+import { ToastContainer, toast } from 'react-toastify'
 
 export default function Car() {
-    // const dispatch = useDispatch()
-    // const cars = useSelector(state => state.car.cars)
-    // const [sideBar, setSideBar] = useState(false)
-    // useEffect(() => {
-    //     dispatch(getCarList())
-    // }, [dispatch]);
+    const dispatch = useDispatch()
+    const users = useSelector(state => state.user.users)
     const [sideBar, setSideBar] = useState(false)
-    const centers = []
+    
+    useEffect(() => {
+        dispatch(getUserList())
+    }, [dispatch]);
     
     return (
       <>
+
         <div className='container'>
             {sideBar &&
             <Modal open={sideBar} onClose={() => setSideBar(false)}>
@@ -31,7 +32,7 @@ export default function Car() {
             </div>
             <div className='main-content'>
                 <Navigation sideBar={sideBar} setSideBar={setSideBar}/>
-                <CenterLayout centers={centers}/>
+                <CenterLayout centers={users}/>
             </div>
         </div>
       </>

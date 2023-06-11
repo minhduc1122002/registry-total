@@ -2,13 +2,18 @@ import React from "react";
 import { useState, useEffect } from "react";
 import Select from "react-select";
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { addUser } from '../../../redux/user'
+import { useDispatch } from 'react-redux';
 
 export default function CenterForm() {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+
     const cities = require('../../../address/tinh_tp.json');
     const tree = require('../../../address/tree.json');
 
-    const [account, setAccount] = useState();
+    const [username, setUsername] = useState();
     const [password, setPassword] = useState();
     const [registerCity, setRegisterCity] = useState();
     const [registerDistrict, setRegisterDistrict] = useState();
@@ -34,6 +39,30 @@ export default function CenterForm() {
       }),
     };
     
+    const handleAdd = (e) => {
+        e.preventDefault()
+        if (!username || !password || !registerCity || !registerDistrict || !registerAddress) {
+            return toast.error('Hãy nhập đầy đủ các trường', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+            })
+        }
+        dispatch(addUser({
+            'username': username,
+            'password': password,
+            'role': 'center',
+            'center': {
+                'city': registerCity.code,
+                'district': registerDistrict.name_with_type,
+                'address': registerAddress
+            }
+        }))
+    }
     return (
         <>
             <div className="content">
@@ -42,13 +71,13 @@ export default function CenterForm() {
                     <div className="row-text">
                         <div className="label">Tài khoản</div>
                         <div className="text-input">
-                            <input type="text" name="account" value={account} onChange={(e) => setAccount(e.target.value)}></input>
+                            <input type="text" name="account" value={username} onChange={(e) => setUsername(e.target.value)}></input>
                         </div>
                     </div>
                     <div className="row-text">
                         <div className="label">Mật khẩu</div>
                         <div className="text-input">
-                            <input type="text" name="password" value={password} onChange={(e) => setPassword(e.target.value)}></input>
+                            <input type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)}></input>
                         </div>
                     </div>
                     <div className="label-group">
@@ -98,7 +127,7 @@ export default function CenterForm() {
             
                     <div className="button-container">
                         <button className="button button-back" type="button" onClick={() => navigate(`/center`)}>Hủy bỏ</button>
-                        <button className="button" type="button">Đăng ký</button>
+                        <button className="button" type="button" onClick={handleAdd}>Đăng ký</button>
                     </div>
                 </form>
             </div>

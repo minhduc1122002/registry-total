@@ -161,6 +161,31 @@
     animation-duration: 10ms; */
 }
 
+.text-input input[type=password]:hover {
+    border-color: gray;
+}
+
+.text-input input[type=password]:focus {
+    border-color: gray;
+}
+
+.text-input input[type=password] {
+    border: 1px solid rgba(0, 0, 0, 0.32);
+    border-radius: 8px;
+    align-items: center;
+    padding: 10px 10px 10px;
+    /* box-shadow: none; */
+    outline: none;
+    color: currentcolor;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 300;
+    /* height: 1.4375em; */
+    width: 100%;
+    /* animation-name: mui-auto-fill-cancel;
+    animation-duration: 10ms; */
+}
+
 .text-input input[type=text]:hover {
     border-color: gray;
 }

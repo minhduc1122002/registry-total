@@ -76,9 +76,8 @@ export default function InspectionLayout( {inspections} ) {
           headerName: "Tình Trạng",
           width: 150,
           renderCell: (params) => {
-            const register_date = new Date(params.row.register_date)
-            
-            const status = register_date.getTime() * 1000 < new Date().getTime() ? 'expired' : 'active'
+            const expired_date = new Date(params.row.expired_date)
+            const status = expired_date.getTime() < new Date().getTime() ? 'expired' : 'active'
             return (
               <div className={`cellWithStatus ${status}`}>
                 {status === 'expired' ? 'Đã hết hạn' : 'Còn hiệu lực'}
