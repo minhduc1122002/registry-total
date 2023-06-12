@@ -10,8 +10,8 @@ import {
     Bar,
     BarChart,
     Legend,
-    RadialBar,
-    RadialBarChart
+    LineChart,
+    Line
 } from "recharts";
 import Table from '../../components/Table/InspectionTable'
 import { useState, useEffect } from "react";
@@ -43,12 +43,18 @@ const customStyles = {
 
 export default function DashboardLayout() {
     const user = useSelector((state) => state.auth.user);
+    const [unregistered_cars, setUnRegisteredCars] = useState([]);
+    const [unregistered_cars_district, setUnRegisteredCarsDistrict] = useState([]);
+    const [forecast, setForecast] = useState([]);
+    const [re_registered_cars, setReRegisCars] = useState([]);
     const [registered_cars, setRegisteredCars] = useState([]);
     const [year_registered_cars, setYearRegisteredCars] = useState([]);
     const [yearly_registered_cars, setYearlyRegisteredCars] = useState([]);
     const [expiring_cars, setExpiringCars] = useState([]);
     const [expired_cars, setExpiredCars] = useState([]);
-    const [re_regis_cars, setReRegisCars] = useState([]);
+    const [re_regis_cars_center, setReRegisCarsCenter] = useState([]);
+    const [re_regis_cars_district, setReRegisCarsDistrict] = useState([]);
+    const [re_regis_cars_dep, setReRegisCarsDep] = useState([]);
     const [selected, setSelected] = useState(null);
 
     const dispatch = useDispatch()
@@ -81,7 +87,103 @@ export default function DashboardLayout() {
               }
           }
       });
-    
+
+      const getUnRegisteredCars = async () => {
+        try {
+            const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+            const response = await axios.create({
+            baseURL: BASE_URL,
+            headers: { token: `${TOKEN}` },
+        }).get("/car/unregis");
+        
+            setUnRegisteredCars(response.data);
+        } catch(e) {
+            console.log(e)
+        }};
+        getUnRegisteredCars();
+
+        const getUnRegisteredCarsDistrict = async () => {
+            try {
+                const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+                const response = await axios.create({
+                baseURL: BASE_URL,
+                headers: { token: `${TOKEN}` },
+            }).get("/car/unregisdistrict");
+
+                const data = response.data;
+                data.forEach( obj => renameKey( obj, 'owner__district', 'name' ) );
+                data.forEach( obj => renameKey( obj, 'count', 'NewRegis' ) );
+                setUnRegisteredCarsDistrict(data);
+            } catch(e) {
+                console.log(e)
+            }};
+        getUnRegisteredCarsDistrict();
+
+        const getReRegisCars = async () => {
+            try {
+                const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+                const response = await axios.create({
+                baseURL: BASE_URL,
+                headers: { token: `${TOKEN}` },
+            }).get("/form/forecast/total");
+            
+                setReRegisCars(response.data);
+            } catch(e) {
+                console.log(e)
+            }};
+        getReRegisCars();
+
+        const getReRegisCarsCenter = async () => {
+            try {
+                const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+                const response = await axios.create({
+                baseURL: BASE_URL,
+                headers: { token: `${TOKEN}` },
+            }).get("/form/forecast/center");
+            
+                setReRegisCarsCenter(response.data);
+            } catch(e) {
+                console.log(e)
+            }};
+        getReRegisCarsCenter();
+
+
+        const getReRegisCarsDep = async () => {
+            try {
+                const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+                const response = await axios.create({
+                    baseURL: BASE_URL,
+                    headers: { token: `${TOKEN}` },
+                }).get("/form/forecast/all");
+
+                const data = response.data;
+                data.forEach( obj => renameKey( obj, 'center_id', 'name' ) );
+                data.forEach( obj => renameKey( obj, 'count', 'ReRegis' ) );
+                data.forEach( obj => obj['NewRegis'] = Math.round(unregistered_cars*parseInt(obj.name)/10));
+                setReRegisCarsDep(data);
+            } catch(e) {
+                console.log(e)
+            }};
+        getReRegisCarsDep();
+
+        const getReRegisCarsDistrict = async () => {
+            try {
+                const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+                const response = await axios.create({
+                    baseURL: BASE_URL,
+                    headers: { token: `${TOKEN}` },
+                }).get("/form/forecast/district");
+
+                const data = response.data;
+                data.forEach( obj => renameKey( obj, 'center__district', 'name' ) );
+                data.forEach( obj => renameKey( obj, 'count', 'ReRegis' ) );
+                setReRegisCarsDistrict(data);
+            } catch(e) {
+                console.log(e)
+            }};
+        getReRegisCarsDistrict();
+
+
         const getRegisteredCars = async () => {
             try {
                 const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
@@ -139,7 +241,6 @@ export default function DashboardLayout() {
             }};
             getYearlyRegisteredCars();
             
-
     }, []);
 
     function renameKey(obj, oldKey, newKey) {
@@ -253,21 +354,27 @@ export default function DashboardLayout() {
         }
     }
 
-    const new_regis_cars = cars.length - inspections.length;
+    const place = ([
+        { value: 'district', label: 'Khu vực' },
+        { value: 'center', label: 'Trung tâm' }
+    ])
 
-    const getReRegisCars = () => {
-        let total = 0;
-        const year = new Date().getFullYear();
-        const month = new Date().getMonth();
-        for(let i = 0; i < inspections.length; i++) {
-            const expired_date = new Date(inspections[i].expired_date);
-            if (expired_date.getFullYear() === year) {
-                if (expired_date.getMonth() - month <= 2) {
-                    total += 1;
+    const handleChangePlace = (selectedOption) => {
+        setSelected(selectedOption);
+        console.log(re_regis_cars_dep);
+        console.log(re_regis_cars_district);
+        if (selectedOption.value !== 'district') setForecast(re_regis_cars_dep);
+        else {
+            for (let i=0;i<unregistered_cars_district.length;i++) {
+                for (let j=0;j<re_regis_cars_district.length;j++) {
+                    if (unregistered_cars_district[i].name === re_regis_cars_district[j].name) {
+                        re_regis_cars_district[j]['NewRegis'] = unregistered_cars_district[i].NewRegis;
+                        continue;
+                    }
                 }
-            } 
+            }
+            setForecast(re_regis_cars_district);
         }
-        return total;
     };
     
     return (
@@ -306,8 +413,19 @@ export default function DashboardLayout() {
                     </div>
                     <div className="statistics-card">
                         <div className="card-text">
-                            <h4>{new_regis_cars}</h4>
-                            <p>Dự Báo Ô Tô Đăng Kiểm Mới</p>
+                            <p>Dự báo</p>
+                            <h4>{Math.round(unregistered_cars*user.center.id/10)}</h4>
+                            <p>Ô Tô Đăng Kiểm Mới</p>
+                        </div>
+                        <div className="card-icon">
+                            <FontAwesomeIcon icon={faCarOn} />
+                        </div>
+                    </div>
+                    <div className="statistics-card">
+                        <div className="card-text">
+                            <p>Dự báo</p>
+                            <h4>{re_regis_cars_center.count}</h4>
+                            <p>Ô Tô Đăng Kiểm Lại</p>
                         </div>
                         <div className="card-icon">
                             <FontAwesomeIcon icon={faCarOn} />
@@ -345,8 +463,19 @@ export default function DashboardLayout() {
                     </div>
                     <div className="statistics-card">
                         <div className="card-text">
-                            <h4>{new_regis_cars}</h4>
-                            <p>Dự Báo Ô Tô Đăng Kiểm Mới</p>
+                            <p>Dự báo</p>
+                            <h4>{unregistered_cars}</h4>
+                            <p>Ô Tô Đăng Kiểm Mới</p>
+                        </div>
+                        <div className="card-icon">
+                            <FontAwesomeIcon icon={faCarOn} />
+                        </div>
+                    </div>
+                    <div className="statistics-card">
+                        <div className="card-text">
+                            <p>Dự báo</p>
+                            <h4>{re_registered_cars}</h4>
+                            <p>Ô Tô Đăng Kiểm Lại</p>
                         </div>
                         <div className="card-icon">
                             <FontAwesomeIcon icon={faCarOn} />
@@ -380,6 +509,33 @@ export default function DashboardLayout() {
                     </div>
                 </div>
             </div>}
+            {user.role === 'department' &&
+                <div className="block-content-container">
+                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
+                        <h4 className="chart-title" style={{marginBottom: '0px'}}>Dự báo số lượng xe ô tô đăng kiểm mới và đăng kiểm lại</h4>
+                        <Select options={place} onChange={handleChangePlace} styles={customStyles}/>
+                    </div>
+                    <div style={{display: 'flex'}}>
+                    <div className="statistics-line-chart">
+                        <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
+                            <ResponsiveContainer width={'100%'} height={400}>
+                                <LineChart width={730} height={250} 
+                                data={forecast}
+                                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Legend />
+                                    <Line type="monotone" dataKey="ReRegis" stroke="#8884d8" />
+                                    <Line type="monotone" dataKey="NewRegis" stroke="#82ca9d" />
+                                </LineChart>
+                        </ResponsiveContainer>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            }
             <div className="block-content-container">
                 <div className="chart-title-container">
                     <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm trong năm</h4>

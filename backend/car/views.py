@@ -9,6 +9,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.parsers import JSONParser 
 from django.forms.models import model_to_dict
+from django.http import JsonResponse
+from django.db.models import Count
 
 class CarView(APIView):
     serializer_class = CarSerializer
@@ -171,3 +173,13 @@ class CarListView(APIView):
             else:
                 return Response(car_serializer.errors, status=400)
         return Response(responses, status=status.HTTP_200_OK)
+    
+    
+def CountInMonthAll(request):
+        total = Car.objects.filter(inspection_status="Chưa đăng kiểm").count()
+        return JsonResponse(total, safe=False)
+    
+def UnregisDistrict(request):
+    total = Car.objects.filter(inspection_status="Chưa đăng kiểm")
+    count = list(total.values('owner__district').annotate(count=Count('owner__district')))
+    return JsonResponse(count, safe=False)

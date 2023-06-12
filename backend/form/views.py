@@ -403,6 +403,46 @@ def ExpiredAllByCenter(request, center_id=None):
             count = list(total.values('center_id').annotate(count=Count('center_id')))
             return JsonResponse(count, safe=False)
 
+def Expired2MonthByCenter(request):
+        token = request.headers.get('Token')
+        if not token:
+            return HttpResponse('You are not authenticated', status=400)
+        try:
+            payload = jwt.decode(token, 'secret', algorithms='HS256')
+        except jwt.ExpiredSignatureError:
+            return HttpResponse('Token is not valid', status=400)
+        
+        today = datetime.today()
+        enddate = datetime(today.year, today.month+2, calendar.monthrange(today.year, today.month+2)[1])
+        
+        if payload['role'] == 'center' and payload['center'] is not None:
+            total = Form.objects.filter(center__id=payload['center']['id'])
+            expired_count = total.filter(expired_date__lte=enddate).count()
+            return JsonResponse({'count': expired_count})
+        
+def Expired2MonthByDepartmentCenter(request):
+    today = datetime.today()
+    enddate = datetime(today.year, today.month+2, calendar.monthrange(today.year, today.month+2)[1])
+
+    total = Form.objects.filter(expired_date__lte=enddate)
+    count = list(total.values('center_id').annotate(count=Count('center_id')))
+    return JsonResponse(count, safe=False)
+
+def Expired2MonthByDepartmentDistrict(request):
+    today = datetime.today()
+    enddate = datetime(today.year, today.month+2, calendar.monthrange(today.year, today.month+2)[1])
+
+    total = Form.objects.filter(expired_date__lte=enddate)
+    count = list(total.values('center__district').annotate(count=Count('center__district')))
+    return JsonResponse(count, safe=False)
+
+def Expired2MonthAll(request):
+    today = datetime.today()
+    enddate = datetime(today.year, today.month+2, calendar.monthrange(today.year, today.month+2)[1])
+
+    total = Form.objects.filter(expired_date__lte=enddate).count()
+    return JsonResponse(total, safe=False)
+
 class FormMonthViewDistrict(APIView):
     def get(self, request, month, district, *args, **kwargs):
         token = request.headers.get('Token')
