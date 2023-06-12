@@ -39,9 +39,14 @@ urlpatterns = [
     path('form/register/all/<str:center_id>', views.CountAllByCenter, name="center"),
     path('form/expired/all', views.ExpiredAllByCenter, name="center"),
     path('form/expired/all/<str:center_id>', views.ExpiredAllByCenter, name="center"),
+    # số lượng dự báo tại 1 trung tâm
     path('form/forecast/center', views.Expired2MonthByCenter, name="forecast"),
-    path('form/forecast/district', views.Expired2MonthByDepartmentDistrict, name="forecast"),
+    path('form/forecast/center/<str:center_id>', views.Expired2MonthByCenter, name="forecast"),
+    # số lượng dự báo tại các trung tâm
     path('form/forecast/all', views.Expired2MonthByDepartmentCenter, name="forecast"),
+    # số lượng dự báo tại các khu vực
+    path('form/forecast/district', views.Expired2MonthByDepartmentDistrict, name="forecast"),
+    # số lượng dự báo trên toàn quốc
     path('form/forecast/total', views.Expired2MonthAll, name="forecast"),
     # path('form/register/month/<int:month>/<str:district>', FormMonthViewDistrict.as_view()),
     # path('form/register/quarter/<int:quarter>/<str:district>', FormQuarterViewDistrict.as_view()),

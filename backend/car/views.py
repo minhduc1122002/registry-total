@@ -181,5 +181,5 @@ def CountInMonthAll(request):
     
 def UnregisDistrict(request):
     total = Car.objects.filter(inspection_status="Chưa đăng kiểm")
-    count = list(total.values('owner__district').annotate(count=Count('owner__district')))
+    count = list(total.values('owner__city').annotate(count=Count('owner__city')))
     return JsonResponse(count, safe=False)

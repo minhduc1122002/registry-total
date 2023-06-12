@@ -56,11 +56,10 @@ export default function DashboardLayout() {
     const [re_regis_cars_dep, setReRegisCarsDep] = useState([]);
     const [selected, setSelected] = useState(null);
 
-    const tree = require('../../address/tree.json');
+    const cities = require('../../address/tinh_tp.json');
 
-    const findDist = (dist, city_code) => {
-        const dists = tree[city_code]['quan-huyen']
-        return dists[dists.findIndex(d => d['code'] === dist)]
+    const findCity = (city) => {
+        return cities[cities.findIndex(c => c['code'] === city)].name
     }
 
     const dispatch = useDispatch()
@@ -100,7 +99,7 @@ export default function DashboardLayout() {
             const response = await axios.create({
             baseURL: BASE_URL,
             headers: { token: `${TOKEN}` },
-        }).get("/car/unregis");
+        }).get("/car/unregis/all");
         
             setUnRegisteredCars(response.data);
         } catch(e) {
@@ -114,11 +113,12 @@ export default function DashboardLayout() {
                 const response = await axios.create({
                 baseURL: BASE_URL,
                 headers: { token: `${TOKEN}` },
-            }).get("/car/unregisdistrict");
+            }).get("/car/unregisdistrict/all");
 
                 const data = response.data;
-                data.forEach( obj => renameKey( obj, 'owner__district', 'name' ) );
+                data.forEach( obj => renameKey( obj, 'owner__city', 'name' ) );
                 data.forEach( obj => renameKey( obj, 'count', 'NewRegis' ) );
+                data.forEach( obj => obj['name'] = findCity(obj['name']));
                 setUnRegisteredCarsDistrict(data);
             } catch(e) {
                 console.log(e)
@@ -165,7 +165,7 @@ export default function DashboardLayout() {
                 const data = response.data;
                 data.forEach( obj => renameKey( obj, 'center_id', 'name' ) );
                 data.forEach( obj => renameKey( obj, 'count', 'ReRegis' ) );
-                data.forEach( obj => obj['NewRegis'] = Math.round(unregistered_cars*parseInt(obj.name)/10));
+                data.forEach( obj => obj['NewRegis'] = Math.round(unregistered_cars*(parseInt(obj.name)%9)/10));
                 setReRegisCarsDep(data);
             } catch(e) {
                 console.log(e)
@@ -181,8 +181,9 @@ export default function DashboardLayout() {
                 }).get("/form/forecast/district");
 
                 const data = response.data;
-                data.forEach( obj => renameKey( obj, 'center__district', 'name' ) );
+                data.forEach( obj => renameKey( obj, 'center__city', 'name' ) );
                 data.forEach( obj => renameKey( obj, 'count', 'ReRegis' ) );
+                data.forEach( obj => obj['name'] = findCity(obj['name']));
                 setReRegisCarsDistrict(data);
             } catch(e) {
                 console.log(e)
@@ -367,6 +368,8 @@ export default function DashboardLayout() {
 
     const handleChangePlace = (selectedOption) => {
         setSelected(selectedOption);
+        console.log(unregistered_cars_district);
+        console.log(re_regis_cars_district);
         if (selectedOption.value !== 'district') setForecast(re_regis_cars_dep);
         else {
             for (let i=0;i<unregistered_cars_district.length;i++) {
@@ -497,17 +500,16 @@ export default function DashboardLayout() {
                   <div className="statistics-line-chart">
                     <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
                         <ResponsiveContainer width={'100%'} height={400}>
-                          <BarChart
-                            data={yearly_registered_cars}
-                            name
-                          >
-                            <Bar dataKey="Total" fill="rgb(63, 81, 181)" />
-                            <XAxis dataKey="name" stroke="gray" />
-                            <YAxis/>
-                            <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
-                          
-                          
-                          </BarChart>
+                            <LineChart width={730} height={250} 
+                                data={yearly_registered_cars}
+                                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Legend />
+                                    <Line type="monotone" dataKey="Total" stroke="#8884d8" />
+                            </LineChart>
                       </ResponsiveContainer>
                       </div>
                     </div>
@@ -523,17 +525,18 @@ export default function DashboardLayout() {
                     <div className="statistics-line-chart">
                         <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
                             <ResponsiveContainer width={'100%'} height={400}>
-                                <LineChart width={730} height={250} 
-                                data={forecast}
-                                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <Tooltip />
+                                <BarChart
+                                    data={forecast}
+                                    name
+                                >
+                                    <Bar dataKey="ReRegis" fill="#8884d8" />
+                                    <Bar dataKey="NewRegis" fill="#82ca9d" />
+                                    <XAxis dataKey="name" stroke="gray" />
+                                    <YAxis/>
+                                    <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
                                     <Legend />
-                                    <Line type="monotone" dataKey="ReRegis" stroke="#8884d8" />
-                                    <Line type="monotone" dataKey="NewRegis" stroke="#82ca9d" />
-                                </LineChart>
+
+                                </BarChart>
                         </ResponsiveContainer>
                         </div>
                         </div>

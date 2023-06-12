@@ -403,7 +403,7 @@ def ExpiredAllByCenter(request, center_id=None):
             count = list(total.values('center_id').annotate(count=Count('center_id')))
             return JsonResponse(count, safe=False)
 
-def Expired2MonthByCenter(request):
+def Expired2MonthByCenter(request, center_id=None):
         token = request.headers.get('Token')
         if not token:
             return HttpResponse('You are not authenticated', status=400)
@@ -420,6 +420,18 @@ def Expired2MonthByCenter(request):
             expired_count = total.filter(expired_date__lte=enddate).count()
             return JsonResponse({'count': expired_count})
         
+        # Trung tâm
+        if payload['role'] == 'center' and payload['center'] is not None:
+            total = Form.objects.filter(center__id=payload['center']['id'])
+            expired_count = total.filter(expired_date__lte=enddate).count()
+            return JsonResponse({'count': expired_count})
+        # Cục
+        ## Từng trung tâm
+        elif center_id is not None:
+            total = Form.objects.filter(center__id=center_id)
+            expired_count = total.filter(expired_date__lte=enddate).count()
+            return JsonResponse({'count': expired_count})
+        
 def Expired2MonthByDepartmentCenter(request):
     today = datetime.today()
     enddate = datetime(today.year, today.month+2, calendar.monthrange(today.year, today.month+2)[1])
@@ -433,7 +445,7 @@ def Expired2MonthByDepartmentDistrict(request):
     enddate = datetime(today.year, today.month+2, calendar.monthrange(today.year, today.month+2)[1])
 
     total = Form.objects.filter(expired_date__lte=enddate)
-    count = list(total.values('center__district').annotate(count=Count('center__district')))
+    count = list(total.values('center__city').annotate(count=Count('center__city')))
     return JsonResponse(count, safe=False)
 
 def Expired2MonthAll(request):
@@ -549,18 +561,18 @@ class FormExpiringView(APIView):
         
         # Trung tâm
         if payload['role'] == 'center' and payload['center'] is not None:
-            registers = Form.objects.filter(expired_date__lte=enddate, center__id=payload['center']['id'])
+            registers = Form.objects.filter(expired_date__gt=today, expired_date__lte=enddate, center__id=payload['center']['id'])
             serializer = FormSerializer(registers, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         # Cục
         ## Từng trung tâm
         elif center_id is not None:
-            registers = Form.objects.filter(expired_date__lte=enddate, center__id=center_id)
+            registers = Form.objects.filter(expired_date__gt=today, expired_date__lte=enddate, center__id=center_id)
             serializer = FormSerializer(registers, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         ## Tất cả trung tâm
         else:
-            registers = Form.objects.filter(expired_date__lte=enddate)
+            registers = Form.objects.filter(expired_date__gt=today, expired_date__lte=enddate)
             serializer = FormSerializer(registers, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 

@@ -55,7 +55,7 @@ export const addCarList = createAsyncThunk('car/add/list', async (cars, thunkAPI
         const response = await axios.create({
             baseURL: BASE_URL,
             headers: { token: `${TOKEN}` },
-        }).post("/car/list", cars)
+        }).post("/car/list/all", cars)
         return response.data
   } catch (error) {
         const message =  (error.response &&

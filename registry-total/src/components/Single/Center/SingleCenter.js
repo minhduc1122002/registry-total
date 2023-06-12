@@ -174,7 +174,7 @@ export default function SingleCenter( {user} ) {
             const response = await axios.create({
             baseURL: BASE_URL,
             headers: { token: `${TOKEN}` },
-        }).get("/car/unregis");
+        }).get("/car/unregis/all");
         
             setUnRegisteredCars(response.data);
         } catch(e) {
@@ -188,8 +188,8 @@ export default function SingleCenter( {user} ) {
                 const response = await axios.create({
                 baseURL: BASE_URL,
                 headers: { token: `${TOKEN}` },
-            }).get("/form/forecast/center");
-            
+            }).get(`/form/forecast/center/${center_id}`);
+                console.log(response.data);
                 setReRegisCarsCenter(response.data);
             } catch(e) {
                 console.log(e)
@@ -521,7 +521,7 @@ export default function SingleCenter( {user} ) {
             {registered_cars && expiring_cars && expired_cars && 
             <div className="card-grid">
                 <>
-                    <div className="statistics-card">
+                <div className="statistics-card">
                         <div className="card-text">
                             <h4>{registered_cars.count}</h4>
                             <p>Ô Tô Đã Đăng Kiểm</p>
