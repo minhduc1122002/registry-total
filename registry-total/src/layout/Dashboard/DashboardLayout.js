@@ -18,6 +18,7 @@ import axios from 'axios';
 import "./DashboardLayout.css";
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
+import Typography from '@mui/material/Typography';
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
 import { getCarList } from '../../redux/car'
@@ -304,9 +305,11 @@ export default function DashboardLayout() {
         { name: "4", Total: 0 }
     ];
 
+    var total;
     
-    function selectdata() {
+    function datamonth() {
         var months = year_registered_cars;
+        
             for (var i=0;i<months.length;i++) {
                 if (months[i].register_date__month===1) {
                     month[0].Total = months[i].count;
@@ -346,6 +349,7 @@ export default function DashboardLayout() {
                     quarter[3].Total += months[i].count;
                 }
             }
+        total = quarter[0].Total + quarter[1].Total  + quarter[2].Total  + quarter[3].Total ;
         return month;
     }
     
@@ -383,6 +387,16 @@ export default function DashboardLayout() {
             setForecast(re_regis_cars_district);
         }
     };
+
+    function getNewRegis() {
+        const city = findCity(user.center.city);
+        for (let i=0;i<unregistered_cars_district.length;i++) {
+            if (unregistered_cars_district[i].name === city) {
+                return unregistered_cars_district[i].NewRegis;
+            }
+        }
+        return 0;
+    }
     
     return (
         <div className="dashboard-layout">
@@ -421,7 +435,7 @@ export default function DashboardLayout() {
                     <div className="statistics-card">
                         <div className="card-text">
                             <p>Dự báo</p>
-                            <h4>{Math.round(unregistered_cars*(parseInt(user.center.id)%9)/10)}</h4>
+                            <h4>{Math.round(getNewRegis()*(parseInt(user.center.id)%9)/10)}</h4>
                             <p>Ô Tô Đăng Kiểm Mới</p>
                         </div>
                         <div className="card-icon">
@@ -553,7 +567,7 @@ export default function DashboardLayout() {
                     <div style={{overflowX: 'scroll', paddingBottom: '8px'}}>
                         <ResponsiveContainer width={800} height={400}>
                           <AreaChart
-                            data={selectdata()}
+                            data={datamonth()}
                           >
                           <defs>
                               <linearGradient id="total" x1="0" y1="0" x2="0" y2="1">
@@ -589,68 +603,152 @@ export default function DashboardLayout() {
                       </ResponsiveContainer>
                       </div>
                     </div>
-                    <div className="quater-container">
-                        <span className="statis">Thống kê theo từng quý</span>
-                        <hr className="space"></hr>
-                        <ul className="progress-bar">
-                            <li>
-                                <div style = {{width:"100%"}}>
-                                    <p className="quarter">
-                                        Quý 1
-                                    </p>
-                                    <Box sx={{ width: '100%' }}>
-                                        <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
-                                            '& .MuiLinearProgress-bar': {
-                                                backgroundColor: 'rgb(236, 64, 122)'
-                                            }}} 
-                                        variant="determinate" value={quarter[0].Total * 100 / (quarter[0].Total + quarter[1].Total + quarter[2].Total + quarter[3].Total)} />
-                                    </Box>
-                                </div>
-                            </li>
-                            <li>
-                                <div style = {{width:"100%"}}>
-                                    <p className="quarter">
-                                        Quý 2
-                                    </p>
-                                    <Box sx={{ width: '100%' }}>
-                                        <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
-                                            '& .MuiLinearProgress-bar': {
-                                                backgroundColor: 'rgb(251, 140, 0)'
-                                            }}} 
-                                        variant="determinate" value={quarter[1].Total * 100 / (quarter[0].Total + quarter[1].Total + quarter[2].Total + quarter[3].Total)} />
-                                    </Box>
-                                </div>
-                            </li>
-                            <li>
-                                <div style = {{width:"100%"}}>
-                                    <p className="quarter">
-                                        Quý 3
-                                    </p>
-                                    <Box sx={{ width: '100%' }}>
-                                        <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
-                                            '& .MuiLinearProgress-bar': {
-                                                backgroundColor: 'rgb(124, 179, 66)'
-                                            }}} 
-                                            variant="determinate" value={quarter[2].Total * 100 / (quarter[0].Total + quarter[1].Total + quarter[2].Total + quarter[3].Total)} />
-                                    </Box>
-                                </div>
-                            </li>
-                            <li>
-                                <div style = {{width:"100%"}}>
-                                    <p className="quarter">
-                                        Quý 4
-                                    </p>
-                                    <Box sx={{ width: '100%' }}>
-                                        <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
-                                            '& .MuiLinearProgress-bar': {
-                                                backgroundColor: 'rgb(3, 169, 244)'
-                                            }}} 
-                                            variant="determinate" value={quarter[3].Total * 100 / (quarter[0].Total + quarter[1].Total + quarter[2].Total + quarter[3].Total)} />
-                                    </Box>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+                    {total !== 0 ? (
+                        <>
+                        <div className="quater-container">
+                            <span className="statis">Thống kê theo từng quý</span>
+                            <hr className="space"></hr>
+                            <ul className="progress-bar">
+                                <li>
+                                    <div style = {{width:"100%"}}>
+                                        <p className="quarter">
+                                            Quý 1
+                                        </p>
+                                        <Box sx={{ width: '100%' }}>
+                                            <LinearProgress
+                                            sx={{backgroundColor: 'rgb(237, 237, 237)', 
+                                                '& .MuiLinearProgress-bar': {
+                                                    backgroundColor: 'rgb(236, 64, 122)',
+                                                }}} 
+                                            variant="determinate" value={quarter[0].Total * 100 / total}>
+                                            </LinearProgress>
+                                        </Box>
+                                        <p className="amount">
+                                            {quarter[0].Total} / {total}
+                                        </p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style = {{width:"100%"}}>
+                                        <p className="quarter">
+                                            Quý 2
+                                        </p>
+                                        <Box sx={{ width: '100%' }}>
+                                            <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
+                                                '& .MuiLinearProgress-bar': {
+                                                    backgroundColor: 'rgb(251, 140, 0)'
+                                                }}} 
+                                            variant="determinate" value={quarter[1].Total * 100 / total} />
+                                        </Box>
+                                        <p className="amount">
+                                            {quarter[1].Total} / {total}
+                                        </p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style = {{width:"100%"}}>
+                                        <p className="quarter">
+                                            Quý 3
+                                        </p>
+                                        <Box sx={{ width: '100%' }}>
+                                            <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
+                                                '& .MuiLinearProgress-bar': {
+                                                    backgroundColor: 'rgb(124, 179, 66)'
+                                                }}} 
+                                                variant="determinate" value={quarter[2].Total * 100 / total} />
+                                        </Box>
+                                        <p className="amount">
+                                            {quarter[2].Total} / {total}
+                                        </p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style = {{width:"100%"}}>
+                                        <p className="quarter">
+                                            Quý 4
+                                        </p>
+                                        <Box sx={{ width: '100%' }}>
+                                            <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
+                                                '& .MuiLinearProgress-bar': {
+                                                    backgroundColor: 'rgb(3, 169, 244)'
+                                                }}} 
+                                                variant="determinate" value={quarter[3].Total * 100 / total} />
+                                        </Box>
+                                        <p className="amount">
+                                            {quarter[3].Total} / {total}
+                                        </p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </>
+                    ) : (
+                  <>
+                  <div className="quater-container">
+                            <span className="statis">Thống kê theo từng quý</span>
+                            <hr className="space"></hr>
+                            <ul className="progress-bar">
+                                <li>
+                                    <div style = {{width:"100%"}}>
+                                        <p className="quarter">
+                                            Quý 1
+                                        </p>
+                                        <Box sx={{ width: '100%' }}>
+                                            <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
+                                                '& .MuiLinearProgress-bar': {
+                                                    backgroundColor: 'rgb(236, 64, 122)'
+                                                }}} 
+                                            variant="determinate" value={0} />
+                                        </Box>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style = {{width:"100%"}}>
+                                        <p className="quarter">
+                                            Quý 2
+                                        </p>
+                                        <Box sx={{ width: '100%' }}>
+                                            <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
+                                                '& .MuiLinearProgress-bar': {
+                                                    backgroundColor: 'rgb(251, 140, 0)'
+                                                }}} 
+                                            variant="determinate" value={0} />
+                                        </Box>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style = {{width:"100%"}}>
+                                        <p className="quarter">
+                                            Quý 3
+                                        </p>
+                                        <Box sx={{ width: '100%' }}>
+                                            <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
+                                                '& .MuiLinearProgress-bar': {
+                                                    backgroundColor: 'rgb(124, 179, 66)'
+                                                }}} 
+                                                variant="determinate" value={0} />
+                                        </Box>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style = {{width:"100%"}}>
+                                        <p className="quarter">
+                                            Quý 4
+                                        </p>
+                                        <Box sx={{ width: '100%' }}>
+                                            <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
+                                                '& .MuiLinearProgress-bar': {
+                                                    backgroundColor: 'rgb(3, 169, 244)'
+                                                }}} 
+                                                variant="determinate" value={0} />
+                                        </Box>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                  </>
+                    )
+                }
                 </div>
             </div>
         </div>

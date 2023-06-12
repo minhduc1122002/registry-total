@@ -11,12 +11,12 @@
     border-width: 0px 0px thin;
     border-style: solid;
     border-color: rgba(0, 0, 0, 0.12);
-    margin: 24px 0px;
+    margin: 15px 0px;
     display: block;
 }
 
 .quater-container li {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
 }
 
 .quarter {
@@ -28,4 +28,10 @@
 }
 .statistics-container {
     display: flex;
+}
+
+.amount {
+    margin-top: 15px;
+    font-style: italic;
+    text-align: center;
 }
