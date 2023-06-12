@@ -4,12 +4,19 @@ import { Link } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 
 export default function CenterLayout( {centers} ) {
+
     const dispatch = useDispatch()
     
+    const tree = require('../../address/tree.json');
     const cities = require('../../address/tinh_tp.json');
     const findCity = (city) => {
         return cities[cities.findIndex(c => c['code'] === city)]
     }
+    const findDist = (dist, city_code) => {
+        const dists = tree[city_code]['quan-huyen']
+        return dists[dists.findIndex(d => d['code'] === dist)]
+    }
+    
     const handleDelete = (e, id) => {
         e.preventDefault()
         // dispatch(deleteInspection(id))
@@ -23,12 +30,14 @@ export default function CenterLayout( {centers} ) {
       renderCell: (params) => {
           return (
           <div className="cellAction">
-              <Link to={`/center/${params.row.username}`} style={{ textDecoration: "none" }}>
-                  <div className="viewButton">View</div>
+              <Link to={`/centers/${params.row.username}`} style={{ textDecoration: "none" }}>
+                <div 
+                    className="viewButton"
+                >View</div>
               </Link>
               <div
                   className="deleteButton"
-                  onClick={(e) => handleDelete(e, params.row.register_id)}
+                  onClick={(e) => handleDelete(e, params.row.username)}
               >
               Delete
               </div>
@@ -68,7 +77,7 @@ export default function CenterLayout( {centers} ) {
             headerName: "Quận",
             width: 150,
             renderCell: (params) => {
-                return <div className="rowitem">{params.row.center.district}</div>;
+                return <div className="rowitem">{findDist(params.row.center.district, params.row.center.city).name}</div>;
             },
         },
         {

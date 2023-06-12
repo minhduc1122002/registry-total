@@ -13,18 +13,20 @@ import {
     RadialBar,
     RadialBarChart
 } from "recharts";
-import Table from '../../components/Table/InspectionTable'
+import Table from '../../../components/Table/InspectionTable'
 import { useState, useEffect } from "react";
 import axios from 'axios';
-import "./DashboardLayout.css";
+import "../../../layout/Dashboard/DashboardLayout.css";
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
-import { getCarList } from '../../redux/car'
-import { getInspectionList } from '../../redux/inspection'
+import { getCarList } from '../../../redux/car'
+import { getInspectionList } from '../../../redux/inspection'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faListCheck, faXmark, faCarBurst, faCarOn } from "@fortawesome/free-solid-svg-icons";
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 const customStyles = {
 
@@ -41,8 +43,9 @@ const customStyles = {
     singleValue: (defaultStyles) => ({ ...defaultStyles, color: "rgb(40, 53, 147)" }),
 };
 
-export default function DashboardLayout() {
-    const user = useSelector((state) => state.auth.user);
+export default function CenterLayout( {user} ) {
+    const navigate = useNavigate()
+    const center_id = user.center.id
     const [registered_cars, setRegisteredCars] = useState([]);
     const [year_registered_cars, setYearRegisteredCars] = useState([]);
     const [yearly_registered_cars, setYearlyRegisteredCars] = useState([]);
@@ -51,16 +54,54 @@ export default function DashboardLayout() {
     const [re_regis_cars, setReRegisCars] = useState([]);
     const [selected, setSelected] = useState(null);
 
+    const cities = require('../../../address/tinh_tp.json');
+    const tree = require('../../../address/tree.json');
+
     const dispatch = useDispatch()
     const cars = useSelector(state => state.car.cars)
+    
+    const findDist = (dist, city_code) => {
+        const dists = tree[city_code]['quan-huyen']
+        return dists[dists.findIndex(d => d['code'] === dist)]
+    }
+
+    const findCity = (city) => {
+        return cities[cities.findIndex(c => c['code'] === city)]
+    }
+
+    const [username, setUsername] = useState(user.username);
+    const [oldPassword, setOldPassword] = useState();
+    const [newPassword, setNewPassword] = useState();
+    const [registerCity, setRegisterCity] = useState(findCity(user.center.city));
+    const [registerDistrict, setRegisterDistrict] = useState(findDist(user.center.district, user.center.city));
+    const [registerAddress, setRegisterAddress] = useState(user.center.address);
+
+    useEffect(() => {
+        setRegisterDistrict("")
+    }, [registerCity])
+
+    const getDist = (city) => {
+        if (city !== undefined) {
+            return tree[city.code]['quan-huyen']
+        }
+        else return []
+    }
+
+    const selectStyle = {    
+        control: (base, state) => ({
+          ...base,
+          '&:hover': { borderColor: 'gray' },
+          border: '1px solid rgba(0, 0, 0, 0.32)',
+          boxShadow: 'none',
+      }),
+    };
+
     useEffect(() => {
         dispatch(getCarList())
-    }, [dispatch]);
-
-    const inspections = useSelector(state => state.inspection.inspections)
-    useEffect(() => {
         dispatch(getInspectionList())
     }, [dispatch]);
+
+    const inspections = useSelector(state => state.inspection.inspections).filter(inspection => inspection.center.id == center_id)
 
     const BASE_URL = "http://localhost:8000/api/"
 
@@ -88,7 +129,7 @@ export default function DashboardLayout() {
                 const response = await axios.create({
                 baseURL: BASE_URL,
                 headers: { token: `${TOKEN}` },
-            }).get("/form/register/all");
+            }).get(`/form/register/all/${center_id}`);
             
                 setRegisteredCars(response.data);
             } catch(e) {
@@ -102,7 +143,7 @@ export default function DashboardLayout() {
                 const response = await axios.create({
                     baseURL: BASE_URL,
                     headers: { token: `${TOKEN}` },
-                }).get("/form/expiring/all");
+                }).get(`/form/expiring/all/${center_id}`);
                 
                 setExpiringCars(response.data);
             } catch(e) {
@@ -116,7 +157,7 @@ export default function DashboardLayout() {
             const response = await axios.create({
                 baseURL: BASE_URL,
                 headers: { token: `${TOKEN}` },
-            }).get("/form/expired/all");
+            }).get(`/form/expired/all/${center_id}`);
             setExpiredCars(response.data);
         } catch(e) {
             console.log(e)
@@ -129,7 +170,7 @@ export default function DashboardLayout() {
                 const response = await axios.create({
                     baseURL: BASE_URL,
                     headers: { token: `${TOKEN}` },
-                }).get("/form/register/byyear/all");
+                }).get(`/form/register/byyear/all/${center_id}`);
                 const data = response.data;
                 data.forEach( obj => renameKey( obj, 'register_date__year', 'name' ) );
                 data.forEach( obj => renameKey( obj, 'count', 'Total' ) );
@@ -161,13 +202,10 @@ export default function DashboardLayout() {
         }
     };
 
-    const years = (user.role === 'center') ? ([
-        { value: '/form/register/bymonth/2022', label: '2022' },
-        { value: '/form/register/bymonth/2023', label: '2023' }
-    ]) : ([
-        { value: '/form/register/bymonth/all/2022', label: '2022' },
-        { value: '/form/register/bymonth/all/2023', label: '2023' }
-    ])
+    const years = [
+        { value: `/form/register/bymonth/2022/${center_id}`, label: '2022' },
+        { value: `/form/register/bymonth/2023/${center_id}`, label: '2023' }
+    ]
 
     const handleChange = (selectedOption) => {
         setSelected(selectedOption);
@@ -240,18 +278,6 @@ export default function DashboardLayout() {
             }
         return month;
     }
-    
-    const getTotalCount = (list) => {
-        if (list.length === 0) {
-            return 0
-        } else {
-            let sum = 0
-            for(let i = 0; i < list.length; i++) {
-                sum += list[i].count
-            }
-            return sum
-        }
-    }
 
     const new_regis_cars = cars.length - inspections.length;
 
@@ -271,12 +297,92 @@ export default function DashboardLayout() {
     };
     
     return (
+        <>
         <div className="dashboard-layout">
-            <h4 className="dashboard-title">Dashboard</h4>
+            <h5 className="dashboard-title">Thông Tin</h5>
+            <form className="block-content-container">
+                <div className="label-group">
+                    Thông Tin Đăng Nhập
+                    <p className="line_blue"></p>
+                </div>
+
+                <div className="row-text">
+                    <div className="label">Tên Đăng Nhập</div>
+                    <div className="text-input">
+                        <input type="text" name="account" defaultValue={username} onChange={(e) => setUsername(e.target.value)}></input>
+                    </div>
+                </div>
+
+                <div className="row-text">
+                    <div className="label">Mật Khẩu Cũ</div>
+                    <div className="text-input">
+                        <input type="text" name="account" defaultValue={oldPassword} onChange={(e) => setOldPassword(e.target.value)}></input>
+                    </div>
+                </div>
+
+                <div className="row-text">
+                    <div className="label">Mật Khẩu Mới</div>
+                    <div className="text-input">
+                        <input type="text" name="account" defaultValue={newPassword} onChange={(e) => setNewPassword(e.target.value)}></input>
+                    </div>
+                </div>
+
+                <div className="label-group">
+                    Thông Tin Trung Tâm
+                    <p className="line_blue"></p>
+                </div>
+                            
+                <div className="row-select">
+                    <div className="label">Tỉnh/Thành phố</div>
+                    <div className="select-container">
+                        <Select 
+                            id="registerCity" name="registerCity" options={cities}
+                            className="select"
+                            placeholder="Chọn Tỉnh/Thành phố"
+                            defaultValue={registerCity}
+                            onChange={setRegisterCity}
+                            getOptionLabel={(city) => city.name_with_type}
+                            getOptionValue={(city) => city.code}
+                            styles={selectStyle}
+                        />
+                    </div>
+                </div>
+        
+                <div className="row-select">
+                    <div className="label">Quận/Huyện</div>
+                    <div className="select-container">
+                        <Select
+                            id="registerDistrict" name="registerDistrict" options={getDist(registerCity)}
+                            className="select"
+                            placeholder="Chọn Quận/Huyện"
+                            defaultValue={registerDistrict}
+                            onChange={setRegisterDistrict}
+                            getOptionLabel={(district) => district.name_with_type}
+                            getOptionValue={(district) => district.code}
+                            noOptionsMessage={() => "Không có lựa chọn nào"}
+                            styles={selectStyle}
+                        />
+                    </div>
+                </div>
+                            
+                <div className="row-text">
+                    <div className="label">Số nhà, phố, tổ dân phố/thôn/đội</div>
+                    <div className="text-input">
+                        <input type="text" name="registerAddress" defaultValue={registerAddress} onChange={(e) => setRegisterAddress(e.target.value)}></input>
+                    </div>
+                </div>
+            
+                <div className="button-container">
+                    <button className="button button-back" type="button" onClick={() => navigate(`/center`)}>Hủy bỏ</button>
+                    <button className="button" type="button" onClick={() => {}}>Cập Nhật</button>
+                </div>
+            </form>
+        </div>
+        <div className="dashboard-layout">
+            <h5 className="dashboard-title">Thống kê</h5>
             {registered_cars && expiring_cars && expired_cars && 
             <div className="card-grid">
-              { user.role === 'center' ? (
-                  <>
+                <>
                     <div className="statistics-card">
                         <div className="card-text">
                             <h4>{registered_cars.count}</h4>
@@ -313,48 +419,7 @@ export default function DashboardLayout() {
                             <FontAwesomeIcon icon={faCarOn} />
                         </div>
                     </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="statistics-card">
-                        <div className="card-text">
-                            <h4>{getTotalCount(registered_cars)}</h4>
-                            <p>Ô Tô Đã Đăng Kiểm</p>
-                        </div>
-                      <div className="card-icon">
-                        <FontAwesomeIcon icon={faListCheck}/>
-                      </div>
-                    </div>
-                    <div className="statistics-card">
-                        <div className="card-text">
-                            <h4>{expiring_cars.length}</h4>
-                            <p>Ô Tô Sắp Hết Hạn Đăng Kiểm</p>
-                        </div>
-                        <div className="card-icon">
-                            <FontAwesomeIcon icon={faCarBurst} />
-                        </div>
-                    </div>
-                    <div className="statistics-card">
-                        <div className="card-text">
-                            <h4>{getTotalCount(expired_cars)}</h4>
-                            <p>Ô Tô Đã Hết Hạn Đăng Kiểm</p>
-                        </div>
-                        <div className="card-icon">
-                            <FontAwesomeIcon icon={faXmark} />
-                        </div>
-                    </div>
-                    <div className="statistics-card">
-                        <div className="card-text">
-                            <h4>{new_regis_cars}</h4>
-                            <p>Dự Báo Ô Tô Đăng Kiểm Mới</p>
-                        </div>
-                        <div className="card-icon">
-                            <FontAwesomeIcon icon={faCarOn} />
-                        </div>
-                    </div>
                 </>
-                )
-              }
             </div>
             }
             {yearly_registered_cars.length !== 0 &&
@@ -491,5 +556,6 @@ export default function DashboardLayout() {
                 </div>
             </div>
         </div>
+    </>
   )
 }

@@ -71,6 +71,7 @@ export const updateInspectionbyId = createAsyncThunk('form/update', async (inspe
 //delete inspection
 export const deleteInspection = createAsyncThunk('form/delete', async (id, thunkAPI) => {
   try {
+        console.log(id)
         const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
         const response = await axios.create({
             baseURL: BASE_URL,

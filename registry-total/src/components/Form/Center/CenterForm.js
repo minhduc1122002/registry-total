@@ -58,7 +58,7 @@ export default function CenterForm() {
             'role': 'center',
             'center': {
                 'city': registerCity.code,
-                'district': registerDistrict.name_with_type,
+                'district': registerDistrict.code,
                 'address': registerAddress
             }
         }))
@@ -71,13 +71,13 @@ export default function CenterForm() {
                     <div className="row-text">
                         <div className="label">Tài khoản</div>
                         <div className="text-input">
-                            <input type="text" name="account" value={username} onChange={(e) => setUsername(e.target.value)}></input>
+                            <input type="text" name="account" defaultValue={username} onChange={(e) => setUsername(e.target.value)}></input>
                         </div>
                     </div>
                     <div className="row-text">
                         <div className="label">Mật khẩu</div>
                         <div className="text-input">
-                            <input type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)}></input>
+                            <input type="password" name="password" defaultValue={password} onChange={(e) => setPassword(e.target.value)}></input>
                         </div>
                     </div>
                     <div className="label-group">
@@ -92,7 +92,7 @@ export default function CenterForm() {
                                 id="registerCity" name="registerCity" options={cities}
                                 className="select"
                                 placeholder="Chọn Tỉnh/Thành phố"
-                                value={registerCity}
+                                defaultValue={registerCity}
                                 onChange={setRegisterCity}
                                 getOptionLabel={(city) => city.name_with_type}
                                 getOptionValue={(city) => city.code}
@@ -108,7 +108,7 @@ export default function CenterForm() {
                                 id="registerDistrict" name="registerDistrict" options={getDist(registerCity)}
                                 className="select"
                                 placeholder="Chọn Quận/Huyện"
-                                value={registerDistrict}
+                                defaultValue={registerDistrict}
                                 onChange={setRegisterDistrict}
                                 getOptionLabel={(district) => district.name_with_type}
                                 getOptionValue={(district) => district.code}
@@ -121,7 +121,7 @@ export default function CenterForm() {
                     <div className="row-text">
                         <div className="label">Số nhà, phố, tổ dân phố/thôn/đội</div>
                         <div className="text-input">
-                            <input type="text" name="registerAddress" value={registerAddress} onChange={(e) => setRegisterAddress(e.target.value)}></input>
+                            <input type="text" name="registerAddress" defaultValue={registerAddress} onChange={(e) => setRegisterAddress(e.target.value)}></input>
                         </div>
                     </div>
             

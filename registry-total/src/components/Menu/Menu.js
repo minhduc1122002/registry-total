@@ -71,7 +71,7 @@ const Sidebar = () => {
                     )}
                 </NavLink> */}
                 {user.role === 'department' && 
-                <NavLink to="/center">
+                <NavLink to="/centers">
                     {({ isActive, isPending }) => (
                         <li>
                             <div className={isActive ? "css-zsxelz" : "css-cxolhu"}>

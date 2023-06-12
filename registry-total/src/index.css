@@ -13,7 +13,6 @@ body {
   --tw-text-opacity: 1;
   --tw-border-opacity: 1;
   --tw-ring-shadow: 0 0 #0000;
-  height: 100vh;
 }
 ::-webkit-scrollbar {
   -webkit-appearance: none;
@@ -79,4 +78,5 @@ a {
 .upload {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
 }

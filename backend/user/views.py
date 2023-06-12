@@ -16,15 +16,15 @@ class RegisterView(APIView):
     queryset = User.objects.all()
         
     def post(self, request, *args, **kwargs):
-        token = request.headers.get('Token')
-        if not token:
-            return Response('You are not authenticated', status=400)
-        try:
-            payload = jwt.decode(token, 'secret', algorithms='HS256')
-        except jwt.ExpiredSignatureError:
-            return Response('Token is not valid', status=400)
+        # token = request.headers.get('Token')
+        # if not token:
+        #     return Response('You are not authenticated', status=400)
+        # try:
+        #     payload = jwt.decode(token, 'secret', algorithms='HS256')
+        # except jwt.ExpiredSignatureError:
+        #     return Response('Token is not valid', status=400)
         
-        if payload['role'] == 'department':
+        # if payload['role'] == 'department':
             if request.data.get('role') is not None and request.data['role'] == 'department':
                 request.data['center'] = None
                 serializer = UserSerializer(data=request.data)
@@ -62,8 +62,8 @@ class RegisterView(APIView):
                     return Response(response, status=status.HTTP_201_CREATED)
             
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response('You are not authenticated', status=400)
+        # else:
+        # return Response('You are not authenticated', status=400)
 
 class LoginView(APIView):
     def post(self, request):
@@ -151,12 +151,20 @@ class UserDetailView(UserView):
         except:
             return Response('Not Found', status=status.HTTP_400_BAD_REQUEST)
         
+        user_data = request.data.copy()
+        
+
+        if request.data.get('oldpassword') is not None and request.data.get('newpassword') is not None:
+            if not user.check_password(request.data['oldpassword']):
+                return Response('Incorrect Old Password', status=status.HTTP_400_BAD_REQUEST)
+            else:
+                user.set_password(request.data['newpassword'])
+
         center = self.get_center(request, user)
 
         if not isinstance(center, Center):
             return Response(center, status=400)
         
-        user_data = request.data.copy()
         user_data['center'] = None
 
         serializer = UserSerializer(user, data=user_data)
@@ -164,8 +172,9 @@ class UserDetailView(UserView):
         if serializer.is_valid():
             user_data['center'] = center
             user = User(**user_data)
-            center.save()
             user.set_password(user_data['password'])
+            print(user)
+            center.save()
             user.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         
@@ -173,10 +182,12 @@ class UserDetailView(UserView):
     
     def delete(self, request, username, *args, **kwargs):
         try:
-            form = User.objects.get(username=username)
-            center = Center.objects.get(id=form['center']['id'])
-            form.delete()
+            
+            user = User.objects.get(username=str(username))
+            center = Center.objects.get(id=user.center.id)
             center.delete()
+            user.delete()
+            
             return Response('User Deleted', status=status.HTTP_200_OK)
         except:
             return Response('Not Found', status=status.HTTP_400_BAD_REQUEST)

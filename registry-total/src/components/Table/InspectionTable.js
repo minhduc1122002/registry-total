@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 
 export default function InspectionTable( { cols, rows, title, row_id, actionColumn }) {
     const user = useSelector((state) => state.auth.user);
+    
     return (
         <div className="datatable">
             <div className="datatableTitle">

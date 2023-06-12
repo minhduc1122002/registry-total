@@ -148,7 +148,7 @@ export default function CarLayout( {cars} ) {
         <div className="dashboard-layout">
             <h4 className="dashboard-title">Xe Ô Tô Đã Đăng Ký</h4>
             {cars &&
-                <div className="statistics-line-chart" style={{paddingBottom: '20px', paddingTop: '20px'}}>
+                <div className="statistics-line-chart" style={{paddingBottom: '64px', paddingTop: '20px'}}>
                     <CarTable rows={cars} cols={userColumns} row_id='registration_id' actionColumn={actionColumn}/>
                 </div>
             }

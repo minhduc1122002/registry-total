@@ -1,7 +1,7 @@
 .statis {
     margin: 0px;
     font-family: "Maven Pro", sans-serif;
-    font-size: 1rem;
+    font-size: 18px;
     line-height: 1.75;
     text-transform: uppercase;
     font-weight: 600;
@@ -25,4 +25,7 @@
     font-weight: 400;
     font-size: 1rem;
     line-height: 1.5;
+}
+.statistics-container {
+    display: flex;
 }

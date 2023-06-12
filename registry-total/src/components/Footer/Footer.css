@@ -1,0 +1,97 @@
+.site-footer {
+    margin-top: 10%;
+    background: linear-gradient(180deg,rgb(40, 53, 147),rgb(40, 53, 147) ,rgb(40, 53, 147)),linear-gradient(0deg,rgb(40, 53, 147),rgb(40, 53, 147)),url(https://d24y9kuxp2d7l2.cloudfront.net/assets/bg-tracks-header@2x-8439ef30af6bf120107f6a84db31a62237d5ee8b.jpg);
+    background-position: -190px;
+    background-size: 100%;
+    box-shadow: 0 4px 24px 0 #00000026;
+    border-top: 8px solid rgb(63, 81, 181);
+    padding: 2em 2em 0 2em;
+     
+}
+.site-info {
+    color: #fff;
+    display: flex;
+}
+.site-info a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+}
+.site-info a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+.first {
+    margin-right: auto;
+}
+.middle {
+    margin-left: auto;
+    margin-right: auto;
+}
+.last {
+    margin-left: auto;
+}
+.site-info {
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    display: grid;
+}
+.site-info .info-col {
+    padding-left: 12px;
+    padding-right: 12px;
+    margin-bottom: 2.5rem;
+}
+.site-info .info-col h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1.15rem;
+    text-transform: uppercase;
+}
+.site-info .info-col p {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+.info-col hr {
+    width: 50px;
+    background-color: #fff;
+    height: 2px;
+    margin-bottom: 1.25rem;
+}
+.soical-icon {
+    height: 1.5em;
+}
+.follow-icon-list {
+    display: flex;
+    align-items: center;
+    margin-top: 1.75rem;
+}
+.follow-icon-list a {
+    margin-right: 2em;
+}
+.site-footer .spilt {
+    margin-top: 1.2rem;
+    margin-bottom: 1rem;
+    border-top: 2px solid rgb(63, 81, 181);
+}
+.end-footer {
+    padding: 1em 0 0.8em;
+    text-align: center;
+    color: #fff;
+    font-size: 1rem;
+}
+@media screen and (max-width: 1000px) {
+    .last {
+        margin-left: 0;
+    }
+    .middle {
+        margin-right: 0;
+    }
+    .site-info {
+        grid-template-columns: repeat(2, minmax(0,1fr));
+        display: grid;
+    }
+}
+@media screen and (max-width: 596px) {
+    .site-info {
+        grid-template-columns: repeat(1, minmax(0,1fr));
+        display: grid;
+    }
+}

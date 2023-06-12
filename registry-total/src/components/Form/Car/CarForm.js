@@ -27,11 +27,33 @@ export default function CarForm( {props} ) {
         { value: 'passenger_service', label: 'Dịch vụ chở khách' },
         { value: 'transportation_service', label: 'Dịch vụ vận tải' }
     ]
-
+    
     const handleNext = (e) => {
         e.preventDefault()
         if (!carId || !carDate || !numberPlate || !carPlace || !brand || !modelCode || !carUse || !carType || !engine_number || !chassis_number || !setChassisNumber) {
-            toast.error('Hãy nhập đầy đủ các trường', {
+            return toast.error('Hãy nhập đầy đủ các trường', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+            })
+        }
+        if (carId.length !== 6) {
+            return toast.error('Mã số không hợp lệ', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+            })
+        }
+        if (numberPlate.length !== 9) {
+            return toast.error('Biển số xe không hợp lệ', {
                 position: "top-right",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -106,7 +128,7 @@ export default function CarForm( {props} ) {
                         <div className="row-text">
                             <div className="label">Mã số</div>
                             <div className="text-input">
-                                <input type="text" name="carId" value={carId} onChange={(e) => setCarId(e.target.value)}></input>
+                                <input type="text" name="carId" defaultValue={carId} onChange={(e) => setCarId(e.target.value)}></input>
                             </div>
                         </div>
                         <div className="row-text">
@@ -114,7 +136,7 @@ export default function CarForm( {props} ) {
                             <div className="text-input">
                                 <LocalizationProvider locale={vi} dateAdapter={AdapterDateFns} adapterLocale={vi}>
                                 <DatePicker
-                                    value={carDate}
+                                    defaultValue={carDate}
                                     onChange={setCarDate}
                                     disableFuture
                                     format="dd/MM/yyyy"
@@ -128,35 +150,35 @@ export default function CarForm( {props} ) {
                     <div className="row-select">
                         <div className="label">Nơi đăng ký</div>
                         <div className="text-input">
-                            <input type="text" name="brand" value={carPlace} onChange={(e) => setCarPlace(e.target.value)}></input>
+                            <input type="text" name="brand" defaultValue={carPlace} onChange={(e) => setCarPlace(e.target.value)}></input>
                         </div>
                     </div>
 
                     <div className="row-text">
                         <div className="label">Biển đăng ký</div>
                         <div className="text-input">
-                            <input type="text" name="numberPlate" value={numberPlate} onChange={(e) => setNumberPlate(e.target.value)}></input>
+                            <input type="text" name="numberPlate" defaultValue={numberPlate} onChange={(e) => setNumberPlate(e.target.value)}></input>
                         </div>
                     </div>
 
                     <div className="row-text">
                         <div className="label">Loại phương tiện</div>
                         <div className="text-input">
-                            <input type="text" name="modelCode" value={carType} onChange={(e) => setCarType(e.target.value)}></input>
+                            <input type="text" name="modelCode" defaultValue={carType} onChange={(e) => setCarType(e.target.value)}></input>
                         </div>
                     </div>
 
                     <div className="row-text">
                         <div className="label">Hãng sản xuất</div>
                         <div className="text-input">
-                            <input type="text" name="brand" value={brand} onChange={(e) => setBrand(e.target.value)}></input>
+                            <input type="text" name="brand" defaultValue={brand} onChange={(e) => setBrand(e.target.value)}></input>
                         </div>
                     </div>
 
                     <div className="row-text">
                         <div className="label">Số loại</div>
                         <div className="text-input">
-                            <input type="text" name="modelCode" value={modelCode} onChange={(e) => setModelCode(e.target.value)}></input>
+                            <input type="text" name="modelCode" defaultValue={modelCode} onChange={(e) => setModelCode(e.target.value)}></input>
                         </div>
                     </div>
                         
@@ -167,7 +189,7 @@ export default function CarForm( {props} ) {
                                 id="carUse" name="carUse" options={carUses}
                                 className="select"
                                 placeholder="Chọn mục đích sử dụng"
-                                value={carUse}
+                                defaultValue={carUse}
                                 onChange={setCarUse}
                                 styles={selectStyle}
                             />
@@ -177,14 +199,14 @@ export default function CarForm( {props} ) {
                     <div className="row-text">
                         <div className="label">Số Máy</div>
                         <div className="text-input">
-                            <input type="text" name="modelCode" value={engine_number} onChange={(e) => setEngineNumber(e.target.value)}></input>
+                            <input type="text" name="modelCode" defaultValue={engine_number} onChange={(e) => setEngineNumber(e.target.value)}></input>
                         </div>
                     </div>
 
                     <div className="row-text">
                         <div className="label">Số Khung</div>
                         <div className="text-input">
-                            <input type="text" name="modelCode" value={chassis_number} onChange={(e) => setChassisNumber(e.target.value)}></input>
+                            <input type="text" name="modelCode" defaultValue={chassis_number} onChange={(e) => setChassisNumber(e.target.value)}></input>
                         </div>
                     </div>
     

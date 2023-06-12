@@ -12,8 +12,15 @@ export default function InspectionForm( {props} ) {
     const {index, setIndex, registerId, setRegisterId, registerDate, setRegisterDate, expiredDate, setExpiredDate, registerCity,
         setRegisterCity, registerDistrict, setRegisterDistrict, registerAddress, setRegisterAddress, handleAdd} = props
 
-    const cities = require('../../../address/tinh_tp.json');
     const tree = require('../../../address/tree.json');
+    const cities = require('../../../address/tinh_tp.json');
+    const findCity = (city) => {
+        return cities[cities.findIndex(c => c['code'] === city)]
+    }
+    const findDist = (dist, city_code) => {
+        const dists = tree[city_code]['quan-huyen']
+        return dists[dists.findIndex(d => d['code'] === dist)]
+    }
 
     const isSuccess = useSelector(
         (state) => state.inspection.isSuccess[0]
@@ -35,9 +42,8 @@ export default function InspectionForm( {props} ) {
     };
 
     const getDist = (city) => {
-        console.log(city.code)
         if (city.code !== undefined) {
-            // console.log(tree[city.code]['quan-huyen'])
+            
             return tree[city.code]['quan-huyen']
         }
         else return []
@@ -106,7 +112,7 @@ export default function InspectionForm( {props} ) {
                         <div className="text-input">
                             <LocalizationProvider locale={vi} dateAdapter={AdapterDateFns} adapterLocale={vi}>
                             <DatePicker
-                                value={registerDate}
+                                defaultValue={registerDate}
                                 onChange={setRegisterDate}
                                 disableFuture
                                 format="dd/MM/yyyy"
@@ -121,7 +127,7 @@ export default function InspectionForm( {props} ) {
                         <div className="text-input">
                             <LocalizationProvider locale={vi} dateAdapter={AdapterDateFns} adapterLocale={vi}>
                             <DatePicker
-                                value={expiredDate}
+                                defaultValue={expiredDate}
                                 onChange={setExpiredDate}
                                 format="dd/MM/yyyy"
                                 className='date-picker-width'
@@ -141,9 +147,7 @@ export default function InspectionForm( {props} ) {
                             <Select 
                                 id="city" name="City" options={cities}
                                 className="select"
-                                placeholder={registerCity}
-                                value={registerCity}
-                                onChange={setRegisterCity}
+                                defaultValue={findCity(registerCity)}
                                 getOptionLabel={(city) => city.name_with_type}
                                 getOptionValue={(city) => city.code}
                                 styles={selectStyle}
@@ -159,8 +163,7 @@ export default function InspectionForm( {props} ) {
                                 id="district" name="District" options={getDist(registerCity)}
                                 className="select"
                                 placeholder={registerDistrict}
-                                value={registerDistrict}
-                                onChange={setRegisterDistrict}
+                                defaultValue={findDist(registerDistrict, registerCity)}
                                 getOptionLabel={(district) => district.name_with_type}
                                 getOptionValue={(district) => district.code}
                                 noOptionsMessage={() => "Không có lựa chọn nào"}
@@ -173,7 +176,7 @@ export default function InspectionForm( {props} ) {
                     <div className="row-text">
                         <div className="label">Số nhà, phố, tổ dân phố/thôn/đội</div>
                         <div className="text-input">
-                            <input type="text" name="registerAddress" value={registerAddress} disabled={true} onChange={(e) => setRegisterAddress(e.target.value)}></input>
+                            <input type="text" name="registerAddress" defaultValue={registerAddress} disabled={true} onChange={(e) => setRegisterAddress(e.target.value)}></input>
                         </div>
                     </div>
 

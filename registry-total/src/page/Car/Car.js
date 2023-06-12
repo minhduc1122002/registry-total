@@ -6,6 +6,7 @@ import { getCarList } from '../../redux/car'
 import { useDispatch, useSelector } from 'react-redux'
 import CarLayout from '../../layout/Car/CarLayout'
 import Modal from '@mui/material/Modal';
+import Footer from '../../components/Footer/Footer'
 
 export default function Car() {
     const dispatch = useDispatch()
@@ -17,7 +18,6 @@ export default function Car() {
     
     return (
       <>
-      
         <div className='container'>
             {sideBar &&
             <Modal open={sideBar} onClose={() => setSideBar(false)}>
@@ -34,6 +34,7 @@ export default function Car() {
                 <CarLayout cars={cars}/>
             </div>
         </div>
+        <Footer/>
       </>
     )
 }

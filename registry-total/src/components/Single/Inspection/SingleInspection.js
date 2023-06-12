@@ -92,7 +92,7 @@ export default function SingleInspection( { inspection }) {
     }
     const findDist = (dist, city) => {
         const dists = tree[city.code]['quan-huyen']
-        return dists[dists.findIndex(d => d['name_with_type'] === dist || d['name'] === dist)]
+        return dists[dists.findIndex(d => d['code'] === dist)]
     }
     const findCity = (city) => {
       return cities[cities.findIndex(c => c['code'] === city)]
@@ -100,7 +100,7 @@ export default function SingleInspection( { inspection }) {
     const findWard = (district, ward) => {
       
       const wards_of_district = wards[district.parent_code]['quan-huyen'][district.code]['xa-phuong']
-      return wards_of_district[wards_of_district.findIndex(w => w['name_with_type'] === ward)]
+      return wards_of_district[wards_of_district.findIndex(w => w['code'] === ward)]
     }
     const getWard = (district) => {
         if (district && district.code && wards[district.parent_code]['quan-huyen'][district.code]['xa-phuong'].length > 0) {
@@ -115,7 +115,10 @@ export default function SingleInspection( { inspection }) {
     const [id, setId] = useState(owner.id);
     const [contact, setContact] = useState(owner.contact);
     const [city, setCity] = useState(findCity(owner.city));
+    console.log(city)
+    console.log(owner.district)
     const [district, setDistrict] = useState(findDist(owner.district, city));
+    console.log(district)
     const [ward, setWard] = useState(findWard(district, owner.ward));
     const [address, setAddress] = useState(owner.address);
 
@@ -134,6 +137,7 @@ export default function SingleInspection( { inspection }) {
     const [registerDate, setRegisterDate] = useState(new Date(inspection.register_date));
     const [expiredDate, setExpiredDate] = useState(new Date(inspection.expired_date));
     const [registerCity, setRegisterCity] = useState(findCity(center.city));
+    console.log(registerCity)
     const [registerDistrict, setRegisterDistrict] = useState(findDist(center.district, registerCity));
     const [registerAddress, setRegisterAddress] = useState(center.address);
     console.log(registerDistrict)
@@ -158,8 +162,8 @@ export default function SingleInspection( { inspection }) {
                   "name": name,
                   "address": address,
                   "contact": contact,
-                  "district": district.name_with_type,
-                  "ward": ward.name_with_type,
+                  "district": district.code,
+                  "ward": ward.code,
                   "city": city.code
               }
           },
@@ -181,7 +185,7 @@ export default function SingleInspection( { inspection }) {
                       <div className="row-text">
                           <div className="label">Mã số</div>
                           <div className="text-input">
-                              <input type="text" name="registerId" value={registerId} disabled={true} onChange={(e) => setRegisterId(e.target.value)}></input>
+                              <input type="text" name="registerId" defaultValue={registerId} disabled={true} onChange={(e) => setRegisterId(e.target.value)}></input>
                           </div>
                       </div>
                       <div className="row-text">
@@ -189,7 +193,7 @@ export default function SingleInspection( { inspection }) {
                           <div className="text-input">
                               <LocalizationProvider locale={vi} dateAdapter={AdapterDateFns} adapterLocale={vi}>
                               <DatePicker
-                                  value={registerDate}
+                                  defaultValue={registerDate}
                                   onChange={setRegisterDate}
                                   disableFuture
                                   format="dd/MM/yyyy"
@@ -204,7 +208,7 @@ export default function SingleInspection( { inspection }) {
                           <div className="text-input">
                               <LocalizationProvider locale={vi} dateAdapter={AdapterDateFns} adapterLocale={vi}>
                               <DatePicker
-                                  value={expiredDate}
+                                  defaultValue={expiredDate}
                                   onChange={setExpiredDate}
                                   format="dd/MM/yyyy"
                                   className='date-picker-width'
@@ -253,7 +257,7 @@ export default function SingleInspection( { inspection }) {
                       <div className="row-text">
                           <div className="label">Số nhà, phố, tổ dân phố/thôn/đội</div>
                           <div className="text-input">
-                              <input type="text" name="registerAddress" value={registerAddress} onChange={(e) => setRegisterAddress(e.target.value)}></input>
+                              <input type="text" name="registerAddress" defaultValue={registerAddress} onChange={(e) => setRegisterAddress(e.target.value)}></input>
                           </div>
                       </div>
                   </form>
@@ -269,7 +273,7 @@ export default function SingleInspection( { inspection }) {
                         <div className="row-text">
                             <div className="label">Mã số</div>
                             <div className="text-input">
-                                <input type="text" name="carId" value={carId} disabled={true} onChange={(e) => setCarId(e.target.value)}></input>
+                                <input type="text" name="carId" defaultValue={carId} disabled={true} onChange={(e) => setCarId(e.target.value)}></input>
                             </div>
                         </div>
                         <div className="row-text">
@@ -277,7 +281,7 @@ export default function SingleInspection( { inspection }) {
                             <div className="text-input">
                                 <LocalizationProvider locale={vi} dateAdapter={AdapterDateFns} adapterLocale={vi}>
                                 <DatePicker
-                                    value={carDate}
+                                    defaultValue={carDate}
                                     onChange={setCarDate}
                                     disableFuture
                                     format="dd/MM/yyyy"
@@ -292,7 +296,7 @@ export default function SingleInspection( { inspection }) {
                         <div className="label">Nơi đăng ký</div>
                         <div className="select-container">
                             <div className="text-input">
-                              <input type="text" name="carPlace" value={carPlace} onChange={(e) => setCarPlace(e.target.value)}></input>
+                              <input type="text" name="carPlace" defaultValue={carPlace} onChange={(e) => setCarPlace(e.target.value)}></input>
                           </div>
                         </div>
                     </div>
@@ -300,28 +304,28 @@ export default function SingleInspection( { inspection }) {
                     <div className="row-text">
                         <div className="label">Biển đăng ký</div>
                         <div className="text-input">
-                            <input type="text" name="numberPlate" value={numberPlate} onChange={(e) => setNumberPlate(e.target.value)}></input>
+                            <input type="text" name="numberPlate" defaultValue={numberPlate} onChange={(e) => setNumberPlate(e.target.value)}></input>
                         </div>
                     </div>
 
                     <div className="row-text">
                         <div className="label">Loại phương tiện</div>
                         <div className="text-input">
-                            <input type="text" name="modelCode" value={carType} onChange={(e) => setCarType(e.target.value)}></input>
+                            <input type="text" name="modelCode" defaultValue={carType} onChange={(e) => setCarType(e.target.value)}></input>
                         </div>
                     </div>
 
                     <div className="row-text">
                         <div className="label">Hãng sản xuất</div>
                         <div className="text-input">
-                            <input type="text" name="brand" value={brand} onChange={(e) => setBrand(e.target.value)}></input>
+                            <input type="text" name="brand" defaultValue={brand} onChange={(e) => setBrand(e.target.value)}></input>
                         </div>
                     </div>
 
                     <div className="row-text">
                         <div className="label">Số loại</div>
                         <div className="text-input">
-                            <input type="text" name="modelCode" value={modelCode} onChange={(e) => setModelCode(e.target.value)}></input>
+                            <input type="text" name="modelCode" defaultValue={modelCode} onChange={(e) => setModelCode(e.target.value)}></input>
                         </div>
                     </div>
                         
@@ -342,14 +346,14 @@ export default function SingleInspection( { inspection }) {
                     <div className="row-text">
                         <div className="label">Số Máy</div>
                         <div className="text-input">
-                            <input type="text" name="engineNumber" value={engine_number} onChange={(e) => setEngineNumber(e.target.value)}></input>
+                            <input type="text" name="engineNumber" defaultValue={engine_number} onChange={(e) => setEngineNumber(e.target.value)}></input>
                         </div>
                     </div>
 
                     <div className="row-text">
                         <div className="label">Số Khung</div>
                         <div className="text-input">
-                            <input type="text" name="chassisNumber" value={chassis_number} onChange={(e) => setChassisNumber(e.target.value)}></input>
+                            <input type="text" name="chassisNumber" defaultValue={chassis_number} onChange={(e) => setChassisNumber(e.target.value)}></input>
                         </div>
                     </div>
                 </form>
@@ -373,19 +377,19 @@ export default function SingleInspection( { inspection }) {
                     <div className="row-text">
                         <div className="label">{type === "individual" ? "Họ và tên" : "Tên doanh nghiệp"}</div>
                         <div className="text-input">
-                            <input type="text" name="Name" value={name} onChange={(e) => setName(e.target.value)}></input>
+                            <input type="text" name="Name" defaultValue={name} onChange={(e) => setName(e.target.value)}></input>
                         </div>
                     </div>
                     <div className="row-text">
                         <div className="label">{type === "individual" ? "Số CMT/CCCD hoặc hộ chiếu" : "Mã số doanh nghiệp"}</div>
                         <div className="text-input">
-                            <input type="text" name="Id" value={id} onChange={(e) => setId(e.target.value)}></input>
+                            <input type="text" name="Id" defaultValue={id} onChange={(e) => setId(e.target.value)}></input>
                         </div>
                     </div>
                     <div className="row-text">
                         <div className="label">Số điện thoại</div>
                         <div className="text-input">
-                            <input type="text" name="Contact" value={contact} onChange={(e) => setContact(e.target.value)}></input>
+                            <input type="text" name="Contact" defaultValue={contact} onChange={(e) => setContact(e.target.value)}></input>
                         </div>
                     </div>
                     <div className="label-group">
@@ -433,7 +437,7 @@ export default function SingleInspection( { inspection }) {
                                 id="ward" name="Ward" options={getWard(district)}
                                 className="select"
                                 placeholder={ward}
-                                value={ward}
+                                defaultValue={ward}
                                 onChange={setWard}
                                 getOptionLabel={(ward) => ward.name_with_type}
                                 getOptionValue={(ward) => ward.code}
@@ -446,7 +450,7 @@ export default function SingleInspection( { inspection }) {
                     <div className="row-text">
                         <div className="label">Số nhà, phố, tổ dân phố/thôn/đội</div>
                         <div className="text-input">
-                            <input type="text" name="Address" value={address} onChange={(e) => setAddress(e.target.value)}></input>
+                            <input type="text" name="Address" defaultValue={address} onChange={(e) => setAddress(e.target.value)}></input>
                         </div>
                     </div>
                     <div className="button-container">

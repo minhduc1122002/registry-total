@@ -17,25 +17,6 @@ export default function OwnerForm( {props} ) {
     const tree = require('../../../address/tree.json');
     const wards = require('../../../address/xa-phuong.json');
 
-    useEffect(() => {
-        setName()
-        setId()
-        setContact()
-        setCity()
-        setDistrict()
-        setWard()
-        setAddress()
-    }, [type])
-
-    useEffect(() => {
-        setDistrict()
-        setWard()
-    }, [city])
-
-    useEffect(() => {
-        setWard()
-    }, [district])
-
     const selectStyle = {    
         control: (base, state) => ({
             ...base,
@@ -62,8 +43,31 @@ export default function OwnerForm( {props} ) {
     }
     const handleNext = (e) => {
         e.preventDefault()
+        console.log(id)
         if (!type || !name || !id || !contact || !city || !district || !ward || !address) {
-            toast.error('Hãy nhập đầy đủ các trường', {
+            return toast.error('Hãy nhập đầy đủ các trường', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+            })
+        }
+        if (type === 'individual' && id.length !== 12 && id.length !== 8) {
+            return toast.error('Số CMT/CCCD, hộ chiếu không hợp lệ', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+            })
+        }
+        if (contact.length !== 10 && contact.length !== 11) {
+            return toast.error('Số điện thoại không hợp lệ', {
                 position: "top-right",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -135,8 +139,7 @@ export default function OwnerForm( {props} ) {
                         <div className="label">Loại</div>
                         <RadioGroup 
                             className="radio-container" 
-                            defaultValue={"individual"} 
-                            value={type}
+                            defaultValue={'individual'} 
                             onChange={(e) => setType(e.target.value)}
                             row 
                         >
@@ -147,19 +150,19 @@ export default function OwnerForm( {props} ) {
                     <div className="row-text">
                         <div className="label">{type === "individual" ? "Họ và tên" : "Tên doanh nghiệp"}</div>
                         <div className="text-input">
-                            <input type="text" name="Name" value={name} onChange={(e) => setName(e.target.value)}></input>
+                            <input type="text" name="Name" defaultValue={name} onChange={(e) => setName(e.target.value)}></input>
                         </div>
                     </div>
                     <div className="row-text">
                         <div className="label">{type === "individual" ? "Số CMT/CCCD hoặc hộ chiếu" : "Mã số doanh nghiệp"}</div>
                         <div className="text-input">
-                            <input type="text" name="Id" value={id} onChange={(e) => setId(e.target.value)}></input>
+                            <input type="text" name="Id" defaultValue={id} onChange={(e) => setId(e.target.value)}></input>
                         </div>
                     </div>
                     <div className="row-text">
                         <div className="label">Số điện thoại</div>
                         <div className="text-input">
-                            <input type="text" name="Contact" value={contact} onChange={(e) => setContact(e.target.value)}></input>
+                            <input type="text" name="Contact" defaultValue={contact} onChange={(e) => setContact(e.target.value)}></input>
                         </div>
                     </div>
                     <div className="label-group">
@@ -174,7 +177,7 @@ export default function OwnerForm( {props} ) {
                                 id="city" name="City" options={cities}
                                 className="select"
                                 placeholder="Chọn Tỉnh/Thành phố"
-                                value={city}
+                                defaultValue={city ? city : ''}
                                 onChange={setCity}
                                 getOptionLabel={(city) => city.name_with_type}
                                 getOptionValue={(city) => city.code}
@@ -190,7 +193,7 @@ export default function OwnerForm( {props} ) {
                                 id="district" name="District" options={getDist(city)}
                                 className="select"
                                 placeholder="Chọn Quận/Huyện"
-                                value={district}
+                                defaultValue={district ? district : ''}
                                 onChange={setDistrict}
                                 getOptionLabel={(district) => district.name_with_type}
                                 getOptionValue={(district) => district.code}
@@ -207,7 +210,7 @@ export default function OwnerForm( {props} ) {
                                 id="ward" name="Ward" options={getWard(district)}
                                 className="select"
                                 placeholder="Chọn Xã/Phường"
-                                value={ward}
+                                defaultValue={ward ? ward : ''}
                                 onChange={setWard}
                                 getOptionLabel={(ward) => ward.name_with_type}
                                 getOptionValue={(ward) => ward.code}
@@ -220,7 +223,7 @@ export default function OwnerForm( {props} ) {
                     <div className="row-text">
                         <div className="label">Số nhà, phố, tổ dân phố/thôn/đội</div>
                         <div className="text-input">
-                            <input type="text" name="Address" value={address} onChange={(e) => setAddress(e.target.value)}></input>
+                            <input type="text" name="Address" defaultValue={address} onChange={(e) => setAddress(e.target.value)}></input>
                         </div>
                     </div>
                     <div className="button-container">

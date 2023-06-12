@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify'
 import { reset } from '../../redux/user';
+import Footer from '../../components/Footer/Footer'
 
 export default function Form() {
     const [sideBar, setSideBar] = useState(false)
@@ -66,6 +67,7 @@ export default function Form() {
                     <CenterForm />
                 </div>
             </div>
+            <Footer/>
         </>
     );
 }

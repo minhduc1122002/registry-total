@@ -11,6 +11,7 @@ import { addInspection, reset } from '../../redux/inspection';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify'
 import Modal from '@mui/material/Modal';
+import Footer from '../../components/Footer/Footer'
 
 export default function Form() {
     const [sideBar, setSideBar] = useState(false)
@@ -57,6 +58,25 @@ export default function Form() {
     const [registerCity, setRegisterCity] = useState(user.center.city);
     const [registerDistrict, setRegisterDistrict] = useState(user.center.district);
     const [registerAddress, setRegisterAddress] = useState(user.center.address);
+    
+    useEffect(() => {
+        setName()
+        setId()
+        setContact()
+        setCity()
+        setDistrict()
+        setWard()
+        setAddress()
+    }, [type])
+
+    useEffect(() => {
+        setDistrict()
+        setWard()
+    }, [city])
+
+    useEffect(() => {
+        setWard()
+    }, [district])
 
     useEffect(() => {
         if (isError) {
@@ -99,20 +119,12 @@ export default function Form() {
                 progress: undefined,
             })
         }
-        let center
-        if (user.center) {
-            center = {
-                "id": user.center.id,
-                "address": registerAddress,
-                "city": registerCity,
-                "district": registerDistrict
-            }
-        } else {
-            center = {
-                "address": registerAddress,
-                "city": registerCity['value'],
-                "district": registerDistrict['name']
-            }
+        
+        const center = {
+            "id": user.center.id,
+            "address": registerAddress,
+            "city": registerCity,
+            "district": registerDistrict
         }
         
         dispatch(addInspection({
@@ -133,8 +145,8 @@ export default function Form() {
                     "name": name,
                     "address": address,
                     "contact": contact,
-                    "ward": ward?.name_with_type,
-                    "district": district?.name_with_type,
+                    "ward": ward?.code,
+                    "district": district?.code,
                     "city": city?.code
                 }
             },
@@ -185,6 +197,7 @@ export default function Form() {
                     {renderSwitch(index)}
                 </div>
             </div>
+            <Footer/>
         </>
     );
 }

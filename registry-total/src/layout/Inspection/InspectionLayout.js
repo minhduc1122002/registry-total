@@ -18,6 +18,7 @@ export default function InspectionLayout( {inspections} ) {
       headerName: "Action",
       width: 150,
       renderCell: (params) => {
+          console.log(params.row.register_id)
           return (
           <div className="cellAction">
               <Link to={`/inspections/${params.row.register_id}`} style={{ textDecoration: "none" }}>
@@ -133,7 +134,7 @@ export default function InspectionLayout( {inspections} ) {
         <div className="dashboard-layout">
             <h4 className="dashboard-title">Giấy Đăng Kiểm</h4>
             {inspections &&
-              <div className="statistics-line-chart" style={{paddingBottom: '20px', paddingTop: '20px'}}>
+              <div className="statistics-line-chart" style={{paddingBottom: '64px', paddingTop: '20px'}}>
                   <InspectionTable rows={inspections} cols={userColumns} row_id='register_id' actionColumn={actionColumn}/>
               </div>
             }

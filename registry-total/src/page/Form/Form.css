@@ -107,6 +107,8 @@
 .row-radio, .row-text, .row-select {
     display: flex;
     margin-top: 16px;
+    justify-content: center;
+    align-items: center;
 }
 
 .label {
@@ -123,6 +125,7 @@
     display: flex;
     font-size: 22px;
     font-weight: 500;
+    margin-bottom: 24px;
 }
 
 .line_blue {
@@ -281,4 +284,29 @@
 }
 .date-picker-width {
     width: 100%
+}
+form.block-content-container {
+    padding: 32px;
+}
+@media screen and (max-width: 1200px) {
+    
+}
+@media screen and (max-width: 900px) {
+    
+}
+@media screen and (max-width: 600px) {
+    .content {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+    .label {
+        font-size: 14px;
+    }
+    .radio-container {
+        justify-content: space-around;
+        font-size: 8px;
+    }
+    .row-text {
+        margin-top: 24px;
+    }
 }

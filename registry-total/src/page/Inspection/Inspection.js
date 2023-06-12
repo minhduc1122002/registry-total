@@ -9,6 +9,7 @@ import { getInspectionList } from '../../redux/inspection'
 import { useDispatch, useSelector } from 'react-redux'
 import { ToastContainer } from 'react-toastify'
 import Modal from '@mui/material/Modal';
+import Footer from '../../components/Footer/Footer'
 
 export default function Inspection() {
     const [sideBar, setSideBar] = useState(false)
@@ -42,6 +43,7 @@ export default function Inspection() {
                 {inspection ? <SingleInspection inspection={inspection}/> : <InspectionLayout inspections={inspections}/>}
             </div>
         </div>
+        <Footer/>
       </>
     )
 }

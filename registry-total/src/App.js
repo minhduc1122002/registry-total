@@ -27,7 +27,8 @@ function App() {
           <Route path="/inspections/:id" element={!user ? <Navigate to="/login"/> : <Inspection/>} />
           <Route path="/inspection/print/:id" element={!user ? <Navigate to="/login"/> : <Export/>} />
           <Route path="/login" element={user ? <Navigate to="/"/> : <Login/>} />
-          <Route path="/center" element={!user ? <Navigate to="/login"/> : <Center />} />
+          <Route path="/centers" element={!user ? <Navigate to="/login"/> : <Center />} />
+          <Route path="/centers/:username" element={!user ? <Navigate to="/login"/> : <Center />} />
           <Route path="/center/form" element={!user ? <Navigate to="/login"/> : <UserForm />} />
         </Routes>
       </Router>

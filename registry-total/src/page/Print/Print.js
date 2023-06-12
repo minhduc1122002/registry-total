@@ -4,13 +4,15 @@ import "@progress/kendo-theme-material/dist/all.css";
 import Sidebar from '../../components/Menu/Menu';
 import Navigation from '../../components/Navigation/Navigation';
 import axios from "axios"; 
-import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { Button } from "@progress/kendo-react-buttons";
 import { PDFExport } from "@progress/kendo-react-pdf";
 import { useNavigate } from 'react-router-dom'
 import './Print.css';
+import Footer from '../../components/Footer/Footer'
+import Modal from '@mui/material/Modal';
 
 export default function Print() {
+    const [sideBar, setSideBar] = useState(false)
     const BASE_URL = "http://localhost:8000/api/";
     const navigate = useNavigate()
     const [layoutSelection, setLayoutSelection] = useState({
@@ -48,7 +50,14 @@ export default function Print() {
     return (
     <>
         <div className="container">
-            <Sidebar/>
+            {sideBar &&
+                <Modal open={sideBar} onClose={() => setSideBar(false)}>
+                    <Sidebar/>
+                </Modal>
+            }
+            <div className="sidebar-container">
+                <Sidebar/>
+            </div>
             <div className='inspection'>
                 <Navigation/>
                 <div className="dashboard-layout">
@@ -117,6 +126,7 @@ export default function Print() {
                 </div>
             </div>
         </div>
+        <Footer />
     </>
   )
 }

@@ -279,7 +279,7 @@ class FormYearViewAll(APIView):
             serializer = FormSerializer(register, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-def CountInMonthByCenter(request, year):
+def CountInMonthByCenter(request, year, center_id=None):
         token = request.headers.get('Token')
         if not token:
             return HttpResponse('You are not authenticated', status=400)
@@ -294,6 +294,13 @@ def CountInMonthByCenter(request, year):
             month = list(total.values('register_date__month').annotate(count=Count('register_date__month')))
             return JsonResponse(month, safe=False)
         # Cục
+        ## Từng trung tâm
+        elif center_id is not None:
+            print(center_id)
+            total = Form.objects.filter(register_date__year=year, center__id=center_id)
+            month = list(total.values('register_date__month').annotate(count=Count('register_date__month')))
+            return JsonResponse(month, safe=False)
+        ## Tất cả trung tâm
         else:
             total = Form.objects.filter(register_date__year=year)
             month = list(total.values('register_date__month', 'center_id').annotate(count=Count('center_id')))
@@ -319,7 +326,7 @@ def CountInMonthAll(request, year):
             month = list(total.values('register_date__month').annotate(count=Count('register_date__month')))
             return JsonResponse(month, safe=False)
 
-def CountInYearAll(request):
+def CountInYearAll(request, center_id=None):
         token = request.headers.get('Token')
         if not token:
             return HttpResponse('You are not authenticated', status=400)
@@ -334,12 +341,18 @@ def CountInYearAll(request):
             year = list(total.values('register_date__year').annotate(count=Count('register_date__year')))
             return JsonResponse(year, safe=False)
         # Cục
+        ## Từng trung tâm
+        elif center_id is not None:
+            total = Form.objects.filter(center__id=center_id)
+            year = list(total.values('register_date__year').annotate(count=Count('register_date__year')))
+            return JsonResponse(year, safe=False)
+        ## Tất cả trung tâm
         else:
             total = Form.objects.all()
             year = list(total.values('register_date__year').annotate(count=Count('register_date__year')))
             return JsonResponse(year, safe=False)
 
-def CountAllByCenter(request):
+def CountAllByCenter(request, center_id=None):
         token = request.headers.get('Token')
         if not token:
             return HttpResponse('You are not authenticated', status=400)
@@ -353,12 +366,17 @@ def CountAllByCenter(request):
             total = Form.objects.filter(center__id=payload['center']['id']).count()
             return JsonResponse({'count': total})
         # Cục
+        ## Từng trung tâm
+        elif center_id is not None:
+            total = Form.objects.filter(center__id=center_id).count()
+            return JsonResponse({'count': total})
+        ## Tất cả trung tâm
         else:
             total = Form.objects.all()
             count = list(total.values('center_id').annotate(count=Count('center_id')))
             return JsonResponse(count, safe=False)
 
-def ExpiredAllByCenter(request):
+def ExpiredAllByCenter(request, center_id=None):
         token = request.headers.get('Token')
         if not token:
             return HttpResponse('You are not authenticated', status=400)
@@ -374,6 +392,12 @@ def ExpiredAllByCenter(request):
             expired_count = total.filter(expired_date__lt=today).count()
             return JsonResponse({'count': expired_count})
         # Cục
+        ## Từng trung tâm
+        elif center_id is not None:
+            total = Form.objects.filter(center__id=center_id)
+            expired_count = total.filter(expired_date__lt=today).count()
+            return JsonResponse({'count': expired_count})
+        ## Tất cả trung tâm
         else:
             total = Form.objects.filter(expired_date__lt=today)
             count = list(total.values('center_id').annotate(count=Count('center_id')))
@@ -471,7 +495,7 @@ class FormExpiringView(APIView):
     serializer_class = FormSerializer
     queryset = Form.objects.all()
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, center_id=None, *args, **kwargs):
         today = datetime.today()
         enddate = datetime(today.year, today.month, calendar.monthrange(today.year, today.month)[1])
 
@@ -489,6 +513,12 @@ class FormExpiringView(APIView):
             serializer = FormSerializer(registers, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         # Cục
+        ## Từng trung tâm
+        elif center_id is not None:
+            registers = Form.objects.filter(expired_date__lte=enddate, center__id=center_id)
+            serializer = FormSerializer(registers, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        ## Tất cả trung tâm
         else:
             registers = Form.objects.filter(expired_date__lte=enddate)
             serializer = FormSerializer(registers, many=True)
