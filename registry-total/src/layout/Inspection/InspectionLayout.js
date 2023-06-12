@@ -4,42 +4,70 @@ import { Link } from "react-router-dom";
 import { deleteInspection } from '../../redux/inspection'
 import { useDispatch, useSelector } from 'react-redux'
 import Select from "react-select"
+import axios from 'axios';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import {vi} from 'date-fns/locale';
+import moment from 'moment';
 
 export default function InspectionLayout( {inspections} ) {
     const dispatch = useDispatch()
     const user = useSelector((state) => state.auth.user);
     const cities = require('../../address/tinh_tp.json');
     const tree = require('../../address/tree.json');
-    const filters = [
-      { value: 'city', label: 'Theo Tỉnh/Thành phố' },
-      { value: 'district', label: 'Theo Quận/Huyện' },
-      { value: 'center', label: 'Theo Trung tâm' }
-    ]
-    const centers = [
-      { value: '1', label: '1' },
-      { value: '2', label: '2' },
-      { value: '3', label: '3' }
-    ]
     const [inspection, setInspection] = useState([])
     
     useEffect(() => {
         setInspection(inspections)
     }, [inspections]);
 
-    const [filter, setFilter] = useState()
     const [city, setCity] = useState()
     const [district, setDistrict] = useState()
+    const [centers, setCenters] = useState()
     const [center, setCenter] = useState()
+    const [lowerRegisterDate, setLowerRegisterDate] = useState()
+    const [upperRegisterDate, setUpperRegisterDate] = useState()
+    const [minUpperRegisterDate, setMinUpperRegisterDate] = useState()
+    const [lowerExpiredDate, setLowerExpiredDate] = useState()
+    const [upperExpiredDate, setUpperExpiredDate] = useState()
+    const [minLowerExpiredDate, setMinLowerExpiredDate] = useState()
+    const [minUpperExpiredDate, setMinUpperExpiredDate] = useState()
 
     useEffect(() => {
-      setCity("")
-      setDistrict("")
-      setCenter("")
-  }, [filter])
+        setDistrict("")
+        setCenter("")
+    }, [city])
 
-  useEffect(() => {
-      setDistrict("")
-  }, [city])
+    useEffect(() => {
+      setCenter("")
+    }, [district])
+
+    useEffect(() => {
+      setMinUpperRegisterDate(lowerRegisterDate)
+      setMinLowerExpiredDate(lowerRegisterDate)
+    }, [lowerRegisterDate])
+
+    useEffect(() => {
+      setMinUpperExpiredDate(lowerExpiredDate)
+    }, [lowerExpiredDate])
+
+    const BASE_URL = "http://localhost:8000/api/"
+    useEffect(() => {
+      const getCenters = async () => {
+        try {
+            const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+            const response = await axios.create({
+            baseURL: BASE_URL,
+            headers: { token: `${TOKEN}` },
+        }).get("/user");
+        
+            setCenters(response.data);
+        } catch(e) {
+            console.log(e)
+        }};
+        getCenters();
+    }, []);
 
     const selectStyle = {    
       control: (base, state) => ({
@@ -58,17 +86,29 @@ export default function InspectionLayout( {inspections} ) {
       else return []
     }
 
+    const getCenter = (district) => {
+      if (centers) {
+        return centers.filter(center => center.center.district == district.code)
+      } 
+      else return []
+    }
+
     const handleClick = () => {
-      if (filter) {
-        switch(filter.value) {
-          case 'city':
-            setInspection(inspections.filter(inspection => inspection.center.city == city.code))
-          case 'district':
-            setInspection(inspections.filter(inspection => inspection.center.district == district.code))
-          case 'center':
-            setInspection(inspections.filter(inspection => inspection.center.id == center.value))
-        }
-      }
+      const chosen_city = (city && city.code) ? city.code : undefined
+      const chosen_district = (district && district.code) ? district.code : undefined
+      const chosen_center = (center && center.center && center.center.id) ? center.center.id : undefined
+      const lower_register_date = (lowerRegisterDate && moment(lowerRegisterDate, 'dd/MM/yyyy', true).isValid()) ? lowerRegisterDate : undefined
+      const upper_register_date = (upperRegisterDate && moment(upperRegisterDate, 'dd/MM/yyyy', true).isValid()) ? upperRegisterDate : undefined
+      const lower_expired_date = (lowerExpiredDate && moment(lowerExpiredDate, 'dd/MM/yyyy', true).isValid()) ? lowerExpiredDate : undefined
+      const upper_expired_date = (upperExpiredDate && moment(upperExpiredDate, 'dd/MM/yyyy', true).isValid()) ? upperExpiredDate : undefined
+
+      setInspection(inspections.filter(inspection => (inspection.center.id === chosen_center || !chosen_center) && 
+                    (inspection.center.district === chosen_district || !chosen_district) && 
+                    (inspection.center.city === chosen_city || !chosen_city) && 
+                    (!lower_register_date || (new Date(inspection.register_date).getTime() >= lower_register_date.getTime())) && 
+                    (!upper_register_date || (new Date(inspection.register_date).getTime() <= upper_register_date.getTime())) && 
+                    (!lower_expired_date || (new Date(inspection.expired_date).getTime() >= lower_expired_date.getTime())) && 
+                    (!upper_expired_date || (new Date(inspection.expired_date).getTime() <= upper_expired_date.getTime()))))
     }
 
     const handleDelete = (e, id) => {
@@ -98,7 +138,7 @@ export default function InspectionLayout( {inspections} ) {
       },
       },
     ];
-    
+
     const userColumns = [
         {
             field: "inspection_id",
@@ -193,6 +233,7 @@ export default function InspectionLayout( {inspections} ) {
           }
         
     ];
+
     return (
         <div className="dashboard-layout">
             <h4 className="dashboard-title">Giấy Đăng Kiểm</h4>
@@ -200,24 +241,10 @@ export default function InspectionLayout( {inspections} ) {
             (
             <>
             <div className="row-select">
-              <div className="label">Bộ lọc</div>
-              <div className="select-container" style={{width:'70%'}}>
-                <Select
-                  id="filter" name="filter" options={filters}
-                  className="select"
-                  placeholder="Chọn Bộ lọc"
-                  value={filter}
-                  onChange={setFilter}
-                  noOptionsMessage={() => "Không có lựa chọn nào"}
-                  styles={selectStyle}
-                />
-              </div>
-            </div>
-            <div className="row-select">
               <div className="label">Tỉnh/Thành phố</div>
               <div className="select-container">
                 <Select 
-                    id="city" name="City" options={(filter && filter.value=='center') ? [] : cities}
+                    id="city" name="City" options={cities}
                     className="select"
                     placeholder="Chọn Tỉnh/Thành phố"
                     value={city}
@@ -233,7 +260,7 @@ export default function InspectionLayout( {inspections} ) {
               <div className="label">Quận/Huyện</div>
               <div className="select-container">
                 <Select
-                    id="district" name="District" options={(filter && filter.value=='district') ? getDist(city) : []}
+                    id="district" name="District" options={getDist(city)}
                     className="select"
                     placeholder="Chọn Quận/Huyện"
                     value={district}
@@ -249,14 +276,69 @@ export default function InspectionLayout( {inspections} ) {
               <div className="label">Trung tâm</div>
               <div className="select-container">
                 <Select
-                    id="center" name="Center" options={(filter && filter.value=='center') ? centers : []}
+                    id="center" name="Center" options={getCenter(district)}
                     className="select"
                     placeholder="Chọn Trung tâm"
                     value={center}
                     onChange={setCenter}
+                    getOptionLabel={(center) => center.center.id}
+                    getOptionValue={(center) => center.center.id}
                     noOptionsMessage={() => "Không có lựa chọn nào"}
                     styles={selectStyle}
                 />
+              </div>
+            </div>
+            <div className="row-text">
+              <div className="label">Ngày cấp</div>
+              <div className="text-input">
+                <LocalizationProvider locale={vi} dateAdapter={AdapterDateFns} adapterLocale={vi}>
+                  <DatePicker
+                      defaultValue={lowerRegisterDate}
+                      onChange={setLowerRegisterDate}
+                      disableFuture
+                      format="dd/MM/yyyy"
+                      className='date-picker-width'
+                  />
+                </LocalizationProvider>
+              </div>
+              <div style={{padding:'10px'}}>-</div>
+              <div className="text-input">
+                <LocalizationProvider locale={vi} dateAdapter={AdapterDateFns} adapterLocale={vi}>
+                  <DatePicker
+                      defaultValue={upperRegisterDate}
+                      onChange={setUpperRegisterDate}
+                      disableFuture
+                      format="dd/MM/yyyy"
+                      className='date-picker-width'
+                      minDate={minUpperRegisterDate}
+                  />
+                </LocalizationProvider>
+              </div>
+            </div>
+            <div className="row-text">
+              <div className="label">Ngày hết hạn</div>
+              <div className="text-input">
+                <LocalizationProvider locale={vi} dateAdapter={AdapterDateFns} adapterLocale={vi}>
+                  <DatePicker
+                      defaultValue={lowerExpiredDate}
+                      onChange={setLowerExpiredDate}
+                      format="dd/MM/yyyy"
+                      className='date-picker-width'
+                      minDate={minLowerExpiredDate}
+                  />
+                </LocalizationProvider>
+              </div>
+              <div style={{padding:'10px'}}>-</div>
+              <div className="text-input">
+                <LocalizationProvider locale={vi} dateAdapter={AdapterDateFns} adapterLocale={vi}>
+                  <DatePicker
+                      defaultValue={upperExpiredDate}
+                      onChange={setUpperExpiredDate}
+                      format="dd/MM/yyyy"
+                      className='date-picker-width'
+                      minDate={minUpperExpiredDate}
+                  />
+                </LocalizationProvider>
               </div>
             </div>
             <div className="button-container">
