@@ -1,11 +1,71 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import InspectionTable from '../../components/Table/InspectionTable'
 import { Link } from "react-router-dom";
 import { deleteInspection } from '../../redux/inspection'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import Select from "react-select"
 
 export default function InspectionLayout( {inspections} ) {
     const dispatch = useDispatch()
+    const user = useSelector((state) => state.auth.user);
+    const cities = require('../../address/tinh_tp.json');
+    const tree = require('../../address/tree.json');
+    const filters = [
+      { value: 'city', label: 'Theo Tỉnh/Thành phố' },
+      { value: 'district', label: 'Theo Quận/Huyện' },
+      { value: 'center', label: 'Theo Trung tâm' }
+    ]
+    const centers = [
+      { value: '1', label: '1' },
+      { value: '2', label: '2' },
+      { value: '3', label: '3' }
+    ]
+    const [inspection, setInspection] = useState(inspections)
+
+    const [filter, setFilter] = useState()
+    const [city, setCity] = useState()
+    const [district, setDistrict] = useState()
+    const [center, setCenter] = useState()
+
+    useEffect(() => {
+      setCity("")
+      setDistrict("")
+      setCenter("")
+  }, [filter])
+
+  useEffect(() => {
+      setDistrict("")
+  }, [city])
+
+    const selectStyle = {    
+      control: (base, state) => ({
+          ...base,
+          '&:hover': { borderColor: 'gray' },
+          border: '1px solid rgba(0, 0, 0, 0.32)',
+          boxShadow: 'none',
+          width: '100%'
+      }),
+    };
+
+    const getDist = (city) => {
+      if (city && city.code) {
+          return tree[city.code]['quan-huyen']
+      }
+      else return []
+    }
+
+    const handleClick = () => {
+      if (filter) {
+        switch(filter.value) {
+          case 'city':
+            setInspection(inspections.filter(inspection => inspection.center.city == city.code))
+          case 'district':
+            setInspection(inspections.filter(inspection => inspection.center.district == district.code))
+          case 'center':
+            setInspection(inspections.filter(inspection => inspection.center.id == center.value))
+        }
+      }
+    }
 
     const handleDelete = (e, id) => {
         e.preventDefault()
