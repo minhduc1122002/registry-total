@@ -30,7 +30,7 @@ export const getCarList = createAsyncThunk('car/list', async (thunkAPI) => {
 })
 
 //add car
-export const addCar = createAsyncThunk('form/add', async (car, thunkAPI) => {
+export const addCar = createAsyncThunk('car/add', async (car, thunkAPI) => {
   try {
         const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
         const response = await axios.create({
@@ -49,7 +49,7 @@ export const addCar = createAsyncThunk('form/add', async (car, thunkAPI) => {
 })
 
 //add list of car
-export const addCarList = createAsyncThunk('form/add/list', async (cars, thunkAPI) => {
+export const addCarList = createAsyncThunk('car/add/list', async (cars, thunkAPI) => {
   try {
         const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
         const response = await axios.create({

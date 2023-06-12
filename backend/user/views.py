@@ -124,7 +124,8 @@ class UserDetailView(UserView):
         try:
             user = User.objects.get(username=username)
             serializer = UserSerializer(user)
-
+            centers = Center.objects.all()
+            print(centers)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except:
             return Response('Not Found', status=status.HTTP_400_BAD_REQUEST)
@@ -143,6 +144,7 @@ class UserDetailView(UserView):
             
         if center_serializer.is_valid():
             center = Center(**request.data['center'])
+            center_serializer.save()
             return center
         else:
             return center_serializer.errors
@@ -174,7 +176,6 @@ class UserDetailView(UserView):
         if serializer.is_valid():
             user.center = center
             user.username = user_data['username']
-            center.save()
             user.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         

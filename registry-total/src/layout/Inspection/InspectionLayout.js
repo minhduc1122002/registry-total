@@ -10,10 +10,11 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import {vi} from 'date-fns/locale';
 import moment from 'moment';
+import './InspectionLayout.css'
 
 export default function InspectionLayout( {inspections} ) {
     const dispatch = useDispatch()
-    const user = useSelector((state) => state.auth.user);
+    const user = useSelector(state => state.auth.user)
     const cities = require('../../address/tinh_tp.json');
     const tree = require('../../address/tree.json');
     const [inspection, setInspection] = useState([])
@@ -33,7 +34,8 @@ export default function InspectionLayout( {inspections} ) {
     const [upperExpiredDate, setUpperExpiredDate] = useState()
     const [minLowerExpiredDate, setMinLowerExpiredDate] = useState()
     const [minUpperExpiredDate, setMinUpperExpiredDate] = useState()
-
+    const [showfilter, setShowFilter] = useState(false)
+    
     useEffect(() => {
         setDistrict("")
         setCenter("")
@@ -237,83 +239,86 @@ export default function InspectionLayout( {inspections} ) {
     return (
         <div className="dashboard-layout">
             <h4 className="dashboard-title">Giấy Đăng Kiểm</h4>
-            {inspection && user.role === 'department' && 
-            (
-            <>
-            <div className="row-select">
-              <div className="label">Tỉnh/Thành phố</div>
-              <div className="select-container">
-                <Select 
-                    id="city" name="City" options={cities}
-                    className="select"
-                    placeholder="Chọn Tỉnh/Thành phố"
-                    value={city}
-                    onChange={setCity}
-                    getOptionLabel={(city) => city.name_with_type}
-                    getOptionValue={(city) => city.code}
-                    noOptionsMessage={() => "Không có lựa chọn nào"}
-                    styles={selectStyle}
-                />
-              </div>
-            </div>
-            <div className="row-select">
-              <div className="label">Quận/Huyện</div>
-              <div className="select-container">
-                <Select
-                    id="district" name="District" options={getDist(city)}
-                    className="select"
-                    placeholder="Chọn Quận/Huyện"
-                    value={district}
-                    onChange={setDistrict}
-                    getOptionLabel={(district) => district.name_with_type}
-                    getOptionValue={(district) => district.code}
-                    noOptionsMessage={() => "Không có lựa chọn nào"}
-                    styles={selectStyle}
-                />
-              </div>
-            </div>
-            <div className="row-select">
-              <div className="label">Trung tâm</div>
-              <div className="select-container">
-                <Select
-                    id="center" name="Center" options={getCenter(district)}
-                    className="select"
-                    placeholder="Chọn Trung tâm"
-                    value={center}
-                    onChange={setCenter}
-                    getOptionLabel={(center) => center.center.id}
-                    getOptionValue={(center) => center.center.id}
-                    noOptionsMessage={() => "Không có lựa chọn nào"}
-                    styles={selectStyle}
-                />
-              </div>
-            </div>
-            <div className="row-text">
-              <div className="label">Ngày cấp</div>
-              <div className="text-input">
-                <LocalizationProvider locale={vi} dateAdapter={AdapterDateFns} adapterLocale={vi}>
-                  <DatePicker
-                      defaultValue={lowerRegisterDate}
-                      onChange={setLowerRegisterDate}
-                      disableFuture
-                      format="dd/MM/yyyy"
-                      className='date-picker-width'
+            {showfilter && 
+            <div className="filter-container">
+              {user.role === 'department' &&
+              <>
+              <div className="row-select">
+                <div className="label">Tỉnh/Thành phố</div>
+                <div className="select-container">
+                  <Select 
+                      id="city" name="City" options={cities}
+                      className="select"
+                      placeholder="Chọn Tỉnh/Thành phố"
+                      value={city}
+                      onChange={setCity}
+                      getOptionLabel={(city) => city.name_with_type}
+                      getOptionValue={(city) => city.code}
+                      noOptionsMessage={() => "Không có lựa chọn nào"}
+                      styles={selectStyle}
                   />
-                </LocalizationProvider>
+                </div>
               </div>
-              <div style={{padding:'10px'}}>-</div>
-              <div className="text-input">
-                <LocalizationProvider locale={vi} dateAdapter={AdapterDateFns} adapterLocale={vi}>
-                  <DatePicker
-                      defaultValue={upperRegisterDate}
-                      onChange={setUpperRegisterDate}
-                      disableFuture
-                      format="dd/MM/yyyy"
-                      className='date-picker-width'
-                      minDate={minUpperRegisterDate}
+              <div className="row-select">
+                <div className="label">Quận/Huyện</div>
+                <div className="select-container">
+                  <Select
+                      id="district" name="District" options={getDist(city)}
+                      className="select"
+                      placeholder="Chọn Quận/Huyện"
+                      value={district}
+                      onChange={setDistrict}
+                      getOptionLabel={(district) => district.name_with_type}
+                      getOptionValue={(district) => district.code}
+                      noOptionsMessage={() => "Không có lựa chọn nào"}
+                      styles={selectStyle}
                   />
-                </LocalizationProvider>
+                </div>
               </div>
+              <div className="row-select">
+                <div className="label">Trung tâm</div>
+                <div className="select-container">
+                  <Select
+                      id="center" name="Center" options={getCenter(district)}
+                      className="select"
+                      placeholder="Chọn Trung tâm"
+                      value={center}
+                      onChange={setCenter}
+                      getOptionLabel={(center) => center.center.id}
+                      getOptionValue={(center) => center.center.id}
+                      noOptionsMessage={() => "Không có lựa chọn nào"}
+                      styles={selectStyle}
+                  />
+                </div>
+              </div>
+              </>
+              }
+              <div className="row-text">
+                <div className="label">Ngày cấp</div>
+                <div className="text-input">
+                  <LocalizationProvider locale={vi} dateAdapter={AdapterDateFns} adapterLocale={vi}>
+                    <DatePicker
+                        defaultValue={lowerRegisterDate}
+                        onChange={setLowerRegisterDate}
+                        disableFuture
+                        format="dd/MM/yyyy"
+                        className='date-picker-width'
+                    />
+                  </LocalizationProvider>
+                </div>
+                <div style={{padding:'10px'}}>-</div>
+                <div className="text-input">
+                  <LocalizationProvider locale={vi} dateAdapter={AdapterDateFns} adapterLocale={vi}>
+                    <DatePicker
+                        defaultValue={upperRegisterDate}
+                        onChange={setUpperRegisterDate}
+                        disableFuture
+                        format="dd/MM/yyyy"
+                        className='date-picker-width'
+                        minDate={minUpperRegisterDate}
+                    />
+                  </LocalizationProvider>
+                </div>
             </div>
             <div className="row-text">
               <div className="label">Ngày hết hạn</div>
@@ -344,13 +349,15 @@ export default function InspectionLayout( {inspections} ) {
             <div className="button-container">
               <button type='button' className='link primary-btn' onClick={handleClick}>Lọc</button>
             </div>
-            </>)}
+          </div>
+          }
 
-            {inspection &&
-              <div className="statistics-line-chart" style={{paddingBottom: '20px', paddingTop: '20px'}}>
-                  <InspectionTable rows={inspection} cols={userColumns} row_id='register_id' actionColumn={actionColumn}/>
-              </div>
-            }
-        </div>
+          {inspection &&
+            <div className="statistics-line-chart" style={{paddingBottom: '20px', paddingTop: '20px'}}>
+                <InspectionTable rows={inspection} cols={userColumns} row_id='register_id' actionColumn={actionColumn}
+                    filter={showfilter} setFilter={setShowFilter}/>
+            </div>
+          }
+    </div>
   )
 }

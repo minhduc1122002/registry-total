@@ -156,6 +156,39 @@ export default function Form() {
             "center": center
         }))
     }
+    console.log({
+        "car": {
+            "registration_id": carId,
+            "registration_place": carPlace,
+            "registration_date": formatDate(carDate),
+            "plate_number": numberPlate,
+            "purpose": carUse?.value,
+            "type": carType,
+            "manufacturer": brand,
+            "model": modelCode,
+            "engine_number": engine_number,
+            "chassis_number": chassis_number,
+            "owner": {
+                "id": id,
+                "type": type,
+                "name": name,
+                "address": address,
+                "contact": contact,
+                "ward": ward?.code,
+                "district": district?.code,
+                "city": city?.code
+            }
+        },
+        "register_id": registerId,
+        "register_date": formatDate(registerDate),
+        "expired_date": formatDate(expiredDate),
+        "center": {
+            "id": user.center.id,
+            "address": registerAddress,
+            "city": registerCity,
+            "district": registerDistrict
+        }
+    })
     const renderSwitch = (index) => {
         switch(index) {
             case "owner":

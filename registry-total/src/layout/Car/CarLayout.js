@@ -25,9 +25,6 @@ export default function CarLayout( {cars} ) {
       renderCell: (params) => {
           return (
           <div className="cellAction">
-              <Link to={`/cars/${params.row.registration_id}`} style={{ textDecoration: "none" }}>
-                  <div className="viewButton">View</div>
-              </Link>
               <div
                   className="deleteButton"
                   onClick={(e) => handleDelete(e, params.row.registration_id)}

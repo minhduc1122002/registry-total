@@ -71,7 +71,6 @@ export default function SingleCenter( {user} ) {
         return cities[cities.findIndex(c => c['code'] === city)]
     }
 
-    const [id, setId] = useState(user.center.id);
     const [username, setUsername] = useState(user.username);
     const [oldPassword, setOldPassword] = useState();
     const [newPassword, setNewPassword] = useState();
@@ -413,7 +412,7 @@ export default function SingleCenter( {user} ) {
                 'newpassword': newPassword,
                 'role': 'center',
                 'center': {
-                    'id': id,
+                    'id': user.center.id,
                     'city': registerCity.code,
                     'district': registerDistrict.code,
                     'address': registerAddress
@@ -425,7 +424,7 @@ export default function SingleCenter( {user} ) {
                 'username': username,
                 'role': 'center',
                 'center': {
-                    'id': id,
+                    'id': user.center.id,
                     'city': registerCity.code,
                     'district': registerDistrict.code,
                     'address': registerAddress
@@ -469,13 +468,6 @@ export default function SingleCenter( {user} ) {
                 <div className="label-group">
                     Thông Tin Trung Tâm
                     <p className="line_blue"></p>
-                </div>
-
-                <div className="row-text">
-                    <div className="label">Mã số</div>
-                    <div className="text-input">
-                        <input type="text" name="id" defaultValue={id} onChange={(e) => setId(e.target.value)}></input>
-                    </div>
                 </div>
 
                 <div className="row-select">

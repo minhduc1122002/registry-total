@@ -52,7 +52,7 @@ export default function CarForm( {props} ) {
                 progress: undefined,
             })
         }
-        if (numberPlate.length !== 9) {
+        if (numberPlate.length !== 10) {
             return toast.error('Biển số xe không hợp lệ', {
                 position: "top-right",
                 autoClose: 2000,
