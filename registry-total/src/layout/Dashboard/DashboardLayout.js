@@ -57,6 +57,13 @@ export default function DashboardLayout() {
     const [re_regis_cars_dep, setReRegisCarsDep] = useState([]);
     const [selected, setSelected] = useState(null);
 
+    const tree = require('../../address/tree.json');
+
+    const findDist = (dist, city_code) => {
+        const dists = tree[city_code]['quan-huyen']
+        return dists[dists.findIndex(d => d['code'] === dist)]
+    }
+
     const dispatch = useDispatch()
     const cars = useSelector(state => state.car.cars)
     useEffect(() => {
@@ -361,8 +368,6 @@ export default function DashboardLayout() {
 
     const handleChangePlace = (selectedOption) => {
         setSelected(selectedOption);
-        console.log(re_regis_cars_dep);
-        console.log(re_regis_cars_district);
         if (selectedOption.value !== 'district') setForecast(re_regis_cars_dep);
         else {
             for (let i=0;i<unregistered_cars_district.length;i++) {
@@ -414,7 +419,7 @@ export default function DashboardLayout() {
                     <div className="statistics-card">
                         <div className="card-text">
                             <p>Dự báo</p>
-                            <h4>{Math.round(unregistered_cars*user.center.id/10)}</h4>
+                            <h4>{Math.round(unregistered_cars*(parseInt(user.center.id)%9)/10)}</h4>
                             <p>Ô Tô Đăng Kiểm Mới</p>
                         </div>
                         <div className="card-icon">

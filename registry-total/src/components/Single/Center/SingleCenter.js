@@ -53,6 +53,8 @@ export default function SingleCenter( {user} ) {
     const [expired_cars, setExpiredCars] = useState([]);
     const [re_regis_cars, setReRegisCars] = useState([]);
     const [selected, setSelected] = useState(null);
+    const [unregistered_cars, setUnRegisteredCars] = useState([]);
+    const [re_regis_cars_center, setReRegisCarsCenter] = useState([]);
 
     const cities = require('../../../address/tinh_tp.json');
     const tree = require('../../../address/tree.json');
@@ -167,6 +169,34 @@ export default function SingleCenter( {user} ) {
           }
       });
     
+      const getUnRegisteredCars = async () => {
+        try {
+            const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+            const response = await axios.create({
+            baseURL: BASE_URL,
+            headers: { token: `${TOKEN}` },
+        }).get("/car/unregis");
+        
+            setUnRegisteredCars(response.data);
+        } catch(e) {
+            console.log(e)
+        }};
+        getUnRegisteredCars();
+
+        const getReRegisCarsCenter = async () => {
+            try {
+                const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+                const response = await axios.create({
+                baseURL: BASE_URL,
+                headers: { token: `${TOKEN}` },
+            }).get("/form/forecast/center");
+            
+                setReRegisCarsCenter(response.data);
+            } catch(e) {
+                console.log(e)
+            }};
+        getReRegisCarsCenter();
+
         const getRegisteredCars = async () => {
             try {
                 const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
@@ -528,8 +558,19 @@ export default function SingleCenter( {user} ) {
                     </div>
                     <div className="statistics-card">
                         <div className="card-text">
-                            <h4>{new_regis_cars}</h4>
-                            <p>Dự Báo Ô Tô Đăng Kiểm Mới</p>
+                            <p>Dự báo</p>
+                            <h4>{Math.round(unregistered_cars*(parseInt(user.center.id)%9)/10)}</h4>
+                            <p>Ô Tô Đăng Kiểm Mới</p>
+                        </div>
+                        <div className="card-icon">
+                            <FontAwesomeIcon icon={faCarOn} />
+                        </div>
+                    </div>
+                    <div className="statistics-card">
+                        <div className="card-text">
+                            <p>Dự báo</p>
+                            <h4>{re_regis_cars_center.count}</h4>
+                            <p>Ô Tô Đăng Kiểm Lại</p>
                         </div>
                         <div className="card-icon">
                             <FontAwesomeIcon icon={faCarOn} />
