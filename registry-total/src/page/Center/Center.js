@@ -40,7 +40,7 @@ export default function Center() {
                 <>
                 <div style={{display:'flex'}}>
                     
-                    <h4 className="dashboard-title">Trung Tâm {user.center.id}</h4>
+                    <h4 className="dashboard-title">TTDK {user.center.id}</h4>
                 </div>
             
                 <div className="statistics-line-chart" style={{paddingBottom: '20px', paddingTop: '20px'}}> 

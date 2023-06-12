@@ -43,7 +43,7 @@ const customStyles = {
     singleValue: (defaultStyles) => ({ ...defaultStyles, color: "rgb(40, 53, 147)" }),
 };
 
-export default function CenterLayout( {user} ) {
+export default function SingleCenter( {user} ) {
     const navigate = useNavigate()
     const center_id = user.center.id
     const [registered_cars, setRegisteredCars] = useState([]);

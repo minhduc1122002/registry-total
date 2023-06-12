@@ -13,6 +13,7 @@ export default function CenterForm() {
     const cities = require('../../../address/tinh_tp.json');
     const tree = require('../../../address/tree.json');
 
+    const [id, setId] = useState();
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
     const [registerCity, setRegisterCity] = useState();
@@ -41,7 +42,7 @@ export default function CenterForm() {
     
     const handleAdd = (e) => {
         e.preventDefault()
-        if (!username || !password || !registerCity || !registerDistrict || !registerAddress) {
+        if (!id || !username || !password || !registerCity || !registerDistrict || !registerAddress) {
             return toast.error('Hãy nhập đầy đủ các trường', {
                 position: "top-right",
                 autoClose: 2000,
@@ -57,6 +58,7 @@ export default function CenterForm() {
             'password': password,
             'role': 'center',
             'center': {
+                'id': id,
                 'city': registerCity.code,
                 'district': registerDistrict.code,
                 'address': registerAddress
@@ -83,6 +85,13 @@ export default function CenterForm() {
                     <div className="label-group">
                         Địa chỉ trung tâm
                         <p className="line_blue"></p>
+                    </div>
+
+                    <div className="row-text">
+                        <div className="label">Tên</div>
+                        <div className="text-input">
+                            <input type="text" name="id" defaultValue={id} onChange={(e) => setId(e.target.value)}></input>
+                        </div>
                     </div>
                             
                     <div className="row-select">
@@ -126,7 +135,7 @@ export default function CenterForm() {
                     </div>
             
                     <div className="button-container">
-                        <button className="button button-back" type="button" onClick={() => navigate(`/center`)}>Hủy bỏ</button>
+                        <button className="button button-back" type="button" onClick={() => navigate(`/centers`)}>Hủy bỏ</button>
                         <button className="button" type="button" onClick={handleAdd}>Đăng ký</button>
                     </div>
                 </form>

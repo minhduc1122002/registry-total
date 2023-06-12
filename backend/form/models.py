@@ -17,7 +17,7 @@ def getChoice(link):
     return choices.items()
 
 class Center(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.CharField(primary_key=True, max_length=30)
     address = models.CharField(blank=True, null=True, max_length=100)
     city = models.CharField(
         max_length=20,

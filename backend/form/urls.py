@@ -24,6 +24,7 @@ urlpatterns = [
     # cục (của từng trung tâm)
     # trung tâm (của trung tâm đấy)
     path('form/register/bymonth/<int:year>', views.CountInMonthByCenter, name="center"),
+    path('form/register/bymonth/<int:year>/<str:center_id>', views.CountInMonthByCenter, name="center"),
     # lấy data của từng tháng trong 1 năm bất kỳ
     # cục (toàn quốc)
     # trung tâm (của trung tâm đấy)
@@ -32,9 +33,12 @@ urlpatterns = [
     # cục (toàn quốc)
     # trung tâm (của trung tâm đấy)
     path('form/register/byyear/all', views.CountInYearAll),
+    path('form/register/byyear/all/<str:center_id>', views.CountInYearAll),
 
     path('form/register/all', views.CountAllByCenter, name="center"),
+    path('form/register/all/<str:center_id>', views.CountAllByCenter, name="center"),
     path('form/expired/all', views.ExpiredAllByCenter, name="center"),
+    path('form/expired/all/<str:center_id>', views.ExpiredAllByCenter, name="center"),
     path('form/forecast/center', views.Expired2MonthByCenter, name="forecast"),
     path('form/forecast/district', views.Expired2MonthByDepartmentDistrict, name="forecast"),
     path('form/forecast/all', views.Expired2MonthByDepartmentCenter, name="forecast"),
@@ -44,6 +48,7 @@ urlpatterns = [
     path('form/register/year/<int:year>/<str:district>', FormYearViewDistrict.as_view()),
     path('form/register/month-year/<int:month>/<int:year>/<str:district>', FormMonthInYearViewDistrict.as_view()),
     path('form/expiring/all', FormExpiringView.as_view()),
+    path('form/expiring/all/<str:center_id>', FormExpiringView.as_view()),
     path('form/expiring/city/<str:city>', FormExpiringCityView.as_view()),
     path('form/expiring/district/<str:district>', FormExpiringDistrictView.as_view()),
 ]

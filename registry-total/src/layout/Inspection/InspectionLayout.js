@@ -78,7 +78,6 @@ export default function InspectionLayout( {inspections} ) {
       headerName: "Action",
       width: 150,
       renderCell: (params) => {
-          console.log(params.row.register_id)
           return (
           <div className="cellAction">
               <Link to={`/inspections/${params.row.register_id}`} style={{ textDecoration: "none" }}>
@@ -193,9 +192,77 @@ export default function InspectionLayout( {inspections} ) {
     return (
         <div className="dashboard-layout">
             <h4 className="dashboard-title">Giấy Đăng Kiểm</h4>
-            {inspections &&
-              <div className="statistics-line-chart" style={{paddingBottom: '64px', paddingTop: '20px'}}>
-                  <InspectionTable rows={inspections} cols={userColumns} row_id='register_id' actionColumn={actionColumn}/>
+            {inspection && user.role === 'department' && 
+            (
+            <>
+            <div className="row-select">
+              <div className="label">Bộ lọc</div>
+              <div className="select-container" style={{width:'70%'}}>
+                <Select
+                  id="filter" name="filter" options={filters}
+                  className="select"
+                  placeholder="Chọn Bộ lọc"
+                  value={filter}
+                  onChange={setFilter}
+                  noOptionsMessage={() => "Không có lựa chọn nào"}
+                  styles={selectStyle}
+                />
+              </div>
+            </div>
+            <div className="row-select">
+              <div className="label">Tỉnh/Thành phố</div>
+              <div className="select-container">
+                <Select 
+                    id="city" name="City" options={(filter && filter.value=='center') ? [] : cities}
+                    className="select"
+                    placeholder="Chọn Tỉnh/Thành phố"
+                    value={city}
+                    onChange={setCity}
+                    getOptionLabel={(city) => city.name_with_type}
+                    getOptionValue={(city) => city.code}
+                    noOptionsMessage={() => "Không có lựa chọn nào"}
+                    styles={selectStyle}
+                />
+              </div>
+            </div>
+            <div className="row-select">
+              <div className="label">Quận/Huyện</div>
+              <div className="select-container">
+                <Select
+                    id="district" name="District" options={(filter && filter.value=='district') ? getDist(city) : []}
+                    className="select"
+                    placeholder="Chọn Quận/Huyện"
+                    value={district}
+                    onChange={setDistrict}
+                    getOptionLabel={(district) => district.name_with_type}
+                    getOptionValue={(district) => district.code}
+                    noOptionsMessage={() => "Không có lựa chọn nào"}
+                    styles={selectStyle}
+                />
+              </div>
+            </div>
+            <div className="row-select">
+              <div className="label">Trung tâm</div>
+              <div className="select-container">
+                <Select
+                    id="center" name="Center" options={(filter && filter.value=='center') ? centers : []}
+                    className="select"
+                    placeholder="Chọn Trung tâm"
+                    value={center}
+                    onChange={setCenter}
+                    noOptionsMessage={() => "Không có lựa chọn nào"}
+                    styles={selectStyle}
+                />
+              </div>
+            </div>
+            <div className="button-container">
+              <button type='button' className='link primary-btn' onClick={handleClick}>Lọc</button>
+            </div>
+            </>)}
+
+            {inspection &&
+              <div className="statistics-line-chart" style={{paddingBottom: '20px', paddingTop: '20px'}}>
+                  <InspectionTable rows={inspection} cols={userColumns} row_id='register_id' actionColumn={actionColumn}/>
               </div>
             }
         </div>
