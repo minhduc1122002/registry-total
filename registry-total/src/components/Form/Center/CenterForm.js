@@ -20,9 +20,11 @@ export default function CenterForm() {
     const [registerDistrict, setRegisterDistrict] = useState();
     const [registerAddress, setRegisterAddress] = useState();
 
-    useEffect(() => {
-        setRegisterDistrict("")
-    }, [registerCity])
+    
+    const handleCity = (e) => {
+        setRegisterCity(e)
+        setRegisterDistrict()
+    }
 
     const getDist = (city) => {
         if (city !== undefined) {
@@ -88,7 +90,7 @@ export default function CenterForm() {
                     </div>
 
                     <div className="row-text">
-                        <div className="label">Tên</div>
+                        <div className="label">Mã số</div>
                         <div className="text-input">
                             <input type="text" name="id" defaultValue={id} onChange={(e) => setId(e.target.value)}></input>
                         </div>
@@ -102,7 +104,7 @@ export default function CenterForm() {
                                 className="select"
                                 placeholder="Chọn Tỉnh/Thành phố"
                                 defaultValue={registerCity}
-                                onChange={setRegisterCity}
+                                onChange={handleCity}
                                 getOptionLabel={(city) => city.name_with_type}
                                 getOptionValue={(city) => city.code}
                                 styles={selectStyle}

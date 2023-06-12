@@ -2,6 +2,7 @@ import React from 'react'
 import CenterTable from '../../components/Table/CenterTable'
 import { Link } from "react-router-dom";
 import { useDispatch } from 'react-redux';
+import { deleteUser } from '../../redux/user'
 
 export default function CenterLayout( {centers} ) {
 
@@ -17,9 +18,9 @@ export default function CenterLayout( {centers} ) {
         return dists[dists.findIndex(d => d['code'] === dist)]
     }
     
-    const handleDelete = (e, id) => {
+    const handleDelete = (e, username) => {
         e.preventDefault()
-        // dispatch(deleteInspection(id))
+        dispatch(deleteUser(username))
     }
 
     const actionColumn = [

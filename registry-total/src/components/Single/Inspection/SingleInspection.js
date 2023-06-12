@@ -49,7 +49,16 @@ export default function SingleInspection( { inspection }) {
         }
         if (isSuccess) {
             dispatch(reset())
-            navigate('/inspections', { replace: true });
+            toast.success('Cập Nhật Thành Công', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                onClose: () => dispatch(reset())
+            })
         }
         toast.clearWaitingQueue();
     }, [isError, message, dispatch, isSuccess, navigate])
@@ -115,10 +124,8 @@ export default function SingleInspection( { inspection }) {
     const [id, setId] = useState(owner.id);
     const [contact, setContact] = useState(owner.contact);
     const [city, setCity] = useState(findCity(owner.city));
-    console.log(city)
-    console.log(owner.district)
+    
     const [district, setDistrict] = useState(findDist(owner.district, city));
-    console.log(district)
     const [ward, setWard] = useState(findWard(district, owner.ward));
     const [address, setAddress] = useState(owner.address);
 
@@ -137,10 +144,8 @@ export default function SingleInspection( { inspection }) {
     const [registerDate, setRegisterDate] = useState(new Date(inspection.register_date));
     const [expiredDate, setExpiredDate] = useState(new Date(inspection.expired_date));
     const [registerCity, setRegisterCity] = useState(findCity(center.city));
-    console.log(registerCity)
     const [registerDistrict, setRegisterDistrict] = useState(findDist(center.district, registerCity));
     const [registerAddress, setRegisterAddress] = useState(center.address);
-    console.log(registerDistrict)
 
     const handleEdit = (e) => {
         e.preventDefault()

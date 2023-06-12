@@ -20,7 +20,11 @@ export default function InspectionLayout( {inspections} ) {
       { value: '2', label: '2' },
       { value: '3', label: '3' }
     ]
-    const [inspection, setInspection] = useState(inspections)
+    const [inspection, setInspection] = useState([])
+    
+    useEffect(() => {
+        setInspection(inspections)
+    }, [inspections]);
 
     const [filter, setFilter] = useState()
     const [city, setCity] = useState()

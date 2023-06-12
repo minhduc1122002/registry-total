@@ -30,7 +30,7 @@ export default function Form() {
 
     useEffect(() => {
         if (isError) {
-            toast.error(message, {
+            return toast.error(message, {
                 position: "top-right",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -45,7 +45,7 @@ export default function Form() {
         }
         if (isSuccess) {
             dispatch(reset())
-            navigate('/center', { replace: true });
+            navigate('/centers', { replace: true });
         }
         toast.clearWaitingQueue();
     }, [isError, isSuccess, message, dispatch, navigate])

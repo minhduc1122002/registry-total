@@ -46,6 +46,8 @@ class RegisterView(APIView):
                         center.save()
                     else:
                         return Response(center_serializer.errors, status=400)
+                else:
+                    return Response('This center already had an account', status=400)
                 
                 user_data = request.data.copy()
                 user_data['center'] = None
@@ -166,14 +168,12 @@ class UserDetailView(UserView):
             return Response(center, status=400)
         
         user_data['center'] = None
-
-        serializer = UserSerializer(user, data=user_data)
+        
+        serializer = UserSerializer(user, data=user_data, partial=True)
         
         if serializer.is_valid():
-            user_data['center'] = center
-            user = User(**user_data)
-            user.set_password(user_data['password'])
-            print(user)
+            user.center = center
+            user.username = user_data['username']
             center.save()
             user.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -182,12 +182,10 @@ class UserDetailView(UserView):
     
     def delete(self, request, username, *args, **kwargs):
         try:
-            
             user = User.objects.get(username=str(username))
             center = Center.objects.get(id=user.center.id)
             center.delete()
             user.delete()
-            
             return Response('User Deleted', status=status.HTTP_200_OK)
         except:
             return Response('Not Found', status=status.HTTP_400_BAD_REQUEST)

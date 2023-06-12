@@ -13,7 +13,6 @@ import {
     RadialBar,
     RadialBarChart
 } from "recharts";
-import Table from '../../../components/Table/InspectionTable'
 import { useState, useEffect } from "react";
 import axios from 'axios';
 import "../../../layout/Dashboard/DashboardLayout.css";
@@ -25,8 +24,9 @@ import { getCarList } from '../../../redux/car'
 import { getInspectionList } from '../../../redux/inspection'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faListCheck, faXmark, faCarBurst, faCarOn } from "@fortawesome/free-solid-svg-icons";
-import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import { updateUser, reset } from '../../../redux/user';
+import { ToastContainer, toast } from 'react-toastify'
 
 const customStyles = {
 
@@ -69,6 +69,7 @@ export default function SingleCenter( {user} ) {
         return cities[cities.findIndex(c => c['code'] === city)]
     }
 
+    const [id, setId] = useState(user.center.id);
     const [username, setUsername] = useState(user.username);
     const [oldPassword, setOldPassword] = useState();
     const [newPassword, setNewPassword] = useState();
@@ -76,15 +77,58 @@ export default function SingleCenter( {user} ) {
     const [registerDistrict, setRegisterDistrict] = useState(findDist(user.center.district, user.center.city));
     const [registerAddress, setRegisterAddress] = useState(user.center.address);
 
+    const isLoading = useSelector(
+        (state) => state.user.isLoading[1]
+    )
+    const message = useSelector(
+        (state) => state.user.message
+    )
+    const isError = useSelector(
+        (state) => state.user.isError[1]
+    )
+
+    const isSuccess = useSelector(
+        (state) => state.user.isSuccess[1]
+    )
+    
     useEffect(() => {
-        setRegisterDistrict("")
-    }, [registerCity])
+        if (isError) {
+            toast.error(JSON.stringify(message), {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                onClose: () => dispatch(reset())
+            })
+        }
+        if (isSuccess) {
+            toast.success('Cập Nhật Thành Công', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                onClose: () => dispatch(reset())
+            })
+        }
+        toast.clearWaitingQueue();
+    }, [isError, message, dispatch, isSuccess, navigate])
 
     const getDist = (city) => {
         if (city !== undefined) {
             return tree[city.code]['quan-huyen']
         }
         else return []
+    }
+
+    const handleCity = (e) => {
+        setRegisterCity(e)
+        setRegisterDistrict()
     }
 
     const selectStyle = {    
@@ -296,8 +340,73 @@ export default function SingleCenter( {user} ) {
         return total;
     };
     
+    const handleEdit = (e) => {
+        e.preventDefault()
+        console.log({username, registerCity, registerDistrict, registerAddress})
+        if (!username || !registerCity || !registerDistrict || !registerAddress) {
+            return toast.error('Hãy nhập đầy đủ các trường', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+            })
+        }
+        if (!oldPassword && newPassword) {
+            return toast.error('Hãy nhập mật khẩu cũ', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+            })
+        }
+        if (oldPassword && !newPassword) {
+            return toast.error('Hãy nhập mật khẩu mới', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+            })
+        }
+        if (oldPassword && newPassword) {
+            dispatch(updateUser({
+                'username': username,
+                'oldpassword': oldPassword,
+                'newpassword': newPassword,
+                'role': 'center',
+                'center': {
+                    'id': id,
+                    'city': registerCity.code,
+                    'district': registerDistrict.code,
+                    'address': registerAddress
+                }
+            }))
+
+        } else {
+            dispatch(updateUser({
+                'username': username,
+                'role': 'center',
+                'center': {
+                    'id': id,
+                    'city': registerCity.code,
+                    'district': registerDistrict.code,
+                    'address': registerAddress
+                }
+            }))
+        }
+    }
+
     return (
         <>
+        <ToastContainer limit={1}/>
         <div className="dashboard-layout">
             <h5 className="dashboard-title">Thông Tin</h5>
             <form className="block-content-container">
@@ -316,14 +425,14 @@ export default function SingleCenter( {user} ) {
                 <div className="row-text">
                     <div className="label">Mật Khẩu Cũ</div>
                     <div className="text-input">
-                        <input type="text" name="account" defaultValue={oldPassword} onChange={(e) => setOldPassword(e.target.value)}></input>
+                        <input type="password" name="oldpassword" defaultValue={oldPassword} onChange={(e) => setOldPassword(e.target.value)}></input>
                     </div>
                 </div>
 
                 <div className="row-text">
                     <div className="label">Mật Khẩu Mới</div>
                     <div className="text-input">
-                        <input type="text" name="account" defaultValue={newPassword} onChange={(e) => setNewPassword(e.target.value)}></input>
+                        <input type="password" name="newpassword" defaultValue={newPassword} onChange={(e) => setNewPassword(e.target.value)}></input>
                     </div>
                 </div>
 
@@ -331,7 +440,14 @@ export default function SingleCenter( {user} ) {
                     Thông Tin Trung Tâm
                     <p className="line_blue"></p>
                 </div>
-                            
+
+                <div className="row-text">
+                    <div className="label">Mã số</div>
+                    <div className="text-input">
+                        <input type="text" name="id" defaultValue={id} onChange={(e) => setId(e.target.value)}></input>
+                    </div>
+                </div>
+
                 <div className="row-select">
                     <div className="label">Tỉnh/Thành phố</div>
                     <div className="select-container">
@@ -339,8 +455,8 @@ export default function SingleCenter( {user} ) {
                             id="registerCity" name="registerCity" options={cities}
                             className="select"
                             placeholder="Chọn Tỉnh/Thành phố"
-                            defaultValue={registerCity}
-                            onChange={setRegisterCity}
+                            value={registerCity ? registerCity : ''}
+                            onChange={handleCity}
                             getOptionLabel={(city) => city.name_with_type}
                             getOptionValue={(city) => city.code}
                             styles={selectStyle}
@@ -355,7 +471,7 @@ export default function SingleCenter( {user} ) {
                             id="registerDistrict" name="registerDistrict" options={getDist(registerCity)}
                             className="select"
                             placeholder="Chọn Quận/Huyện"
-                            defaultValue={registerDistrict}
+                            value={registerDistrict ? registerDistrict : ''}
                             onChange={setRegisterDistrict}
                             getOptionLabel={(district) => district.name_with_type}
                             getOptionValue={(district) => district.code}
@@ -373,8 +489,8 @@ export default function SingleCenter( {user} ) {
                 </div>
             
                 <div className="button-container">
-                    <button className="button button-back" type="button" onClick={() => navigate(`/center`)}>Hủy bỏ</button>
-                    <button className="button" type="button" onClick={() => {}}>Cập Nhật</button>
+                    <button className="button button-back" type="button" onClick={() => navigate(`/centers`)}>Hủy bỏ</button>
+                    <button className="button" type="button" onClick={handleEdit}>Cập Nhật</button>
                 </div>
             </form>
         </div>

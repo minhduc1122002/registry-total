@@ -48,43 +48,43 @@ export const addUser = createAsyncThunk('user/add', async (user, thunkAPI) => {
   }
 })
 
-//update inspection by id
-// export const updateInspectionbyId = createAsyncThunk('form/update', async (inspection, thunkAPI) => {
-//   try {
-//         const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
-//         const response = await axios.create({
-//             baseURL: BASE_URL,
-//             headers: { token: `${TOKEN}` },
-//         }).put(`/form/${inspection.register_id}`, inspection)
+// update user by username
+export const updateUser = createAsyncThunk('user/update', async (user, thunkAPI) => {
+  try {
+        const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+        const response = await axios.create({
+            baseURL: BASE_URL,
+            headers: { token: `${TOKEN}` },
+        }).put(`/user/${user.username}`, user)
         
-//         return response.data
-//   } catch (error) {
-//     console.log(error.response)
-//     const message = (error.response &&
-//       (error.response.data ||
-//       error.response.data.message)) || error.message ||
-//       error.toString()
-//     return thunkAPI.rejectWithValue(message)
-//   }
-// })
+        return response.data
+  } catch (error) {
+    console.log(error.response)
+    const message = (error.response &&
+      (error.response.data ||
+      error.response.data.message)) || error.message ||
+      error.toString()
+    return thunkAPI.rejectWithValue(message)
+  }
+})
 
-// //delete inspection
-// export const deleteInspection = createAsyncThunk('form/delete', async (id, thunkAPI) => {
-//   try {
-//         const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
-//         const response = await axios.create({
-//             baseURL: BASE_URL,
-//             headers: { token: `${TOKEN}` },
-//         }).delete("/form/" + id)
-//         return id
-//   }catch (error) {
-//     const message = (error.response &&
-//       (error.response.data ||
-//         error.response.data.message)) || error.message ||
-//       error.toString()
-//     return thunkAPI.rejectWithValue(message)
-//   }
-// })
+//delete user
+export const deleteUser = createAsyncThunk('user/delete', async (username, thunkAPI) => {
+  try {
+        const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+        const response = await axios.create({
+            baseURL: BASE_URL,
+            headers: { token: `${TOKEN}` },
+        }).delete("/user/" + username)
+        return username
+  }catch (error) {
+    const message = (error.response &&
+      (error.response.data ||
+        error.response.data.message)) || error.message ||
+      error.toString()
+    return thunkAPI.rejectWithValue(message)
+  }
+})
 
 export const UserSlice = createSlice({
   name: 'user',
@@ -129,39 +129,39 @@ export const UserSlice = createSlice({
         state.isSuccess[0] = false
         state.message = action.payload
       })
-    //   .addCase(updateInspectionbyId.pending, (state) => {
-    //     state.isLoading[1] = true
-    //   })
-    //   .addCase(updateInspectionbyId.fulfilled, (state, action) => {
-    //     state.isLoading[1] = false
-    //     state.isError[1] = false
-    //     state.isSuccess[1] = true
-    //     state.inspections[
-    //       state.inspections.findIndex(index => index.register_id === action.payload.register_id)
-    //     ] = action.payload
-    //   })
-    //   .addCase(updateInspectionbyId.rejected, (state, action) => {
-    //     state.isLoading[1] = false
-    //     state.isError[1] = true
-    //     state.isSuccess[1] = false
-    //     state.message = action.payload
-    //   })
-    //   .addCase(deleteInspection.pending, (state) => {
-    //     state.isLoading[2] = true
-    //   })
-    //   .addCase(deleteInspection.fulfilled, (state, action) => {
-    //     state.isLoading[2] = false
-    //     state.isError[2] = false
-    //     state.isSuccess[2] = true
-    //     const index = state.inspections.findIndex(inspection => inspection.register_id === action.payload)
-    //     state.inspections.splice(index, 1)
-    //   })
-    //   .addCase(deleteInspection.rejected, (state, action) => {
-    //     state.isLoading[2] = false
-    //     state.isError[2] = true
-    //     state.isSuccess[2] = false
-    //     state.message = action.payload
-    //   })
+      .addCase(updateUser.pending, (state) => {
+        state.isLoading[1] = true
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.isLoading[1] = false
+        state.isError[1] = false
+        state.isSuccess[1] = true
+        state.users[
+          state.users.findIndex(index => index.username === action.payload.username)
+        ] = action.payload
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.isLoading[1] = false
+        state.isError[1] = true
+        state.isSuccess[1] = false
+        state.message = action.payload
+      })
+      .addCase(deleteUser.pending, (state) => {
+        state.isLoading[2] = true
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        state.isLoading[2] = false
+        state.isError[2] = false
+        state.isSuccess[2] = true
+        const index = state.users.findIndex(user => user.username === action.payload)
+        state.users.splice(index, 1)
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.isLoading[2] = false
+        state.isError[2] = true
+        state.isSuccess[2] = false
+        state.message = action.payload
+      })
       
   },
 })
