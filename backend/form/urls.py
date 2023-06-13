@@ -9,8 +9,9 @@ from .views import (
     FormYearViewDistrict,
     FormMonthInYearViewDistrict,
     FormExpiringView,
-    FormExpiringCityView,
+    ExpiringInMonthByCenter,
     FormExpiringDistrictView,
+    ExpiringInMonthByCity
 )
 
 urlpatterns = [
@@ -37,6 +38,8 @@ urlpatterns = [
 
     path('form/register/all', views.CountAllByCenter, name="center"),
     path('form/register/all/<str:center_id>', views.CountAllByCenter, name="center"),
+    path('form/register/city_year/<int:year>', views.CountInYearByCity, name="center"),
+    path('form/register/city_month/<int:year>/<int:month>', views.CountInMonthByCity, name="center"),
     path('form/expired/all', views.ExpiredAllByCenter, name="center"),
     path('form/expired/all/<str:center_id>', views.ExpiredAllByCenter, name="center"),
     # số lượng dự báo tại 1 trung tâm
@@ -54,6 +57,7 @@ urlpatterns = [
     path('form/register/month-year/<int:month>/<int:year>/<str:district>', FormMonthInYearViewDistrict.as_view()),
     path('form/expiring/all', FormExpiringView.as_view()),
     path('form/expiring/all/<str:center_id>', FormExpiringView.as_view()),
-    path('form/expiring/city/<str:city>', FormExpiringCityView.as_view()),
+    path('form/expiring/center', ExpiringInMonthByCenter.as_view()),
+    path('form/expiring/city/<int:month>', ExpiringInMonthByCity.as_view()),
     path('form/expiring/district/<str:district>', FormExpiringDistrictView.as_view()),
 ]

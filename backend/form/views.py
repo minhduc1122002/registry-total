@@ -376,6 +376,40 @@ def CountAllByCenter(request, center_id=None):
             count = list(total.values('center_id').annotate(count=Count('center_id')))
             return JsonResponse(count, safe=False)
 
+def CountInYearByCity(request, year):
+        token = request.headers.get('Token')
+        if not token:
+            return HttpResponse('You are not authenticated', status=400)
+        try:
+            payload = jwt.decode(token, 'secret', algorithms='HS256')
+        except jwt.ExpiredSignatureError:
+            return HttpResponse('Token is not valid', status=400)
+        
+        # Cục
+        if payload['role'] == 'department':
+            total = Form.objects.filter(register_date__year=year)
+            count = list(total.values('center__city').annotate(count=Count('center__city')))
+            return JsonResponse(count, safe=False)
+        else:
+            return Response("You are unauthorized", status=status.HTTP_401_UNAUTHORIZED)
+
+def CountInMonthByCity(request, year, month):
+        token = request.headers.get('Token')
+        if not token:
+            return HttpResponse('You are not authenticated', status=400)
+        try:
+            payload = jwt.decode(token, 'secret', algorithms='HS256')
+        except jwt.ExpiredSignatureError:
+            return HttpResponse('Token is not valid', status=400)
+        
+        # Cục
+        if payload['role'] == 'department':
+            total = Form.objects.filter(register_date__year=year, register_date__month=month)
+            count = list(total.values('center__city').annotate(count=Count('center__city')))
+            return JsonResponse(count, safe=False)
+        else:
+            return Response("You are unauthorized", status=status.HTTP_401_UNAUTHORIZED)
+            
 def ExpiredAllByCenter(request, center_id=None):
         token = request.headers.get('Token')
         if not token:
@@ -576,17 +610,52 @@ class FormExpiringView(APIView):
             serializer = FormSerializer(registers, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-class FormExpiringCityView(APIView):
+class ExpiringInMonthByCenter(APIView):
     serializer_class = FormSerializer
     queryset = Form.objects.all()
 
-    def get(self, request, city, *args, **kwargs):
-        registers = Form.objects.filter(register_city=city)
-        today = datetime.today()
-        enddate = datetime(today.year, today.month, calendar.monthrange(today.year, today.month)[1])
-        registers = registers.filter(expired_date__lte=enddate)
-        serializer = FormSerializer(registers, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get(self, request, *args, **kwargs):
+        token = request.headers.get('Token')
+        if not token:
+            return HttpResponse('You are not authenticated', status=400)
+        try:
+            payload = jwt.decode(token, 'secret', algorithms='HS256')
+        except jwt.ExpiredSignatureError:
+            return HttpResponse('Token is not valid', status=400)
+        
+        # Trung tâm
+        if payload['role'] == 'center' and payload['center'] is not None:
+            today = datetime.today()
+            startdate = today.replace(day=1)
+            total = Form.objects.filter(expired_date__gte=startdate, center__id=payload['center']['id'])
+            count = list(total.values('expired_date__month').annotate(count=Count('expired_date__month')))
+            return JsonResponse(count, safe=False)
+        else:
+            return Response("You are unauthorized", status=status.HTTP_401_UNAUTHORIZED)
+
+class ExpiringInMonthByCity(APIView):
+    serializer_class = FormSerializer
+    queryset = Form.objects.all()
+
+    def get(self, request, month, *args, **kwargs):
+        token = request.headers.get('Token')
+        if not token:
+            return HttpResponse('You are not authenticated', status=400)
+        try:
+            payload = jwt.decode(token, 'secret', algorithms='HS256')
+        except jwt.ExpiredSignatureError:
+            return HttpResponse('Token is not valid', status=400)
+        
+        # Cục
+        if payload['role'] == 'department':
+            today = datetime.today()
+            startdate = today.replace(day=1)
+            print(startdate)
+            total = Form.objects.filter(expired_date__gte=startdate, expired_date__month=month)
+            count = list(total.values('center__city').annotate(count=Count('center__city')))
+            return JsonResponse(count, safe=False)
+        else:
+            return Response("You are unauthorized", status=status.HTTP_401_UNAUTHORIZED)
 
 class FormExpiringDistrictView(APIView):
     serializer_class = FormSerializer

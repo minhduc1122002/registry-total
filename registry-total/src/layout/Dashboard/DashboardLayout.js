@@ -55,6 +55,12 @@ export default function DashboardLayout() {
     const [re_regis_cars_center, setReRegisCarsCenter] = useState([]);
     const [re_regis_cars_district, setReRegisCarsDistrict] = useState([]);
     const [re_regis_cars_dep, setReRegisCarsDep] = useState([]);
+    const [city_year_registered_cars, setCityYearRegisteredCars] = useState([]);
+    const [city_year_registered_cars_2, setCityYearRegisteredCars2] = useState();
+    const [city_month_registered_cars, setCityMonthRegisteredCars] = useState([]);
+    const [city_month_registered_cars_2, setCityMonthRegisteredCars2] = useState();
+    const [city_month_expiring_cars, setCityMonthExpiringCars] = useState();
+    const [center_month_expiring_cars, setCenterMonthExpiringCars] = useState();
     const [selected, setSelected] = useState(null);
 
     const cities = require('../../address/tinh_tp.json');
@@ -270,6 +276,73 @@ export default function DashboardLayout() {
         }
     };
 
+    async function getCityYearRegisteredCars(url) {
+        try {
+            const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+            const response = await axios.create({
+            baseURL: BASE_URL,
+            headers: { token: `${TOKEN}` },
+        }).get(url);
+            const data = response.data;
+            data.forEach( obj => renameKey( obj, 'center__city', 'name' ) );
+            data.forEach( obj => renameKey( obj, 'count', 'Total' ) );
+            data.forEach( obj => obj['name'] = findCity(obj['name']));
+            setCityYearRegisteredCars(data);
+        } catch(e) {
+            console.log(e)
+        }
+    };
+
+    async function getCityMonthRegisteredCars(url) {
+        try {
+            const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+            const response = await axios.create({
+            baseURL: BASE_URL,
+            headers: { token: `${TOKEN}` },
+        }).get(url);
+            const data = response.data;
+            data.forEach( obj => renameKey( obj, 'center__city', 'name' ) );
+            data.forEach( obj => renameKey( obj, 'count', 'Total' ) );
+            data.forEach( obj => obj['name'] = findCity(obj['name']));
+            setCityMonthRegisteredCars(data);
+        } catch(e) {
+            console.log(e)
+        }
+    };
+
+    async function getCityMonthExpiringCars(url) {
+        try {
+            const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+            const response = await axios.create({
+                baseURL: BASE_URL,
+                headers: { token: `${TOKEN}` },
+            }).get(url);
+            const data = response.data;
+            data.forEach( obj => renameKey( obj, 'center__city', 'name' ) );
+            data.forEach( obj => renameKey( obj, 'count', 'Total' ) );
+            data.forEach( obj => obj['name'] = findCity(obj['name']));
+            setCityMonthExpiringCars(data);
+        } catch(e) {
+            console.log(e)
+        }};
+
+    async function getCenterMonthExpiringCars() {
+        try {
+            const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+            const response = await axios.create({
+                baseURL: BASE_URL,
+                headers: { token: `${TOKEN}` },
+            }).get("/form/expiring/center");
+            const data = response.data;
+            data.forEach( obj => renameKey( obj, 'expired_date__month', 'name' ) );
+            data.forEach( obj => renameKey( obj, 'count', 'Total' ) );
+            console.log(data)
+            setCenterMonthExpiringCars(data);
+        } catch(e) {
+            console.log(e)
+        }};
+    getCenterMonthExpiringCars();
+
     const years = (user.role === 'center') ? ([
         { value: '/form/register/bymonth/2022', label: '2022' },
         { value: '/form/register/bymonth/2023', label: '2023' }
@@ -278,25 +351,85 @@ export default function DashboardLayout() {
         { value: '/form/register/bymonth/all/2023', label: '2023' }
     ])
 
+    const city_years = (user.role === 'department') ? ([
+        { value: '/form/register/city_year/2022', label: '2022' },
+        { value: '/form/register/city_year/2023', label: '2023' }
+    ]) : ([])
+
+    const city_month_years = (user.role === 'department') ? ([
+        { value: '/form/register/city_month/2022', label: '2022' },
+        { value: '/form/register/city_month/2023', label: '2023' }
+    ]) : ([])
+
+    const city_months = [
+        { value: '/1', label: '1' },
+        { value: '/2', label: '2' },
+        { value: '/3', label: '3' },
+        { value: '/4', label: '4' },
+        { value: '/5', label: '5' },
+        { value: '/6', label: '6' },
+        { value: '/7', label: '7' },
+        { value: '/8', label: '8' },
+        { value: '/9', label: '9' },
+        { value: '/10', label: '10' },
+        { value: '/11', label: '11' },
+        { value: '/12', label: '12' },
+    ]
+
     const handleChange = (selectedOption) => {
         setSelected(selectedOption);
         getYearRegisteredCars(selectedOption.value);
     };
 
+    const handleChangeCityYear = (selectedOption) => {
+        getCityYearRegisteredCars(selectedOption.value)
+    };
+
+    const handleChangeCityYear2 = (selectedOption) => {
+        setCityYearRegisteredCars2(selectedOption.value)
+    };
+
+    const handleChangeCityMonth = (selectedOption) => {
+        setCityMonthRegisteredCars2(selectedOption.value)
+    };
+
+    const handleChangeCityMonthExpiring = (selectedOption) => {
+        getCityMonthExpiringCars("form/expiring/city" + selectedOption.value)
+    };
+
+    const handleClick = () => {
+        city_month_registered_cars_2 && city_year_registered_cars_2 && getCityMonthRegisteredCars(city_year_registered_cars_2 + city_month_registered_cars_2)
+    }
+
     var month = [
-        { name: "Jan", Total: 0 },
-        { name: "Feb", Total: 0 },
-        { name: "Mar", Total: 0 },
-        { name: "Apr", Total: 0 },
-        { name: "May", Total: 0 },
-        { name: "June", Total: 0 },
-        { name: "July", Total: 0 },
-        { name: "Aug", Total: 0 },
-        { name: "Sep", Total: 0 },
-        { name: "Oct", Total: 0 },
-        { name: "Nov", Total: 0 },
-        { name: "Dec", Total: 0 },
+        { name: "T1", Total: 0 },
+        { name: "T2", Total: 0 },
+        { name: "T3", Total: 0 },
+        { name: "T4", Total: 0 },
+        { name: "T5", Total: 0 },
+        { name: "T6", Total: 0 },
+        { name: "T7", Total: 0 },
+        { name: "T8", Total: 0 },
+        { name: "T9", Total: 0 },
+        { name: "T10", Total: 0 },
+        { name: "T11", Total: 0 },
+        { name: "T12", Total: 0 },
     ];
+
+    var expiring_month = [
+        { name: "T1", Total: 0 },
+        { name: "T2", Total: 0 },
+        { name: "T3", Total: 0 },
+        { name: "T4", Total: 0 },
+        { name: "T5", Total: 0 },
+        { name: "T6", Total: 0 },
+        { name: "T7", Total: 0 },
+        { name: "T8", Total: 0 },
+        { name: "T9", Total: 0 },
+        { name: "T10", Total: 0 },
+        { name: "T11", Total: 0 },
+        { name: "T12", Total: 0 },
+    ].slice(new Date().getMonth(),)
 
     var quarter = [
         { name: "1", Total: 0 },
@@ -352,6 +485,21 @@ export default function DashboardLayout() {
         total = quarter[0].Total + quarter[1].Total  + quarter[2].Total  + quarter[3].Total ;
         return month;
     }
+
+    function expiringMonth() {
+        var months = center_month_expiring_cars;
+        if (months) {
+            console.log(months[0])
+            for (var i = 0; i < months.length; i++) {
+                for (var j = 0; j < expiring_month.length; j++) {
+                    if (months[i].name === j + new Date().getMonth() + 1) {
+                        expiring_month[j].Total = months[i].Total;
+                    }
+                }
+            }
+            return expiring_month;
+        }
+    }
     
     const getTotalCount = (list) => {
         if (list.length === 0) {
@@ -372,8 +520,6 @@ export default function DashboardLayout() {
 
     const handleChangePlace = (selectedOption) => {
         setSelected(selectedOption);
-        console.log(unregistered_cars_district);
-        console.log(re_regis_cars_district);
         if (selectedOption.value !== 'district') setForecast(re_regis_cars_dep);
         else {
             for (let i=0;i<unregistered_cars_district.length;i++) {
@@ -532,8 +678,95 @@ export default function DashboardLayout() {
             {user.role === 'department' &&
                 <div className="block-content-container">
                     <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
+                        <h4 className="chart-title" style={{marginBottom: '0px'}}>Số lượng xe ô tô đã đăng kiểm theo khu vực trong năm</h4>
+                        <Select options={city_years} onChange={handleChangeCityYear} styles={customStyles} placeholder="Chọn năm"/>
+                    </div>
+                    <div style={{display: 'flex'}}>
+                    <div className="statistics-line-chart">
+                        <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
+                            <ResponsiveContainer width={'100%'} height={400}>
+                                <BarChart
+                                    data={city_year_registered_cars}
+                                    name
+                                >
+                                    <Bar dataKey="Total" fill="#8884d8" />
+                                    <XAxis dataKey="name" stroke="gray" />
+                                    <YAxis/>
+                                    <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
+                                    <Legend />
+
+                                </BarChart>
+                        </ResponsiveContainer>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            {user.role === 'department' &&
+                <div className="block-content-container">
+                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
+                        <h4 className="chart-title" style={{marginBottom: '0px'}}>Số lượng xe ô tô đã đăng kiểm theo khu vực trong tháng</h4>
+                        <Select options={city_months} onChange={handleChangeCityMonth} styles={customStyles} placeholder="Chọn tháng"/>
+                        <span style={{paddingLeft:"12px"}}>-</span>
+                        <Select options={city_month_years} onChange={handleChangeCityYear2} styles={customStyles} placeholder="Chọn năm"/>
+                        <span>
+                            <button type='button' className='link primary-btn' onClick={handleClick}>Lọc</button>
+                        </span>
+                    </div>
+                    <div style={{display: 'flex'}}>
+                    <div className="statistics-line-chart">
+                        <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
+                            <ResponsiveContainer width={'100%'} height={400}>
+                                <BarChart
+                                    data={city_month_registered_cars}
+                                    name
+                                >
+                                    <Bar dataKey="Total" fill="#8884d8" />
+                                    <XAxis dataKey="name" stroke="gray" />
+                                    <YAxis/>
+                                    <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
+                                    <Legend />
+
+                                </BarChart>
+                        </ResponsiveContainer>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            {user.role === 'department' &&
+                <div className="block-content-container">
+                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
+                        <h4 className="chart-title" style={{marginBottom: '0px'}}>Số lượng xe ô tô hết hạn đăng kiểm theo khu vực trong tháng</h4>
+                        <Select options={city_months.slice(new Date().getMonth(),)} onChange={handleChangeCityMonthExpiring} styles={customStyles} placeholder="Chọn tháng"/>
+                        <span className="chart-title" style={{paddingLeft:"12px"}}>- {new Date().getFullYear()}</span>
+                    </div>
+                    <div style={{display: 'flex'}}>
+                    <div className="statistics-line-chart">
+                        <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
+                            <ResponsiveContainer width={'100%'} height={400}>
+                                <BarChart
+                                    data={city_month_expiring_cars}
+                                    name
+                                >
+                                    <Bar dataKey="Total" fill="#8884d8" />
+                                    <XAxis dataKey="name" stroke="gray" />
+                                    <YAxis/>
+                                    <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
+                                    <Legend />
+
+                                </BarChart>
+                        </ResponsiveContainer>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            {user.role === 'department' &&
+                <div className="block-content-container">
+                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
                         <h4 className="chart-title" style={{marginBottom: '0px'}}>Dự báo số lượng xe ô tô đăng kiểm mới và đăng kiểm lại</h4>
-                        <Select options={place} onChange={handleChangePlace} styles={customStyles}/>
+                        <Select options={place} onChange={handleChangePlace} styles={customStyles} placeholder="Chọn bộ lọc"/>
                     </div>
                     <div style={{display: 'flex'}}>
                     <div className="statistics-line-chart">
@@ -560,7 +793,7 @@ export default function DashboardLayout() {
             <div className="block-content-container">
                 <div className="chart-title-container">
                     <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm trong năm</h4>
-                    <Select options={years} onChange={handleChange} styles={customStyles}/>
+                    <Select options={years} onChange={handleChange} styles={customStyles} placeholder="Chọn năm"/>
                 </div>
                 <div className="statistics-container">
                   <div className="statistics-line-chart" style={{padding: '16px'}}>
@@ -741,18 +974,17 @@ export default function DashboardLayout() {
             </div>
             <div className="block-content-container">
                     <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
-                        <h4 className="chart-title" style={{marginBottom: '0px'}}>Số lượng xe sắp hết hạn đăng kiểm hàng tháng</h4>
+                        <h4 className="chart-title" style={{marginBottom: '0px'}}>Số lượng xe ô tô hết hạn đăng kiểm hàng tháng</h4>
                     </div>
                     <div style={{display: 'flex'}}>
                     <div className="statistics-line-chart">
                         <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
                             <ResponsiveContainer width={'100%'} height={400}>
                                 <BarChart
-                                    data={forecast}
+                                    data={expiringMonth()}
                                     name
                                 >
-                                    <Bar dataKey="ReRegis" fill="#8884d8" />
-                                    <Bar dataKey="NewRegis" fill="#82ca9d" />
+                                    <Bar dataKey="Total" fill="#8884d8" />
                                     <XAxis dataKey="name" stroke="gray" />
                                     <YAxis/>
                                     <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
