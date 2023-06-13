@@ -471,7 +471,7 @@ def Expired2MonthByDepartmentCenter(request):
     enddate = datetime(today.year, today.month+1, calendar.monthrange(today.year, today.month+1)[1])
 
     total = Form.objects.filter(expired_date__lte=enddate)
-    count = list(total.values('center_id').annotate(count=Count('center_id')))
+    count = list(total.values('center_id', 'center__city').annotate(count=Count('center_id')))
     return JsonResponse(count, safe=False)
 
 def Expired2MonthByDepartmentDistrict(request):

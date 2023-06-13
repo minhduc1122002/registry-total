@@ -520,7 +520,15 @@ export default function DashboardLayout() {
 
     const handleChangePlace = (selectedOption) => {
         setSelected(selectedOption);
-        if (selectedOption.value !== 'district') setForecast(re_regis_cars_dep);
+        console.log(re_regis_cars_dep);
+        console.log(unregistered_cars_district);
+        console.log(re_regis_cars_district);
+        if (selectedOption.value !== 'district') {
+            for (let i=0;i<re_regis_cars_dep.length;i++) {
+                re_regis_cars_dep[i]['NewRegis'] = Math.round(getNewRegisDep(re_regis_cars_dep[i].center__city)*(parseInt(re_regis_cars_dep[i].name)%9)/10);
+            }
+            setForecast(re_regis_cars_dep);
+        }
         else {
             for (let i=0;i<unregistered_cars_district.length;i++) {
                 for (let j=0;j<re_regis_cars_district.length;j++) {
@@ -536,6 +544,16 @@ export default function DashboardLayout() {
 
     function getNewRegis() {
         const city = findCity(user.center.city);
+        for (let i=0;i<unregistered_cars_district.length;i++) {
+            if (unregistered_cars_district[i].name === city) {
+                return unregistered_cars_district[i].NewRegis;
+            }
+        }
+        return 0;
+    }
+
+    function getNewRegisDep(code) {
+        const city = findCity(code);
         for (let i=0;i<unregistered_cars_district.length;i++) {
             if (unregistered_cars_district[i].name === city) {
                 return unregistered_cars_district[i].NewRegis;
