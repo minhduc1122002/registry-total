@@ -677,8 +677,8 @@ export default function DashboardLayout() {
                 <div style={{display: 'flex'}}>
                   <div className="statistics-line-chart">
                     <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                        <ResponsiveContainer width={1000} height={400}>
-                            <LineChart width={730} height={250} 
+                        <ResponsiveContainer width={1100} height={400}>
+                            <LineChart
                                 data={yearly_registered_cars}
                                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" />
@@ -704,7 +704,7 @@ export default function DashboardLayout() {
                     <div style={{display: 'flex'}}>
                     <div className="statistics-line-chart">
                         <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                            <ResponsiveContainer width={1000} height={400}>
+                            <ResponsiveContainer width={1100} height={400}>
                                 <BarChart
                                     data={city_year_registered_cars}
                                     name
@@ -740,7 +740,7 @@ export default function DashboardLayout() {
                     <div style={{display: 'flex'}}>
                     <div className="statistics-line-chart">
                         <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                            <ResponsiveContainer width={1000} height={400}>
+                            <ResponsiveContainer width={1100} height={400}>
                                 <BarChart
                                     data={city_month_registered_cars}
                                     name
@@ -770,7 +770,7 @@ export default function DashboardLayout() {
                     <div style={{display: 'flex'}}>
                     <div className="statistics-line-chart">
                         <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                            <ResponsiveContainer width={1000} height={400}>
+                            <ResponsiveContainer width={1100} height={400}>
                                 <BarChart
                                     data={city_month_expiring_cars}
                                     name
@@ -799,7 +799,7 @@ export default function DashboardLayout() {
                     <div style={{display: 'flex'}}>
                     <div className="statistics-line-chart">
                         <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                            <ResponsiveContainer width={1000} height={400}>
+                            <ResponsiveContainer width={1100} height={'100%'}>
                                 <BarChart
                                     data={forecast}
                                     name
@@ -1010,7 +1010,7 @@ export default function DashboardLayout() {
                     <div style={{display: 'flex'}}>
                     <div className="statistics-line-chart">
                         <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                            <ResponsiveContainer width={1000} height={400}>
+                            <ResponsiveContainer width={1100} height={400}>
                                 <BarChart
                                     data={expiringMonth()}
                                     name

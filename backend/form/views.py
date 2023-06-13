@@ -296,7 +296,6 @@ def CountInMonthByCenter(request, year, center_id=None):
         # Cục
         ## Từng trung tâm
         elif center_id is not None:
-            print(center_id)
             total = Form.objects.filter(register_date__year=year, center__id=center_id)
             month = list(total.values('register_date__month').annotate(count=Count('register_date__month')))
             return JsonResponse(month, safe=False)
@@ -614,7 +613,7 @@ class ExpiringInMonthByCenter(APIView):
     serializer_class = FormSerializer
     queryset = Form.objects.all()
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, center_id=None, *args, **kwargs):
         token = request.headers.get('Token')
         if not token:
             return HttpResponse('You are not authenticated', status=400)
@@ -623,15 +622,17 @@ class ExpiringInMonthByCenter(APIView):
         except jwt.ExpiredSignatureError:
             return HttpResponse('Token is not valid', status=400)
         
+        today = datetime.today()
+        startdate = today.replace(day=1)
         # Trung tâm
         if payload['role'] == 'center' and payload['center'] is not None:
-            today = datetime.today()
-            startdate = today.replace(day=1)
             total = Form.objects.filter(expired_date__gte=startdate, center__id=payload['center']['id'])
             count = list(total.values('expired_date__month').annotate(count=Count('expired_date__month')))
             return JsonResponse(count, safe=False)
-        else:
-            return Response("You are unauthorized", status=status.HTTP_401_UNAUTHORIZED)
+        elif center_id is not None:
+            total = Form.objects.filter(expired_date__gte=startdate, center__id=center_id)
+            count = list(total.values('expired_date__month').annotate(count=Count('expired_date__month')))
+            return JsonResponse(count, safe=False)
 
 class ExpiringInMonthByCity(APIView):
     serializer_class = FormSerializer

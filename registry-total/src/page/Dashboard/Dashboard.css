@@ -84,8 +84,6 @@
     border: 0px solid rgba(0, 0, 0, 0.125);
     border-radius: 1rem;
     box-shadow: rgba(0, 0, 0, 0.05) 0rem 1.25rem 1.6875rem 0rem;
-    justify-content: center;
-    align-items: center;
 }
 .statistics-line-chart {
     flex: 2;

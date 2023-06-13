@@ -282,7 +282,7 @@ export default function SingleCenter( {user} ) {
                 const response = await axios.create({
                         baseURL: BASE_URL,
                         headers: { token: `${TOKEN}` },
-                }).get("/form/expiring/center");
+                }).get(`/form/expiring/center/${center_id}`);
                 const data = response.data;
                 data.forEach( obj => renameKey( obj, 'expired_date__month', 'name' ) );
                 data.forEach( obj => renameKey( obj, 'count', 'Total' ) );
@@ -629,8 +629,8 @@ export default function SingleCenter( {user} ) {
                 <div style={{display: 'flex'}}>
                   <div className="statistics-line-chart">
                     <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                        <ResponsiveContainer width={1000} height={400}>
-                            <LineChart width={730} height={250} 
+                        <ResponsiveContainer width={1100} height={400}>
+                            <LineChart
                                 data={yearly_registered_cars}
                                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" />
@@ -829,13 +829,13 @@ export default function SingleCenter( {user} ) {
                 
             </div>
             <div className="block-content-container">
-                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
+                    <div className="chart-title-container">
                         <h4 className="chart-title">Số lượng xe ô tô hết hạn đăng kiểm hàng tháng</h4>
                     </div>
                     <div style={{display: 'flex'}}>
                     <div className="statistics-line-chart">
                         <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                            <ResponsiveContainer width={1000} height={400}>
+                            <ResponsiveContainer width={1100} height={400}>
                                 <BarChart
                                     data={expiringMonth()}
                                     name

@@ -58,6 +58,7 @@ urlpatterns = [
     path('form/expiring/all', FormExpiringView.as_view()),
     path('form/expiring/all/<str:center_id>', FormExpiringView.as_view()),
     path('form/expiring/center', ExpiringInMonthByCenter.as_view()),
+    path('form/expiring/center/<str:center_id>', ExpiringInMonthByCenter.as_view()),
     path('form/expiring/city/<int:month>', ExpiringInMonthByCity.as_view()),
     path('form/expiring/district/<str:district>', FormExpiringDistrictView.as_view()),
 ]
