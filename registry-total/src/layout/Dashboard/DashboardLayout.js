@@ -693,131 +693,6 @@ export default function DashboardLayout() {
                     </div>
                 </div>
             </div>}
-            {user.role === 'department' &&
-                <div className="block-content-container">
-                    <div className="chart-title-container">
-                        <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm theo khu vực trong năm</h4>
-                        <div className="chart-select">
-                            <Select options={city_years} onChange={handleChangeCityYear} styles={customStyles} placeholder="Chọn năm"/>
-                        </div>
-                    </div>
-                    <div style={{display: 'flex'}}>
-                    <div className="statistics-line-chart">
-                        <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                            <ResponsiveContainer width={1100} height={400}>
-                                <BarChart
-                                    data={city_year_registered_cars}
-                                    name
-                                >
-                                    <Bar dataKey="Total" fill="#8884d8" />
-                                    <XAxis dataKey="name" stroke="gray" />
-                                    <YAxis/>
-                                    <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
-                                    <Legend />
-
-                                </BarChart>
-                        </ResponsiveContainer>
-                        </div>
-                        </div>
-                    </div>
-                </div>
-            }
-            {user.role === 'department' &&
-                <div className="block-content-container">
-                    <div className="special-chart-title-container">
-                        <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm theo khu vực trong tháng</h4>
-                        <div className="chart-select-container">
-                            <div className="chart-select">
-                                <Select options={city_months} onChange={handleChangeCityMonth} styles={customStyles} placeholder="Chọn tháng"/>
-                                <span style={{paddingLeft:"12px"}}>-</span>
-                                <Select options={city_month_years} onChange={handleChangeCityYear2} styles={customStyles} placeholder="Chọn năm"/>
-                            </div>
-                            <span>
-                                <button type='button' className='link primary-btn' onClick={handleClick}>Lọc</button>
-                            </span>
-                        </div>
-                    </div>
-                    <div style={{display: 'flex'}}>
-                    <div className="statistics-line-chart">
-                        <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                            <ResponsiveContainer width={1100} height={400}>
-                                <BarChart
-                                    data={city_month_registered_cars}
-                                    name
-                                >
-                                    <Bar dataKey="Total" fill="#8884d8" />
-                                    <XAxis dataKey="name" stroke="gray" />
-                                    <YAxis/>
-                                    <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
-                                    <Legend />
-
-                                </BarChart>
-                        </ResponsiveContainer>
-                        </div>
-                        </div>
-                    </div>
-                </div>
-            }
-            {user.role === 'department' &&
-                <div className="block-content-container">
-                    <div className="chart-title-container">
-                        <h4 className="chart-title">Số lượng xe ô tô hết hạn đăng kiểm theo khu vực trong tháng</h4>
-                        <div className="chart-select">
-                            <Select options={city_months.slice(new Date().getMonth(),)} onChange={handleChangeCityMonthExpiring} styles={customStyles} placeholder="Chọn tháng"/>
-                            <span className="chart-title" style={{paddingLeft:"12px"}}>- {new Date().getFullYear()}</span>
-                        </div>
-                    </div>
-                    <div style={{display: 'flex'}}>
-                    <div className="statistics-line-chart">
-                        <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                            <ResponsiveContainer width={1100} height={400}>
-                                <BarChart
-                                    data={city_month_expiring_cars}
-                                    name
-                                >
-                                    <Bar dataKey="Total" fill="#8884d8" />
-                                    <XAxis dataKey="name" stroke="gray" />
-                                    <YAxis/>
-                                    <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
-                                    <Legend />
-
-                                </BarChart>
-                        </ResponsiveContainer>
-                        </div>
-                        </div>
-                    </div>
-                </div>
-            }
-            {user.role === 'department' &&
-                <div className="block-content-container">
-                    <div className="chart-title-container">
-                        <h4 className="chart-title">Dự báo số lượng xe ô tô đăng kiểm mới và đăng kiểm lại</h4>
-                        <div className="chart-select">
-                            <Select options={place} onChange={handleChangePlace} styles={customStyles} placeholder="Chọn bộ lọc"/>
-                        </div>
-                    </div>
-                    <div style={{display: 'flex'}}>
-                    <div className="statistics-line-chart">
-                        <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                            <ResponsiveContainer width={1100} height={'100%'}>
-                                <BarChart
-                                    data={forecast}
-                                    name
-                                >
-                                    <Bar dataKey="ReRegis" fill="#8884d8" />
-                                    <Bar dataKey="NewRegis" fill="#82ca9d" />
-                                    <XAxis dataKey="name" stroke="gray" />
-                                    <YAxis/>
-                                    <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
-                                    <Legend />
-
-                                </BarChart>
-                        </ResponsiveContainer>
-                        </div>
-                        </div>
-                    </div>
-                </div>
-            }
             <div className="block-content-container">
                 <div className="chart-title-container">
                     <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm trong năm</h4>
@@ -1002,6 +877,131 @@ export default function DashboardLayout() {
                 }
                 </div>
             </div>
+            {user.role === 'department' &&
+                <div className="block-content-container">
+                    <div className="chart-title-container">
+                        <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm theo khu vực trong năm</h4>
+                        <div className="chart-select">
+                            <Select options={city_years} onChange={handleChangeCityYear} styles={customStyles} placeholder="Chọn năm"/>
+                        </div>
+                    </div>
+                    <div style={{display: 'flex'}}>
+                    <div className="statistics-line-chart">
+                        <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
+                            <ResponsiveContainer width={1100} height={400}>
+                                <BarChart
+                                    data={city_year_registered_cars}
+                                    name
+                                >
+                                    <Bar dataKey="Total" fill="#8884d8" />
+                                    <XAxis dataKey="name" stroke="gray" />
+                                    <YAxis/>
+                                    <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
+                                    <Legend />
+
+                                </BarChart>
+                        </ResponsiveContainer>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            {user.role === 'department' &&
+                <div className="block-content-container">
+                    <div className="special-chart-title-container">
+                        <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm theo khu vực trong tháng</h4>
+                        <div className="chart-select-container">
+                            <div className="chart-select">
+                                <Select options={city_months} onChange={handleChangeCityMonth} styles={customStyles} placeholder="Chọn tháng"/>
+                                <span style={{paddingLeft:"12px"}}>-</span>
+                                <Select options={city_month_years} onChange={handleChangeCityYear2} styles={customStyles} placeholder="Chọn năm"/>
+                            </div>
+                            <span>
+                                <button type='button' className='link primary-btn' onClick={handleClick}>Lọc</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div style={{display: 'flex'}}>
+                    <div className="statistics-line-chart">
+                        <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
+                            <ResponsiveContainer width={1100} height={400}>
+                                <BarChart
+                                    data={city_month_registered_cars}
+                                    name
+                                >
+                                    <Bar dataKey="Total" fill="#8884d8" />
+                                    <XAxis dataKey="name" stroke="gray" />
+                                    <YAxis/>
+                                    <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
+                                    <Legend />
+
+                                </BarChart>
+                        </ResponsiveContainer>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            {user.role === 'department' &&
+                <div className="block-content-container">
+                    <div className="chart-title-container">
+                        <h4 className="chart-title">Số lượng xe ô tô hết hạn đăng kiểm theo khu vực trong tháng</h4>
+                        <div className="chart-select">
+                            <Select options={city_months.slice(new Date().getMonth(),)} onChange={handleChangeCityMonthExpiring} styles={customStyles} placeholder="Chọn tháng"/>
+                            <span className="chart-title" style={{paddingLeft:"12px"}}>- {new Date().getFullYear()}</span>
+                        </div>
+                    </div>
+                    <div style={{display: 'flex'}}>
+                    <div className="statistics-line-chart">
+                        <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
+                            <ResponsiveContainer width={1100} height={400}>
+                                <BarChart
+                                    data={city_month_expiring_cars}
+                                    name
+                                >
+                                    <Bar dataKey="Total" fill="#8884d8" />
+                                    <XAxis dataKey="name" stroke="gray" />
+                                    <YAxis/>
+                                    <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
+                                    <Legend />
+
+                                </BarChart>
+                        </ResponsiveContainer>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            {user.role === 'department' &&
+                <div className="block-content-container">
+                    <div className="chart-title-container">
+                        <h4 className="chart-title">Dự báo số lượng xe ô tô đăng kiểm mới và đăng kiểm lại</h4>
+                        <div className="chart-select">
+                            <Select options={place} onChange={handleChangePlace} styles={customStyles} placeholder="Chọn bộ lọc"/>
+                        </div>
+                    </div>
+                    <div style={{display: 'flex'}}>
+                    <div className="statistics-line-chart">
+                        <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
+                            <ResponsiveContainer width={1100} height={'100%'}>
+                                <BarChart
+                                    data={forecast}
+                                    name
+                                >
+                                    <Bar dataKey="ReRegis" fill="#8884d8" />
+                                    <Bar dataKey="NewRegis" fill="#82ca9d" />
+                                    <XAxis dataKey="name" stroke="gray" />
+                                    <YAxis/>
+                                    <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
+                                    <Legend />
+
+                                </BarChart>
+                        </ResponsiveContainer>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            }
             {user.role === 'center' &&
                 <div className="block-content-container">
                     <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>

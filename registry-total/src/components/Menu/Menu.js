@@ -20,7 +20,7 @@ const Sidebar = () => {
             </div>
             <hr className="line"/>
             <ul>
-                <div className="menu-part"><h2>Main</h2></div>
+                <div className="menu-part"><h2>Thống kê</h2></div>
                 <NavLink to="/">
                     {({ isActive, isPending }) => (
                         <li>
@@ -33,7 +33,7 @@ const Sidebar = () => {
                         </li>
                     )}
                 </NavLink>
-                <div className="menu-part"><h2>Table</h2></div>
+                <div className="menu-part"><h2>Quản lý</h2></div>
                 <NavLink to="/inspections">
                     {({ isActive, isPending }) => (
                         <li>
