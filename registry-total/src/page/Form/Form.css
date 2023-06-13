@@ -287,6 +287,7 @@
 }
 form.block-content-container {
     padding: 32px;
+    align-items: normal;
 }
 @media screen and (max-width: 1200px) {
     

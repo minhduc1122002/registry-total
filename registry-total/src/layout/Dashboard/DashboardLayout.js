@@ -254,7 +254,23 @@ export default function DashboardLayout() {
                 console.log(e)
             }};
             getYearlyRegisteredCars();
-            
+        
+        async function getCenterMonthExpiringCars() {
+            try {
+                const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+                const response = await axios.create({
+                        baseURL: BASE_URL,
+                        headers: { token: `${TOKEN}` },
+                }).get("/form/expiring/center");
+                const data = response.data;
+                data.forEach( obj => renameKey( obj, 'expired_date__month', 'name' ) );
+                data.forEach( obj => renameKey( obj, 'count', 'Total' ) );
+                console.log(data)
+                setCenterMonthExpiringCars(data);
+            } catch(e) {
+                console.log(e)
+            }};
+            getCenterMonthExpiringCars()
     }, []);
 
     function renameKey(obj, oldKey, newKey) {
@@ -325,23 +341,6 @@ export default function DashboardLayout() {
         } catch(e) {
             console.log(e)
         }};
-
-    async function getCenterMonthExpiringCars() {
-        try {
-            const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
-            const response = await axios.create({
-                baseURL: BASE_URL,
-                headers: { token: `${TOKEN}` },
-            }).get("/form/expiring/center");
-            const data = response.data;
-            data.forEach( obj => renameKey( obj, 'expired_date__month', 'name' ) );
-            data.forEach( obj => renameKey( obj, 'count', 'Total' ) );
-            console.log(data)
-            setCenterMonthExpiringCars(data);
-        } catch(e) {
-            console.log(e)
-        }};
-    getCenterMonthExpiringCars();
 
     const years = (user.role === 'center') ? ([
         { value: '/form/register/bymonth/2022', label: '2022' },
@@ -430,7 +429,7 @@ export default function DashboardLayout() {
         { name: "T11", Total: 0 },
         { name: "T12", Total: 0 },
     ].slice(new Date().getMonth(),)
-
+    
     var quarter = [
         { name: "1", Total: 0 },
         { name: "2", Total: 0 },
@@ -488,8 +487,8 @@ export default function DashboardLayout() {
 
     function expiringMonth() {
         var months = center_month_expiring_cars;
+        console.log(months)
         if (months) {
-            console.log(months[0])
             for (var i = 0; i < months.length; i++) {
                 for (var j = 0; j < expiring_month.length; j++) {
                     if (months[i].name === j + new Date().getMonth() + 1) {
@@ -497,6 +496,7 @@ export default function DashboardLayout() {
                     }
                 }
             }
+            console.log(expiring_month)
             return expiring_month;
         }
     }
@@ -520,9 +520,7 @@ export default function DashboardLayout() {
 
     const handleChangePlace = (selectedOption) => {
         setSelected(selectedOption);
-        console.log(re_regis_cars_dep);
-        console.log(unregistered_cars_district);
-        console.log(re_regis_cars_district);
+
         if (selectedOption.value !== 'district') {
             for (let i=0;i<re_regis_cars_dep.length;i++) {
                 re_regis_cars_dep[i]['NewRegis'] = Math.round(getNewRegisDep(re_regis_cars_dep[i].center__city)*(parseInt(re_regis_cars_dep[i].name)%9)/10);
@@ -673,11 +671,13 @@ export default function DashboardLayout() {
             }
             {yearly_registered_cars.length !== 0 &&
             <div className="block-content-container">
-                <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm qua các năm</h4>
+                <div className="chart-title-container">
+                    <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm qua các năm</h4>
+                </div>
                 <div style={{display: 'flex'}}>
                   <div className="statistics-line-chart">
                     <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                        <ResponsiveContainer width={'100%'} height={400}>
+                        <ResponsiveContainer width={1000} height={400}>
                             <LineChart width={730} height={250} 
                                 data={yearly_registered_cars}
                                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
@@ -695,14 +695,16 @@ export default function DashboardLayout() {
             </div>}
             {user.role === 'department' &&
                 <div className="block-content-container">
-                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
-                        <h4 className="chart-title" style={{marginBottom: '0px'}}>Số lượng xe ô tô đã đăng kiểm theo khu vực trong năm</h4>
-                        <Select options={city_years} onChange={handleChangeCityYear} styles={customStyles} placeholder="Chọn năm"/>
+                    <div className="chart-title-container">
+                        <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm theo khu vực trong năm</h4>
+                        <div className="chart-select">
+                            <Select options={city_years} onChange={handleChangeCityYear} styles={customStyles} placeholder="Chọn năm"/>
+                        </div>
                     </div>
                     <div style={{display: 'flex'}}>
                     <div className="statistics-line-chart">
                         <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                            <ResponsiveContainer width={'100%'} height={400}>
+                            <ResponsiveContainer width={1000} height={400}>
                                 <BarChart
                                     data={city_year_registered_cars}
                                     name
@@ -722,19 +724,23 @@ export default function DashboardLayout() {
             }
             {user.role === 'department' &&
                 <div className="block-content-container">
-                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
-                        <h4 className="chart-title" style={{marginBottom: '0px'}}>Số lượng xe ô tô đã đăng kiểm theo khu vực trong tháng</h4>
-                        <Select options={city_months} onChange={handleChangeCityMonth} styles={customStyles} placeholder="Chọn tháng"/>
-                        <span style={{paddingLeft:"12px"}}>-</span>
-                        <Select options={city_month_years} onChange={handleChangeCityYear2} styles={customStyles} placeholder="Chọn năm"/>
-                        <span>
-                            <button type='button' className='link primary-btn' onClick={handleClick}>Lọc</button>
-                        </span>
+                    <div className="special-chart-title-container">
+                        <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm theo khu vực trong tháng</h4>
+                        <div className="chart-select-container">
+                            <div className="chart-select">
+                                <Select options={city_months} onChange={handleChangeCityMonth} styles={customStyles} placeholder="Chọn tháng"/>
+                                <span style={{paddingLeft:"12px"}}>-</span>
+                                <Select options={city_month_years} onChange={handleChangeCityYear2} styles={customStyles} placeholder="Chọn năm"/>
+                            </div>
+                            <span>
+                                <button type='button' className='link primary-btn' onClick={handleClick}>Lọc</button>
+                            </span>
+                        </div>
                     </div>
                     <div style={{display: 'flex'}}>
                     <div className="statistics-line-chart">
                         <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                            <ResponsiveContainer width={'100%'} height={400}>
+                            <ResponsiveContainer width={1000} height={400}>
                                 <BarChart
                                     data={city_month_registered_cars}
                                     name
@@ -754,15 +760,17 @@ export default function DashboardLayout() {
             }
             {user.role === 'department' &&
                 <div className="block-content-container">
-                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
-                        <h4 className="chart-title" style={{marginBottom: '0px'}}>Số lượng xe ô tô hết hạn đăng kiểm theo khu vực trong tháng</h4>
-                        <Select options={city_months.slice(new Date().getMonth(),)} onChange={handleChangeCityMonthExpiring} styles={customStyles} placeholder="Chọn tháng"/>
-                        <span className="chart-title" style={{paddingLeft:"12px"}}>- {new Date().getFullYear()}</span>
+                    <div className="chart-title-container">
+                        <h4 className="chart-title">Số lượng xe ô tô hết hạn đăng kiểm theo khu vực trong tháng</h4>
+                        <div className="chart-select">
+                            <Select options={city_months.slice(new Date().getMonth(),)} onChange={handleChangeCityMonthExpiring} styles={customStyles} placeholder="Chọn tháng"/>
+                            <span className="chart-title" style={{paddingLeft:"12px"}}>- {new Date().getFullYear()}</span>
+                        </div>
                     </div>
                     <div style={{display: 'flex'}}>
                     <div className="statistics-line-chart">
                         <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                            <ResponsiveContainer width={'100%'} height={400}>
+                            <ResponsiveContainer width={1000} height={400}>
                                 <BarChart
                                     data={city_month_expiring_cars}
                                     name
@@ -782,14 +790,16 @@ export default function DashboardLayout() {
             }
             {user.role === 'department' &&
                 <div className="block-content-container">
-                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
-                        <h4 className="chart-title" style={{marginBottom: '0px'}}>Dự báo số lượng xe ô tô đăng kiểm mới và đăng kiểm lại</h4>
-                        <Select options={place} onChange={handleChangePlace} styles={customStyles} placeholder="Chọn bộ lọc"/>
+                    <div className="chart-title-container">
+                        <h4 className="chart-title">Dự báo số lượng xe ô tô đăng kiểm mới và đăng kiểm lại</h4>
+                        <div className="chart-select">
+                            <Select options={place} onChange={handleChangePlace} styles={customStyles} placeholder="Chọn bộ lọc"/>
+                        </div>
                     </div>
                     <div style={{display: 'flex'}}>
                     <div className="statistics-line-chart">
                         <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                            <ResponsiveContainer width={'100%'} height={400}>
+                            <ResponsiveContainer width={1000} height={400}>
                                 <BarChart
                                     data={forecast}
                                     name
@@ -811,7 +821,9 @@ export default function DashboardLayout() {
             <div className="block-content-container">
                 <div className="chart-title-container">
                     <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm trong năm</h4>
-                    <Select options={years} onChange={handleChange} styles={customStyles} placeholder="Chọn năm"/>
+                    <div className="chart-select">
+                        <Select options={years} onChange={handleChange} styles={customStyles} placeholder="Chọn năm"/>
+                    </div>
                 </div>
                 <div className="statistics-container">
                   <div className="statistics-line-chart" style={{padding: '16px'}}>
@@ -990,14 +1002,15 @@ export default function DashboardLayout() {
                 }
                 </div>
             </div>
-            <div className="block-content-container">
+            {user.role === 'center' &&
+                <div className="block-content-container">
                     <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
-                        <h4 className="chart-title" style={{marginBottom: '0px'}}>Số lượng xe ô tô hết hạn đăng kiểm hàng tháng</h4>
+                        <h4 className="chart-title">Số lượng xe ô tô hết hạn đăng kiểm hàng tháng</h4>
                     </div>
                     <div style={{display: 'flex'}}>
                     <div className="statistics-line-chart">
                         <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                            <ResponsiveContainer width={'100%'} height={400}>
+                            <ResponsiveContainer width={1000} height={400}>
                                 <BarChart
                                     data={expiringMonth()}
                                     name
@@ -1014,6 +1027,7 @@ export default function DashboardLayout() {
                         </div>
                     </div>
                 </div>
+            }
         </div>
   )
 }

@@ -11,7 +11,9 @@ import {
     BarChart,
     Legend,
     RadialBar,
-    RadialBarChart
+    RadialBarChart,
+    LineChart,
+    Line
 } from "recharts";
 import { useState, useEffect } from "react";
 import axios from 'axios';
@@ -55,6 +57,7 @@ export default function SingleCenter( {user} ) {
     const [selected, setSelected] = useState(null);
     const [re_regis_cars_center, setReRegisCarsCenter] = useState([]);
     const [unregistered_cars_district, setUnRegisteredCarsDistrict] = useState([]);
+    const [center_month_expiring_cars, setCenterMonthExpiringCars] = useState();
 
     const cities = require('../../../address/tinh_tp.json');
     const tree = require('../../../address/tree.json');
@@ -92,6 +95,21 @@ export default function SingleCenter( {user} ) {
         (state) => state.user.isSuccess[1]
     )
     
+    var expiring_month = [
+        { name: "T1", Total: 0 },
+        { name: "T2", Total: 0 },
+        { name: "T3", Total: 0 },
+        { name: "T4", Total: 0 },
+        { name: "T5", Total: 0 },
+        { name: "T6", Total: 0 },
+        { name: "T7", Total: 0 },
+        { name: "T8", Total: 0 },
+        { name: "T9", Total: 0 },
+        { name: "T10", Total: 0 },
+        { name: "T11", Total: 0 },
+        { name: "T12", Total: 0 },
+    ].slice(new Date().getMonth(),)
+
     useEffect(() => {
         if (isError) {
             toast.error(JSON.stringify(message), {
@@ -145,6 +163,7 @@ export default function SingleCenter( {user} ) {
         dispatch(getCarList())
         dispatch(getInspectionList())
     }, [dispatch]);
+    
 
     const inspections = useSelector(state => state.inspection.inspections).filter(inspection => inspection.center.id == center_id)
 
@@ -256,8 +275,23 @@ export default function SingleCenter( {user} ) {
                 console.log(e)
             }};
             getYearlyRegisteredCars();
-            
-
+        
+        async function getCenterMonthExpiringCars() {
+            try {
+                const TOKEN = JSON.parse(localStorage.getItem('accessToken'))
+                const response = await axios.create({
+                        baseURL: BASE_URL,
+                        headers: { token: `${TOKEN}` },
+                }).get("/form/expiring/center");
+                const data = response.data;
+                data.forEach( obj => renameKey( obj, 'expired_date__month', 'name' ) );
+                data.forEach( obj => renameKey( obj, 'count', 'Total' ) );
+                console.log(data)
+                setCenterMonthExpiringCars(data);
+            } catch(e) {
+                console.log(e)
+            }};
+        getCenterMonthExpiringCars();
     }, []);
 
     function renameKey(obj, oldKey, newKey) {
@@ -366,6 +400,23 @@ export default function SingleCenter( {user} ) {
             }
         }
         return 0;
+    }
+
+    function expiringMonth() {
+        var months = center_month_expiring_cars;
+        
+        if (months) {
+            console.log(months[0])
+            for (var i = 0; i < months.length; i++) {
+                for (var j = 0; j < expiring_month.length; j++) {
+                    if (months[i].name === j + new Date().getMonth() + 1) {
+                        expiring_month[j].Total = months[i].Total;
+                    }
+                }
+            }
+            console.log(expiring_month)
+            return expiring_month;
+        }
     }
     
     const handleEdit = (e) => {
@@ -572,22 +623,23 @@ export default function SingleCenter( {user} ) {
             }
             {yearly_registered_cars.length !== 0 &&
             <div className="block-content-container">
-                <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm qua các năm</h4>
+                <div className="chart-title-container">
+                    <h4 className="chart-title">Số lượng xe ô tô đã đăng kiểm qua các năm</h4>
+                </div>
                 <div style={{display: 'flex'}}>
                   <div className="statistics-line-chart">
                     <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
-                        <ResponsiveContainer width={'100%'} height={400}>
-                          <BarChart
-                            data={yearly_registered_cars}
-                            name
-                          >
-                            <Bar dataKey="Total" fill="rgb(63, 81, 181)" />
-                            <XAxis dataKey="name" stroke="gray" />
-                            <YAxis/>
-                            <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
-                          
-                          
-                          </BarChart>
+                        <ResponsiveContainer width={1000} height={400}>
+                            <LineChart width={730} height={250} 
+                                data={yearly_registered_cars}
+                                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Legend />
+                                    <Line type="monotone" dataKey="Total" stroke="#8884d8" />
+                            </LineChart>
                       </ResponsiveContainer>
                       </div>
                     </div>
@@ -774,7 +826,32 @@ export default function SingleCenter( {user} ) {
                     )
                 }
                 </div>
+                
             </div>
+            <div className="block-content-container">
+                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
+                        <h4 className="chart-title">Số lượng xe ô tô hết hạn đăng kiểm hàng tháng</h4>
+                    </div>
+                    <div style={{display: 'flex'}}>
+                    <div className="statistics-line-chart">
+                        <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
+                            <ResponsiveContainer width={1000} height={400}>
+                                <BarChart
+                                    data={expiringMonth()}
+                                    name
+                                >
+                                    <Bar dataKey="Total" fill="#8884d8" />
+                                    <XAxis dataKey="name" stroke="gray" />
+                                    <YAxis/>
+                                    <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
+                                    <Legend />
+
+                                </BarChart>
+                        </ResponsiveContainer>
+                        </div>
+                        </div>
+                    </div>
+                </div>
         </div>
     </>
   )

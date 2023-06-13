@@ -7,7 +7,7 @@
 .dashboard-title {
     font-weight: 700;
     font-size: 24px;
-    
+    margin-top: 16px;
     padding-right: 8px;
     text-transform: capitalize;
     color: rgb(40, 53, 147);
@@ -84,6 +84,8 @@
     border: 0px solid rgba(0, 0, 0, 0.125);
     border-radius: 1rem;
     box-shadow: rgba(0, 0, 0, 0.05) 0rem 1.25rem 1.6875rem 0rem;
+    justify-content: center;
+    align-items: center;
 }
 .statistics-line-chart {
     flex: 2;

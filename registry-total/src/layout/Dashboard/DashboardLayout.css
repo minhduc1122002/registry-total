@@ -35,3 +35,35 @@
     font-style: italic;
     text-align: center;
 }
+
+.chart-select-container {
+    display: flex;
+    flex-direction: row;
+    margin-top: 16px;
+}
+.chart-select {
+    display: flex;
+    flex-direction: row;
+}
+.special-chart-title-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 36px;
+    flex-direction: column ;
+}
+@media screen and (max-width: 600px) {
+    .chart-select-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .chart-select {
+        display: flex;
+        margin-bottom: 16px;
+    }
+    .chart-select-container, .chart-select .css-sy6u7w-control {
+        font-size: 12px;
+    }
+}

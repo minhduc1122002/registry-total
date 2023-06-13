@@ -45,13 +45,34 @@ export default function CarLayout( {cars} ) {
             renderCell: (params) => {
               return <div className="rowitem">{params.row.registration_id}</div>;
             },
-       },
+        },
+        {
+            field: "registration_address",
+            headerName: "Nơi Đăng Ký",
+            width: 200,
+            renderCell: (params) => {
+              return <div className="rowitem">{params.row.registration_place}</div>;
+            },
+        },
         {
           field: "plate_number",
           headerName: "Biển Số Xe",
           width: 150,
           renderCell: (params) => {
             return <div className="rowitem">{params.row.plate_number}</div>;
+          },
+        },
+        {
+          field: "inspection_status",
+          headerName: "Tình Trạng",
+          width: 200,
+          renderCell: (params) => {
+            const status_class = params.row.inspection_status === 'Chưa đăng kiểm' ? 'expired' : 'active'
+            return (
+              <div className={`cellWithStatus ${status_class}`}>
+                {status_class === 'expired' ? 'Chưa đăng kiểm' : 'Đã đăng kiểm'}
+              </div>
+            );
           },
         },
         {
@@ -91,7 +112,7 @@ export default function CarLayout( {cars} ) {
           {
             field: "owner_name",
             headerName: "Chủ sở hữu",
-            width: 150,
+            width: 200,
             renderCell: (params) => {
               return <div className="rowitem">{params.row.owner.name}</div>;
             }
@@ -99,47 +120,30 @@ export default function CarLayout( {cars} ) {
   
           {
             field: "owner_id",
-            headerName: "CCCD",
+            headerName: "CCCD/Mã Cty",
             width: 150,
             renderCell: (params) => {
               return <div className="rowitem">{params.row.owner.id}</div>;
             }
           },
       
-        // {
-        //   field: "center_id",
-        //   headerName: "Trung Tâm",
-        //   width: 100,
-        //   renderCell: (params) => {
-        //     return <div className="rowitem">{params.row.center.id}</div>;
-        //   }
-        // },
-    
-        // {
-        //     field: "car_id",
-        //     headerName: "Biển Số Xe",
-        //     width: 150,
-        //     renderCell: (params) => {
-        //       return <div className="rowitem">{params.row.car.plate_number}</div>;
-        //     }
-        //   },
-
-        //   {
-        //     field: "status",
-        //     headerName: "Tình Trạng",
-        //     width: 150,
-        //     renderCell: (params) => {
-        //       const register_date = new Date(params.row.register_date)
-              
-        //       const status = register_date.getTime() * 1000 < new Date().getTime() ? 'expired' : 'active'
-        //       return (
-        //         <div className={`cellWithStatus ${status}`}>
-        //           {status === 'expired' ? 'Đã hết hạn' : 'Còn hiệu lực'}
-        //         </div>
-        //       );
-        //     },
-        //   },
-        
+          {
+            field: "owner_address",
+            headerName: "Địa Chỉ Thường Trú",
+            width: 300,
+            renderCell: (params) => {
+              return <div className="rowitem">{params.row.owner.address}</div>;
+            }
+          },
+      
+          {
+            field: "owner_contact",
+            headerName: "Địa Chỉ Liên Hệ",
+            width: 250,
+            renderCell: (params) => {
+              return <div className="rowitem">{params.row.owner.contact}</div>;
+            }
+          },
     ];
     return (
         <div className="dashboard-layout">
