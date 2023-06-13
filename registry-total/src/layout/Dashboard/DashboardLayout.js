@@ -612,7 +612,7 @@ export default function DashboardLayout() {
                                 <li>
                                     <div style = {{width:"100%"}}>
                                         <p className="quarter">
-                                            Quý 1
+                                            Quý 1 ({quarter[0].Total} / {total})
                                         </p>
                                         <Box sx={{ width: '100%' }}>
                                             <LinearProgress
@@ -623,15 +623,12 @@ export default function DashboardLayout() {
                                             variant="determinate" value={quarter[0].Total * 100 / total}>
                                             </LinearProgress>
                                         </Box>
-                                        <p className="amount">
-                                            {quarter[0].Total} / {total}
-                                        </p>
                                     </div>
                                 </li>
                                 <li>
                                     <div style = {{width:"100%"}}>
                                         <p className="quarter">
-                                            Quý 2
+                                            Quý 2 ({quarter[1].Total} / {total})
                                         </p>
                                         <Box sx={{ width: '100%' }}>
                                             <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
@@ -640,15 +637,12 @@ export default function DashboardLayout() {
                                                 }}} 
                                             variant="determinate" value={quarter[1].Total * 100 / total} />
                                         </Box>
-                                        <p className="amount">
-                                            {quarter[1].Total} / {total}
-                                        </p>
                                     </div>
                                 </li>
                                 <li>
                                     <div style = {{width:"100%"}}>
                                         <p className="quarter">
-                                            Quý 3
+                                            Quý 3 ({quarter[2].Total} / {total})
                                         </p>
                                         <Box sx={{ width: '100%' }}>
                                             <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
@@ -657,15 +651,12 @@ export default function DashboardLayout() {
                                                 }}} 
                                                 variant="determinate" value={quarter[2].Total * 100 / total} />
                                         </Box>
-                                        <p className="amount">
-                                            {quarter[2].Total} / {total}
-                                        </p>
                                     </div>
                                 </li>
                                 <li>
                                     <div style = {{width:"100%"}}>
                                         <p className="quarter">
-                                            Quý 4
+                                            Quý 4 ({quarter[3].Total} / {total})
                                         </p>
                                         <Box sx={{ width: '100%' }}>
                                             <LinearProgress sx={{backgroundColor: 'rgb(237, 237, 237)', 
@@ -674,9 +665,6 @@ export default function DashboardLayout() {
                                                 }}} 
                                                 variant="determinate" value={quarter[3].Total * 100 / total} />
                                         </Box>
-                                        <p className="amount">
-                                            {quarter[3].Total} / {total}
-                                        </p>
                                     </div>
                                 </li>
                             </ul>
@@ -751,6 +739,31 @@ export default function DashboardLayout() {
                 }
                 </div>
             </div>
+            <div className="block-content-container">
+                    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '36px'}}>
+                        <h4 className="chart-title" style={{marginBottom: '0px'}}>Số lượng xe sắp hết hạn đăng kiểm hàng tháng</h4>
+                    </div>
+                    <div style={{display: 'flex'}}>
+                    <div className="statistics-line-chart">
+                        <div style={{overflowX: 'scroll', paddingBottom: '16px'}}>
+                            <ResponsiveContainer width={'100%'} height={400}>
+                                <BarChart
+                                    data={forecast}
+                                    name
+                                >
+                                    <Bar dataKey="ReRegis" fill="#8884d8" />
+                                    <Bar dataKey="NewRegis" fill="#82ca9d" />
+                                    <XAxis dataKey="name" stroke="gray" />
+                                    <YAxis/>
+                                    <CartesianGrid strokeDasharray="3 3" className="chartGrid" />
+                                    <Legend />
+
+                                </BarChart>
+                        </ResponsiveContainer>
+                        </div>
+                        </div>
+                    </div>
+                </div>
         </div>
   )
 }

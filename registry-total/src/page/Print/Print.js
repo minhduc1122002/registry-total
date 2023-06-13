@@ -22,6 +22,47 @@ export default function Print() {
     const [inspection, setInspection] = useState()
     const InspectionId = window.location.pathname.split("/")[3]
 
+    const types = [
+        {
+            name : "Cơ quan",
+            code : "agency"
+        },
+        {
+            name : "Cá nhân",
+            code : "individual"
+        }  
+    ]
+
+    const findType = (type) => {
+        return types[types.findIndex(c => c['code'] === type)].name
+    }
+
+    const purposes = [
+        {
+            name : "Đi lại cá nhân",
+            code : "personal"
+        },
+        {
+            name : "Dịch vụ chở khách",
+            code : "passenger_service"
+        },
+        {
+            name : "Dịch vụ vận tải",
+            code : "transportation_service"
+        }
+           
+    ]
+
+    const findPurpose = (purpose) => {
+        return purposes[purposes.findIndex(c => c['code'] === purpose)].name
+    }
+
+    const cities = require('../../address/tinh_tp.json');
+
+    const findCity = (city) => {
+        return cities[cities.findIndex(c => c['code'] === city)].name
+    }
+
     useEffect(() => {
         const getInspection = async () => {
             try {
@@ -79,7 +120,48 @@ export default function Print() {
                                         <div className={`pdf-page ${layoutSelection.value}`}>
                                             <div className="pdf-header">
                                                 <span className="company-logo">
-                                                    1. PHƯƠNG TIỆN
+                                                    1. CHỦ SỞ HỮU
+                                                </span>
+                                                <span className="english">(OWNER)</span>
+                                            </div>
+                                            <div className="pdf-body">
+                                                <div className="regis-number">
+                                                    <p className="regis">
+                                                        Họ và tên : <b>{inspection.car.owner.name}</b>
+                                                    </p>
+                                                    <p className="number">
+                                                        (Full name)
+                                                    </p>
+                                                </div>
+                                                <div className="inspec-no">
+                                                        <p className="regis">
+                                                            Thông tin liên lạc : <span className="text">{inspection.car.owner.contact}</span>
+                                                        </p>
+                                                        <p className="number">
+                                                            (Contact No.)
+                                                        </p>
+                                                    </div>
+                                                <div className="cluster">
+                                                    <div className="type">
+                                                        CMT/CCCD : 
+                                                        <span className="ita"> (ID) </span>
+                                                        <span className="text">{inspection.car.owner.id}</span> 
+                                                    </div>
+                                                    <div className="type">
+                                                        Quyền sở hữu : 
+                                                        <span className="ita"> (Type) </span>
+                                                        <span className="text">{findType(inspection.car.owner.type)}</span> 
+                                                    </div>
+                                                    <div className="type">
+                                                        Địa chỉ thường trú : 
+                                                        <span className="ita"> (Owner address) </span>
+                                                        <span className="text">{inspection.car.owner.address}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="pdf-header">
+                                                <span className="company-logo">
+                                                    2. PHƯƠNG TIỆN
                                                 </span>
                                                 <span className="english">(VEHICLE)</span>
                                             </div>
@@ -94,7 +176,7 @@ export default function Print() {
                                                 </div>
                                                 <div className="inspec-no">
                                                         <p className="regis">
-                                                            Mã Đăng Kiểm : <span className="text">{inspection.register_id}</span>
+                                                            Số quản lý : <span className="text">{inspection.register_id}</span>
                                                         </p>
                                                         <p className="number">
                                                             (Vehicle Inspection No.)
@@ -107,14 +189,66 @@ export default function Print() {
                                                         <span className="text">{inspection.car.type}</span> 
                                                     </div>
                                                     <div className="type">
-                                                        Hãng sản xuất : 
-                                                        <span className="ita"> (Manufacturer) </span>
+                                                        Mục đích sử dụng : 
+                                                        <span className="ita"> (Purpose) </span>
+                                                        <span className="text">{findPurpose(inspection.car.purpose)}</span> 
+                                                    </div>
+                                                    <div className="type">
+                                                        Nhãn hiệu : 
+                                                        <span className="ita"> (Mark) </span>
                                                         <span className="text">{inspection.car.manufacturer}</span> 
                                                     </div>
                                                     <div className="type">
                                                         Số loại : 
                                                         <span className="ita"> (Model code) </span>
                                                         <span className="text">{inspection.car.model}</span>
+                                                    </div>
+                                                    <div className="type">
+                                                        Số máy : 
+                                                        <span className="ita"> (Engine Number) </span>
+                                                        <span className="text">{inspection.car.engine_number}</span>
+                                                    </div>
+                                                    <div className="type">
+                                                        Số khung : 
+                                                        <span className="ita"> (Chassis Number) </span>
+                                                        <span className="text">{inspection.car.chassis_number}</span>
+                                                    </div>
+                                                </div>
+                                                <div className='footer'>
+                                                    <div className='left'>
+                                                        <p className="regis">
+                                                            Số phiếu kiểm định : {inspection.register_id}
+                                                        </p>
+                                                        <p className="number">
+                                                            (Inspection Report No)
+                                                        </p>
+                                                        <p className="regis">
+                                                            Có hiệu lực đến ngày : <b>{inspection.expired_date}</b>
+                                                        </p>
+                                                        <p className="number">
+                                                            (Valid until)
+                                                        </p>
+                                                    </div>
+                                                    <div className='right'>
+                                                        <p className="regis">
+                                                            {findCity(inspection.center.city)}, 
+                                                            ngày {new Date().getDate()} tháng {new Date().getMonth()+1} năm {new Date().getFullYear()}
+                                                        </p>
+                                                        <p className="number">
+                                                            (Issued on: Day/Month/Year)
+                                                        </p>
+                                                        <p className="regis">
+                                                            <b>ĐƠN VỊ KIỂM ĐỊNH</b>
+                                                        </p>
+                                                        <p className="regis">
+                                                            <b>{inspection.center.id}</b> {inspection.center.address}
+                                                        </p>
+                                                        <p className="number">
+                                                            (INSPECTION CENTER)
+                                                        </p>
+                                                        <p className="regis">
+                                                            <b>{new Date().getDate()}-{new Date().getMonth() + 1}-{new Date().getFullYear()} {new Date().getHours()}:{new Date().getMinutes()}:{new Date().getSeconds()}</b>
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>

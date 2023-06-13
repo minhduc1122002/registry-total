@@ -69,6 +69,7 @@
     
   .pdf-header {
     padding-bottom: 0.1in;
+    padding-top: 0.1in;
   }
   
   .company-logo {
@@ -95,12 +96,21 @@
   .regis-number {
     float: left;
   }
+  .left {
+    float: left;
+    text-align: center;
+  }
   
   .inspec-no {
     float: right;
     padding-right: 15px;
   }
-  
+
+  .right {
+    float: right;
+    text-align: center;
+  }
+
   .regis, .cluster {
     font-size: 14px;
   }
@@ -113,10 +123,15 @@
   
   .type {
     clear: both;
+    padding-top: 10px;
   }
   
   .ita, .number {
     font-style: italic;
     font-size: 13px;
     font-family: 'Times New Roman', Times, serif;
+  }
+
+  .footer {
+    padding-top: 62px;
   }
